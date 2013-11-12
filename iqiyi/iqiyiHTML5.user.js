@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          iqiyiHTML5
-// @version       1.3
+// @version       1.4
 // @description   play video with html5 in iqiyi.com
 // @include       http://*.iqiyi.com/*
 // @grant         GM_xmlhttpRequest
@@ -9,6 +9,8 @@
 
 
 /**
+ * v1.4 - 2013.11.12
+ * Fixed: add type == 4
  * v1.3 - 2013.11.5
  * algorithm updated.
  * v1.2 - 2013.8.3
@@ -53,6 +55,12 @@ var iqiyi = {
       vid: '',
       key: '',
       name: '超清',
+      links: [],
+    },
+    4: {
+      vid: '',
+      key: '',
+      name: '超清(分段)',
       links: [],
     },
     5: {
