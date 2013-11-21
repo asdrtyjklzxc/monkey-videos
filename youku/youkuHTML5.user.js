@@ -2,7 +2,7 @@
 // @name         youkuHTML5
 // @description  Play Videos with html5 on youku.com
 // @include      http://v.youku.com/*
-// @version      1.26
+// @version      1.27
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -11,6 +11,8 @@
 // ==/UserScript==
 
 /**
+ * 1.27 2013.11.21
+ * Add a toggle button to show/hide playlist.
  * 1.26 2013.8.28
  * Fix video link when > 16.
  * 1.25 2013.8.12
@@ -302,19 +304,6 @@ var yk = {
   },
 
   /**
-   * Create a new <style> tag with str as its content.
-   * @param string styleText
-   *   - The <style> tag content.
-   */
-  addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
-      style.innerHTML = styleText;
-    }
-  },
-
-  /**
    * Create the control panel.
    */
   createPanel: function() {
@@ -324,29 +313,45 @@ var yk = {
     panel.className = 'yk-panel';
     this.addStyle([
       '.yk-panel {',
-        'position: fixed; ',
-        'right: 10px; ',
-        'bottom: 10px; ',
-        'z-index: 99999; ',
-        'border: 2px solid #ccc; ',
-        'border-top-left-radius: 14px; ',
-        'margin: 10px 0px 0px 0px; ',
-        'padding: 10px; ',
-        'background-color: #fff; ',
-        'overflow-y: hidden; ',
-        'max-height: 90%; ',
-        'min-width: 100px; ',
-        'min-height: 120px; ',
+        'position: fixed;',
+        'right: 10px;',
+        'bottom: 0px;',
+        'z-index: 99999;',
+        'border: 2px solid #ccc;',
+        'border-top-left-radius: 14px;',
+        'margin: 10px 0px 0px 0px;',
+        'padding: 10px 10px 0px 10px;',
+        'background-color: #fff;',
+        'overflow-y: hidden;',
+        'max-height: 90%;',
+        'min-width: 100px;',
+        //'min-height: 120px;',
       '}',
       '.yk-panel:hover {',
-        'overflow-y: auto; ',
+        'overflow-y: auto;',
       '}',
       '.yk-label {',
         'margin-right: 10px;',
-      '}'
+      '}',
+      '#playlist-toggle {',
+        'height: 10px;',
+        'margin-top: 10px;',
+      '}',
+      '#playlist-toggle:hover {',
+        'cursor: pointer;',
+      '}',
+      '.playlist-show {',
+        'background-color: #8b82a2;',
+        'border-radius: 0px 0px 5px 5px;',
+      '}',
+      '.playlist-hide {',
+        'background-color: #462093;',
+        'border-radius: 5px 5px 0px 0px;',
+      '}',
     ].join(''));
 
     panel.innerHTML = [
+      '<div id="playlist-wrap">',
       '<form id="chooseFormat">',
         '<label for="chooseFlv" class="yk-label">',
           '<input type="radio" id="chooseFlv" name="formatChoice" checked="checked" />',
@@ -363,7 +368,21 @@ var yk = {
         '<a id="pls-link" href="#">播放列表</a>',
       '</form>', 
       '<div id="playlist"></div>',
+      '</div>',
+      '<div id="playlist-toggle" class="playlist-show"></div>',
     ].join('');
+
+    uw.document.querySelector('#playlist-toggle').addEventListener(
+        'click', function(event) {
+          var pls = uw.document.querySelector('#playlist-wrap');
+          if (pls.style.display === 'none') {
+            pls.style.display = 'block';
+            event.target.className = 'playlist-show';
+          } else {
+            pls.style.display = 'none';
+            event.target.className = 'playlist-hide';
+          }
+        }, false);
   },
 
   /**
@@ -442,6 +461,19 @@ var yk = {
 
     // Refresh m3u playlist file.
     uw.document.getElementById('pls-link').href = this.plsDataScheme(format);
+  },
+
+  /**
+   * Create a new <style> tag with str as its content.
+   * @param string styleText
+   *   - The <style> tag content.
+   */
+  addStyle: function(styleText) {
+    var style = uw.document.createElement('style');
+    if (uw.document.head) {
+      uw.document.head.appendChild(style);
+      style.innerHTML = styleText;
+    }
   },
 
   /**
