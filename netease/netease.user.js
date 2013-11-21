@@ -87,13 +87,13 @@ var netease = {
         for (type in that.videos) {
           video = xml.querySelector('playurl_origin ' + type +' mp4');
           if (video) {
-            that.videos[type] = video.innerHTML;
+            that.videos[type] = video.firstChild.data;
             continue;
           }
           video = xml.querySelector(
             'playurl_origin ' + type.toUpperCase() +' mp4');
           if (video) {
-            that.videos[type] = video.innerHTML;
+            that.videos[type] = video.firstChild.data;
           }
         }
         subs = xml.querySelectorAll('subs sub');
