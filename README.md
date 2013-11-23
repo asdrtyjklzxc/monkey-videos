@@ -7,6 +7,16 @@
 flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果很好.
 
 
+类似项目
+========
+
+* YouAntiADs - 用于解决视频网站的黑屏问题, http://userscripts.org/scripts/show/119622
+* you-get - 用python3写的视频网站下载脚本, 用的人挺多的, https://github.com/soimort/you-get 
+* youtube-dl - 与you-get类似, 也用于下载视频网站中的视频, 这个项目由国外的
+朋友维护, 可能对于国内视频网站的支持没有you-get完善, 但它支持的网站有数十个,
+非常丰富, https://github.com/rg3/youtube-dl 
+
+
 安装
 ====
 1. 安装firefox.
