@@ -95,9 +95,7 @@ var letv = {
 
     var input = uw.document.querySelector('.add input'),
         vidReg,
-        vidMatch,
-        titleReg = /^([^-]+) -/,
-        titleMatch = titleReg.exec(uw.document.title);
+        vidMatch;
 
     if (input && input.hasAttribute('value')) {
       vidReg = /\/(\d+)\.html$/;
@@ -114,12 +112,6 @@ var letv = {
       return false;
     }
 
-    if (titleMatch && titleMatch.length === 2) {
-      this.title = titleMatch[1];
-    } else {
-      this.title = uw.document.title;
-    }
-    log('this: ', this);
   },
 
   getVideoXML: function() {
@@ -147,6 +139,7 @@ var letv = {
           log('jsonTxt: ', jsonTxt);
           json = JSON.parse(jsonTxt);
           log('json: ', json);
+          that.title = json.title;
           that.getVideoUrl(json);
         }
       },
