@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        letvHTML5
-// @version     1.6
+// @version     1.7
 // @description Play Videos with html5 on letv.com
 // @license     GPLv3
 // @author      LiuLang
@@ -13,6 +13,8 @@
 // ==/UserScript==
 
 /**
+ * v1.7 - 2013.12.22
+ * Fixed: titleMatch is null.
  * v1.6 - 2013.7.26
  * Show all images.
  * Remove js dependency.
@@ -105,14 +107,14 @@ var letv = {
       return false;
     }
 
-    if (vidMatch.length === 2) {
+    if (vidMatch && vidMatch.length === 2) {
       this.vid = vidMatch[1];
     } else {
       error('Failed to get video ID!');
       return false;
     }
 
-    if (titleMatch.length === 2) {
+    if (titleMatch && titleMatch.length === 2) {
       this.title = titleMatch[1];
     } else {
       this.title = uw.document.title;
