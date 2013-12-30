@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         tudouHTML5
 // @description  Play Videos with html5 on tudou.com
-// @version      1.1
-// @include      http://www.tudou.com/programs/view/*
+// @version      1.2
 // @include      http://www.tudou.com/albumplay/*
+// @include      http://www.tudou.com/listplay/*
+// @include      http://www.tudou.com/programs/view/*
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3
@@ -13,6 +14,8 @@
 
 
 /**
+ * v1.2 - 2013.12.31
+ * support listplay page
  * v1.1 - 2013.10.31
  * iid method updated
  * v1.0 -2013.4.26
@@ -42,16 +45,16 @@ var tudou = {
   },
 
   run: function() {
+    log('run()');
     this.router();
   },
 
-  router: function() {
-    log('router()');
-    this.url = uw.document.location.href;
 
+  router: function() {
+    log('router');
     var scripts = uw.document.querySelectorAll('script'),
         script,
-        titleReg = /kw: '([^']+)'/,
+        titleReg = /kw:\s*['"]([^'"]+)['"]/,
         titleMatch,
         iidReg = /iid\s*[:=]\s*(\d+)/,
         iidMatch,
@@ -141,7 +144,7 @@ var tudou = {
       videos = this.segs[key];
       for (i = 0; video = videos[i]; i += 1) {
         log(key, video);
-        this.links[key] = {};
+        this.links[key] = [];
         this.totalJobs += 1;
         this.getVideoUrl(key, video['k'], video['no']);
       }
@@ -216,7 +219,7 @@ var tudou = {
     panel.innerHTML = [
       '<form id="choose-format">',
       '</form>',
-      '<div id="playlist"></div>',
+      '<div id="td-playlist"></div>',
       ].join('');
 
     for (pid in this.links) {
@@ -247,7 +250,9 @@ var tudou = {
           3: '360P',
           4: '480P',
           5: '720P',
-          52: 'UN',
+          52: '240P(mp4)',
+          53: '360P(mp4)',
+          54: '480P(mp4)',
           99: '原画质'
         };
 
@@ -262,7 +267,7 @@ var tudou = {
   modifyList: function (input) {
     log('modifyList() --');
     var pid = '',
-        playlist = uw.document.querySelector('#playlist'),
+        playlist = uw.document.querySelector('#td-playlist'),
         a = '',
         url = '',
         num,
@@ -276,22 +281,21 @@ var tudou = {
 
     for (key in this.links[pid]) {
       url = this.links[pid][key];
-      if (key < 9) {
-        num = '0';
-      } else {
+      if (this.links[pid].length === 1) {
         num = '';
+      } else if (this.links[pid].length > 9 && key < 9) {
+        num = '-(0' + String(parseInt(key) + 1) + ')';
+      } else {
+        num = '-(' + String(parseInt(key) + 1) + ')';
       }
       a += [
         '<a href="',
         url,
         '" class="video-item">',
         this.title,
+        num,
         '-',
         input.nextSibling.innerHTML,
-        '-(',
-        num,
-        String(parseInt(key) + 1),
-        ')',
         '</a>'
         ].join('');
     }
