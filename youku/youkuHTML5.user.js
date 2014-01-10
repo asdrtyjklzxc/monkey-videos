@@ -2,15 +2,19 @@
 // @name         youkuHTML5
 // @description  Play Videos with html5 on youku.com
 // @include      http://v.youku.com/*
-// @version      1.27
+// @version      1.28
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @run-at       document-end
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 /**
+ * 1.28 2013.12.8
+ * Add a greasemonkey option to save last choice.
  * 1.27 2013.11.21
  * Add a toggle button to show/hide playlist.
  * 1.26 2013.8.28
@@ -307,7 +311,8 @@ var yk = {
    * Create the control panel.
    */
   createPanel: function() {
-    var panel = uw.document.createElement('div');
+    var panel = uw.document.createElement('div'),
+        playlist_toggle;
 
     uw.document.body.appendChild(panel);
     panel.className = 'yk-panel';
@@ -372,17 +377,23 @@ var yk = {
       '<div id="playlist-toggle" class="playlist-show"></div>',
     ].join('');
 
-    uw.document.querySelector('#playlist-toggle').addEventListener(
+    playlist_toggle = uw.document.querySelector('#playlist-toggle');
+    playlist_toggle.addEventListener(
         'click', function(event) {
           var pls = uw.document.querySelector('#playlist-wrap');
           if (pls.style.display === 'none') {
             pls.style.display = 'block';
             event.target.className = 'playlist-show';
+            GM_setValue('hidePlaylist', false);
           } else {
             pls.style.display = 'none';
             event.target.className = 'playlist-hide';
+            GM_setValue('hidePlaylist', true);
           }
         }, false);
+    if (GM_getValue('hidePlaylist', false)) {
+      playlist_toggle.click();
+    }
   },
 
   /**
@@ -391,36 +402,54 @@ var yk = {
   createPlaylist: function() {
     var tmp,
         i,
+        formats = [],
+        format = GM_getValue('format', 'flv'),
+        ids = {
+          'flv': 'chooseFlv',
+          'mp4': 'chooseMp4',
+          'hd2': 'chooseHd2',
+        },
         chooseFlv = uw.document.getElementById('chooseFlv'),
         chooseMp4 = uw.document.getElementById('chooseMp4'),
         chooseHd2 = uw.document.getElementById('chooseHd2'); 
       
-    log('formsts: ', this.formats);
     // 显示flv 格式的列表;
     if (this.formats.flv.length > 0) {
-      // Default: show flv videos.
-      this.modifyList('flv');
+      formats.push('flv');
       chooseFlv.addEventListener('change', function() {
         yk.modifyList('flv');
+        GM_setValue('format', 'flv');
       }, false);
     }
 
     // mp4 格式的列表;
     if (this.formats.mp4.length > 0 ) {
+      formats.push('mp4');
       chooseMp4.parentNode.style.display = 'inline';
       chooseMp4.addEventListener('change', function() {
         yk.modifyList('mp4');
+        GM_setValue('format', 'mp4');
       }, false);
     }
     // hd2 格式的列表;
     if (this.formats.hd2.length > 0) {
+      formats.push('hd2');
       chooseHd2.parentNode.style.display = 'inline';
       chooseHd2.addEventListener('change', function() {
         yk.modifyList('hd2');
+        GM_setValue('format', 'hd2');
       }, false);
     }
+
+    // Load default type of playlist.
+    if (formats.indexOf(format) === -1) {
+      // If this type of playlist is empty, use the last available type of
+      // video.
+      format = formats[formats.length-1];
+    }
+    uw.document.getElementById(ids[format]).click();
   },
-    
+
   /**
    * Modify the playlist content.
    *
@@ -428,7 +457,8 @@ var yk = {
    * @param string format 
    *  - specific video format.
    */
-  modifyList: function(format) {
+  modifyList: function(format, withClick) {
+    log('modifyList(), format = ', format);
     var classes = {
           'flv': 'playlistFlv', 
           'mp4': 'playlistMp4', 
