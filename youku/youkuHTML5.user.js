@@ -407,6 +407,7 @@ var yk = {
         i,
         formats = [],
         format = GM_getValue('format', 'flv'),
+        currPlaylist,
         ids = {
           'flv': 'chooseFlv',
           'mp4': 'chooseMp4',
@@ -450,13 +451,12 @@ var yk = {
       // video.
       format = formats[formats.length-1];
     }
-    var element = uw.document.getElementById(ids[format]);
-    if (element) {
-      if (element.checked) {
-        this.modifyList(format);
-      } else {
-        element.click();
+    currPlaylist = uw.document.getElementById(ids[format]);
+    if (currPlaylist) {
+      if (!currPlaylist.checked) {
+        currPlaylist.checked = true;
       }
+      this.modifyList(format);
     }
   },
 
