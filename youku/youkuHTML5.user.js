@@ -311,6 +311,7 @@ var yk = {
    * Create the control panel.
    */
   createPanel: function() {
+    log('createPanel() --');
     var panel = uw.document.createElement('div'),
         playlist_toggle;
 
@@ -400,6 +401,8 @@ var yk = {
    * Create the playlist.
    */
   createPlaylist: function() {
+    log('createPlaylist() --');
+    log(this);
     var tmp,
         i,
         formats = [],
@@ -447,7 +450,14 @@ var yk = {
       // video.
       format = formats[formats.length-1];
     }
-    uw.document.getElementById(ids[format]).click();
+    var element = uw.document.getElementById(ids[format]);
+    if (element) {
+      if (element.checked) {
+        this.modifyList(format);
+      } else {
+        element.click();
+      }
+    }
   },
 
   /**
