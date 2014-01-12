@@ -1,16 +1,19 @@
 // ==UserScript==
 // @name        56HTML5
-// @version     1.0
+// @version     1.1
 // @description Play Videos with html5 on 56.com
 // @license     GPLv3
 // @author      LiuLang
 // @email       gsushzhsosgsu@gmail.com
 // @include     http://www.56.com/u*
+// @include     http://www.56.com/w*
 // @grant       GM_xmlhttpRequest
 // @run-at      document-end
 // ==/UserScript==
 
 /**
+ * v1.1 - 2014.1.12
+ * Support albums
  * v1.0 - 2014.1.11
  * Project inited.
  */
@@ -46,11 +49,16 @@ var html56 = {
     log('getID() --');
     var url = uw.location.href,
         idReg = /\/v_(\w+)\.html/,
-        idMatch = idReg.exec(url);
+        idMatch = idReg.exec(url),
+        albumIDReg = /_vid-(\w+)\.html/,
+        albumIDMatch = albumIDReg.exec(url);
 
     log(idMatch);
-    if (idMatch && idMatch.length == 2) {
+    log(albumIDMatch);
+    if (idMatch && idMatch.length === 2) {
       this.id = idMatch[1]; 
+    } else if (albumIDMatch && albumIDMatch.length === 2) {
+      this.id = albumIDMatch[1];
     }
     log(this);
   },
