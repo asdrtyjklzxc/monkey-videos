@@ -1,15 +1,22 @@
 // ==UserScript==
 // @name         sohuHTML5
-// @version      1.0
 // @description  Play Videos with html5 on sohu.com
+// @include      http://my.tv.sohu.com/*
 // @include      http://tv.sohu.com/*
+// @version      1.1
+// @license      GPLv3
+// @author       LiuLang
+// @email        gsushzhsosgsu@gmail.com
 // @run-at       document-end
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 
 /**
- * v1.0 -2013.4.26
+ * v1.1 - 2014.1.15
+ * v1.0 - 2013.4.26
  * Project intied.
  * Need to enable javascript on web page.
  */
@@ -59,6 +66,7 @@ var sohu = {
   },
 
   run: function() {
+    log('run() --');
     this.getId();
     this.getVideoJSON('p2');
     this.createUI();
@@ -83,18 +91,20 @@ var sohu = {
    * e.g. http://hot.vrs.sohu.com/vrs_flash.action?vid=1109268&plid=5028903&referer=http%3A//tv.sohu.com/20130426/n374150509.shtml
    */
   getVideoJSON: function(fmt) {
+    log('getVideoJSON() --');
+    log('fmt: ', fmt);
     var pref = 'http://hot.vrs.sohu.com/vrs_flash.action',
         url = '',
         that = this;
 
-    /*
+    // If vid is unset, just return it.
     if (this[fmt].vid === 0) {
       this[fmt].done = true;
       return false;
     }
-    */
 
-    url = [pref, 
+    url = [
+      pref, 
       '?vid=', this[fmt].vid,
       '&plid=', this.plid,
       '&out=0',
