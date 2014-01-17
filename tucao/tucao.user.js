@@ -289,4 +289,5 @@ uw.addEventListener('hashchange', function() {
 //uw.onhashchange = function() {
 //  tucao.run();
 //};
-tucao.run();
+monkey.run();
+
