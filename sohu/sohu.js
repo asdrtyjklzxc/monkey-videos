@@ -1,7 +1,7 @@
 
 var monkey = {
   title: '',
-  vid: 0,
+  vid: '',
   plid: '',
   referer: '',
   jobs: 0,
@@ -13,7 +13,6 @@ var monkey = {
   },
 
   p1: {
-    done: false,
     json: [],
     su: [],
     clipsURL: [],
@@ -21,10 +20,10 @@ var monkey = {
     vid: 0,
     reserveIp: [],
     videos: [],
+    params: [],
   },
 
   p2: {
-    done: false,
     json: [],
     su: [],
     vid: 0,
@@ -32,10 +31,10 @@ var monkey = {
     ip: '',
     reserveIp: [],
     videos: [],
+    params: [],
   },
 
   p3: {
-    done: false,
     json: [],
     su: [],
     clipsURL: [],
@@ -43,10 +42,10 @@ var monkey = {
     ip: '',
     reserveIp: [],
     videos: [],
+    params: [],
   },
 
   p4: {
-    done: false,
     json: [],
     su: [],
     clipsURL: [],
@@ -54,11 +53,157 @@ var monkey = {
     ip: '',
     reserveIp: [],
     videos: [],
+    params: [],
   },
 
   run: function() {
     log('run() --');
-    this.getId();
+    this.router();
+  },
+
+  router: function() {
+    log('router() -- ');
+    var host = uw.document.location.hostname;
+    if (host === 'my.tv.sohu.com') {
+      this.getUGCId();
+    } else if (host === 'tv.sohu.com') {
+      this.getId();
+    } else {
+      error('Error: this page is not supported');
+    }
+  },
+
+  /**
+   * Get video id for UGC video
+   */
+  getUGCId: function() {
+    log('getUGCId() -- ');
+    var scripts = uw.document.querySelectorAll('script'),
+        script,
+        vidReg = /var vid\s+=\s+'(\d+)'/,
+        vidMatch,
+        titleReg = /,title:\s+'([^']+)'/,
+        titleMatch,
+        txt,
+        i;
+
+    for (i = 0; script = scripts[i]; i += 1) {
+      if (script.innerHTML.search('var vid') > -1) {
+        txt = script.innerHTML;
+        vidMatch = vidReg.exec(txt);
+        log('vidMatch: ', vidMatch);
+        if (vidMatch && vidMatch.length === 2) {
+          this.vid = vidMatch[1];
+        }
+        log('titleMatch: ', titleMatch);
+        titleMatch = titleReg.exec(txt);
+        if (titleMatch && titleMatch.length === 2) {
+          this.title = titleMatch[1];
+        }
+        break;
+      }
+    }
+    if (this.vid.length > 0) {
+      this.referer = uw.escape(uw.location.href);
+      this.p2.vid = this.vid;
+      this.getUGCVideoJSON('p2');
+    } else {
+      error('Error: failed to get video id!');
+    }
+  },
+
+  /**
+   * Get UGC video info
+   */
+  getUGCVideoJSON: function(fmt) {
+    log('getUGCVideoJSON() -- ');
+    var that = this,
+        url = 'http://my.tv.sohu.com/videinfo.jhtml?m=viewtv&vid=' + this.vid;
+
+    log('url: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        log('response: ', response);
+        var json = JSON.parse(response.responseText);
+
+        log('json: ', json);
+        that[fmt].json = json;
+        that[fmt].su = json.data.su;
+        that[fmt].clipsURL = json.data.clipsURL;
+
+        if (fmt === 'p2') {
+          if (json.data.norVid) {
+            that.p1.vid = json.data.norVid;
+            that.getUGCVideoJSON('p1');
+          }
+          if (json.data.superVid) {
+            that.p3.vid = json.data.superVid;
+            that.getUGCVideoJSON('p3');
+          }
+          if (json.data.oriVid) {
+            that.p4.vid = json.data.oriVid;
+            that.getUGCVideoJSON('p4');
+          }
+        }
+        that.decUGCVideo(fmt);
+      },
+    });
+  },
+
+  /**
+   * Decode UGC video url
+   */
+  decUGCVideo: function(fmt) {
+    log('decUGCVideo() -- ');
+    var url,
+        json = this[fmt].json,
+        i;
+
+    for (i = 0; i < json.data.clipsURL.length; i += 1) {
+      url = [
+        'http://',
+        json.allot,
+        '?prot=',
+        json.prot, 
+        '&file=',
+        json.data.clipsURL[i],
+        '&new=',
+        json.data.su[i],
+      ].join('');
+      log('url: ', url);
+      this[fmt].videos.push('');
+      this.jobs += 1;
+      this.decUGCVideo2(fmt, url, i);
+    }
+  },
+
+  decUGCVideo2: function(fmt, url, i) {
+    log('decUGCVideo2() -- ');
+    var that = this;
+
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        log('response:', response);
+        var params = response.responseText.split('|');
+
+        that[fmt].params = params;
+        that[fmt].videos[i] = [
+          params[0],
+          that[fmt].su[i],
+          '?key=',
+          params[3],
+        ].join('');
+        
+        that.jobs -= 1;
+        if (that.jobs === 0) {
+          that.createUI();
+        }
+      },
+    });
   },
 
   /**
@@ -71,7 +216,6 @@ var monkey = {
     this.plid = uw.playlistId;
     this.title = uw.document.title.split('-')[0].trim();
     this.referer = uw.escape(uw.location.href);
-    log(this);
     this.jobs += 1;
     this.getVideoJSON('p2');
   },
@@ -89,7 +233,6 @@ var monkey = {
 
     // If vid is unset, just return it.
     if (this[fmt].vid === 0) {
-      this[fmt].done = true;
       return;
     }
 
@@ -123,7 +266,6 @@ var monkey = {
         that.p4.vid = that[fmt].json.data.oriVid;
         that[fmt].ip = that[fmt].json.allot;
         that[fmt].reserveIp = that[fmt].json.reserveIp.split(';');
-        that[fmt].done = true;
         for (i in that[fmt].clipsURL) {
           url = [
             'http://', that[fmt].ip,
@@ -171,13 +313,15 @@ var monkey = {
         i;
 
     for (type in this.formats) {
-      if (this[type].vid > 0 && this[type].done) {
+      log('type: ', type);
+      if (this[type].videos.length > 0) {
         videos.links.push(this[type].videos);
         videos.formats.push(this.formats[type]);
       }
     }
-
-    multiFiles.run(videos);
+    if (videos.formats.length > 0) {
+      multiFiles.run(videos);
+    }
   },
 };
 
