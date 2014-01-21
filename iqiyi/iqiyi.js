@@ -177,29 +177,26 @@ var monkey = {
           title: this.title,
           formats: [],
           links: [],
-        };
+        },
+        links,
+        link,
+        j;
 
     for (i = 0; i < this.rcOrder.length; i += 1) {
       video = this.rc[this.rcOrder[i]];
       if (video.links.length > 0) {
         videos.formats.push(video.name);
-        videos.links.push(video.links);
+
+        // append KEY/UUID string to end of each video link
+        links = [];
+        for (j = 0; j < video.links.length; j += 1) {
+          link = [video.links[j], '?', video.key].join(''); 
+          links.push(link);
+        }
+        videos.links.push(links);
       }
     }
     multiFiles.run(videos);
-  },
-
-  /**
-   * Create a new <style> tag with str as its content.
-   * @param string styleText
-   *   - The <style> tag content.
-   */
-  addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
-      style.innerHTML = styleText;
-    }
   },
 
   /**

@@ -263,6 +263,7 @@ var multiFiles = {
         'overflow-y: hidden;',
         'max-height: 90%;',
         'min-width: 100px;',
+        'text-align: left;',
       '}',
       '.monkey-videos-panel:hover {',
         'overflow-y: auto;',
@@ -275,7 +276,6 @@ var multiFiles = {
       '}',
       '.monkey-videos-panel #playlist-toggle {',
         'height: 10px;',
-        'width: 100%;',
         'margin-top: 10px;',
       '}',
       '.monkey-videos-panel #playlist-toggle:hover {',
@@ -370,9 +370,11 @@ var multiFiles = {
         formats = this.videos.formats,
         currPlaylist;
 
-    if (formats.length > currPos - 1) {
+    log('currPos: ', currPos);
+    if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
+    log('currPos: ', currPos);
 
     currPlaylist = uw.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
@@ -641,29 +643,26 @@ var monkey = {
           title: this.title,
           formats: [],
           links: [],
-        };
+        },
+        links,
+        link,
+        j;
 
     for (i = 0; i < this.rcOrder.length; i += 1) {
       video = this.rc[this.rcOrder[i]];
       if (video.links.length > 0) {
         videos.formats.push(video.name);
-        videos.links.push(video.links);
+
+        // append KEY/UUID string to end of each video link
+        links = [];
+        for (j = 0; j < video.links.length; j += 1) {
+          link = [video.links[j], '?', video.key].join(''); 
+          links.push(link);
+        }
+        videos.links.push(links);
       }
     }
     multiFiles.run(videos);
-  },
-
-  /**
-   * Create a new <style> tag with str as its content.
-   * @param string styleText
-   *   - The <style> tag content.
-   */
-  addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
-      style.innerHTML = styleText;
-    }
   },
 
   /**
