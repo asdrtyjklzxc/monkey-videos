@@ -15,7 +15,7 @@ var monkey = {
   },
 
   run: function() {
-    var type;
+    log('run() --');
 
     this.getTitle();
     if (uw.document.title.search('网易公开课') > -1) {
@@ -26,11 +26,12 @@ var monkey = {
   },
 
   getTitle: function() {
+    log('getTitle() --');
     this.title = uw.document.title;
   },
 
   getOpenCourseSource: function() {
-    log('getOpenCourseSource()')
+    log('getOpenCourseSource() --');
     var url = uw.document.location.href.split('/'),
         length = url.length,
         xmlUrl,
@@ -43,11 +44,12 @@ var monkey = {
       '2_' + url[length - 1].replace('html', 'xml'),
       ].join('/');
     log('xmlUrl: ', xmlUrl);
+
     GM_xmlhttpRequest({
       method: 'GET',
       url: xmlUrl,
       onload: function(response) {
-        log(response);
+        log('response: ', response);
         var xml = that.parseXML(response.responseText),
             type,
             video,
@@ -57,15 +59,14 @@ var monkey = {
             i;
 
         //that.title = xml.querySelector('all title').innerHTML;
-        that.title = uw.document.title.replace('_网易公开课', '');
+        that.title = that.title.replace('_网易公开课', '');
         for (type in that.videos) {
-          video = xml.querySelector('playurl_origin ' + type +' mp4');
+          video = xml.querySelector('playurl ' + type +' mp4');
           if (video) {
             that.videos[type] = video.firstChild.data;
             continue;
           }
-          video = xml.querySelector(
-            'playurl_origin ' + type.toUpperCase() +' mp4');
+          video = xml.querySelector('playurl ' + type.toUpperCase() +' mp4');
           if (video) {
             that.videos[type] = video.firstChild.data;
           }
@@ -81,7 +82,7 @@ var monkey = {
   },
 
   getSource: function() {
-    log('getSource()');
+    log('getSource() --');
     var scripts = uw.document.querySelectorAll('script'),
         script,
         reg = /<source[\s\S]+src="([^"]+)"/,
@@ -89,6 +90,7 @@ var monkey = {
         m3u8Reg = /appsrc\:\s*'([\s\S]+)\.m3u8'/,
         m3u8Match,
         i;
+
     for (i = 0; script = scripts[i]; i += 1) {
       match = reg.exec(script.innerHTML);
       log(match);
@@ -110,61 +112,27 @@ var monkey = {
   createUI: function() {
     log('createUI() --');
     log(this);
+    var videos = {
+          title: this.title,
+          formats: [],
+          links: [],
+          ok: true,
+          msg: '',
+        },
+        format;
 
-    var panel = uw.document.createElement('div'),
-        type,
-        subName,
-        a;
-
-    this.addStyle([
-        '.download-wrap { ',
-          'position: fixed; ',
-          'left: 10px; ',
-          'bottom: 10px; ',
-          'border: 2px solid #ccc; ',
-          'border-top-right-radius: 15px; ',
-          'margin; 0; ',
-          'padding: 10px; ',
-          'background-color: #fff; ',
-          'z-index: 9999; ',
-          '}',
-        '.download-link { ',
-          'display: block;',
-          'margin: 8px;',
-          '}',
-        '.download-link:hover { ',
-          'text-decoration: underline; ',
-          '}',
-        '.download-link:active {',
-          'color: #e03434; ',
-          'outline: none; ',
-          '}',
-        ].join(''));
-
-    for (type in this.videos) {
-      if (this.videos[type] === '') {
-        continue;
+    for (format in this.videos) {
+      if (this.videos[format].length > 0) {
+        videos.formats.push(this.types[format]);
+        videos.links.push(this.videos[format]);
       }
-      a = uw.document.createElement('a');
-      a.href = this.videos[type];
-      a.innerHTML = this.title + '-' + this.types[type];
-      a.className = 'download-link';
-      panel.appendChild(a);
     }
-
-    for (subName in this.subs) {
-      if (this.subs[subName] === '') {
-        continue;
-      }
-      a = uw.document.createElement('a');
-      a.href = this.subs[subName];
-      a.innerHTML = this.title + '-' + subName;
-      a.className = 'download-link';
-      panel.appendChild(a);
+    // TODO: add subtitle
+    if (videos.links.length === 0) {
+      videos.ok = false;
+      videos.msg = 'Failed to parse video source';
     }
-
-    panel.className = 'download-wrap';
-    uw.document.body.appendChild(panel);
+    singleFile.run(videos);
   },
 
   /**
