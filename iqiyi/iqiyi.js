@@ -3,42 +3,37 @@ var monkey = {
   title: '',
   vid: '', // default vid
   type: 0, // default type
-  rcOrder: [96, 1, 2, 3, 4, 5],
+  rcOrder: [96, 1, 4, 5, 10],
   rc: {
     96: {
       vid: '',
       key: '',
-      name: '极速',
+      name: '320P',
       links: [],
     },
     1: {
       vid: '',
       key: '',
-      name: '流畅',
+      name: '480P',
       links: [],
     },
-    2: {
-      vid: '',
-      key: '',
-      name: '高清',
-      links: [],
-    },
-    3: {
-      vid: '',
-      key: '',
-      name: '超清',
-      links: [],
-    },
+    // 2, 3
     4: {
       vid: '',
       key: '',
-      name: '超清(分段)',
+      name: '720P',
       links: [],
     },
     5: {
       vid: '',
       key: '',
       name: '1080P',
+      links: [],
+    },
+    10: {
+      vid: '',
+      key: '',
+      name: '4K',
       links: [],
     },
   },
@@ -79,7 +74,7 @@ var monkey = {
   },
 
   getVideoUrls: function(vid) {
-    log('getVideoUrls()', vid);
+    log('getVideoUrls() --', vid);
     var url = 'http://cache.video.qiyi.com/v/' + vid,
         that = this;
 
@@ -100,18 +95,23 @@ var monkey = {
             files,
             file;
 
+        log('xml: ', xml);
         if (that.title.length === 0) {
           title = xml.querySelector('title').innerHTML;
           that.title = title.substring(9, title.length - 3);
         }
 
         vid_elems = xml.querySelectorAll('relative data');
-        if (that.jobs === 0) {
-          that.jobs = vid_elems.length;
-          log('that.job is: ', that.jobs, that, url);
-        }
+        //if (that.jobs === 0) {
+          //that.jobs = vid_elems.length;
+          //log('that.job is: ', that.jobs, that, url);
+        //}
         for (i = 0; vid_elem = vid_elems[i]; i += 1) {
           type = vid_elem.getAttribute('version');
+          if (! that.rc[type]) {
+            error('Current video type not supported: ', type);
+            continue;
+          }
           container = that.rc[type];
           if (container.vid.length === 0) {
             container.vid = vid_elem.innerHTML;
@@ -127,6 +127,7 @@ var monkey = {
             for (j = 0; file = files[j]; j += 1) {
               container.links.push(file.innerHTML);
             }
+            that.jobs += 1;
             that.getKey(container);
           }
         }
