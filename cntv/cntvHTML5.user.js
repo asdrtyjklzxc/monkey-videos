@@ -276,7 +276,6 @@ var multiFiles = {
       '}',
       '.monkey-videos-panel #playlist-toggle {',
         'height: 10px;',
-        'width: 100%;',
         'margin-top: 10px;',
       '}',
       '.monkey-videos-panel #playlist-toggle:hover {',
@@ -371,9 +370,11 @@ var multiFiles = {
         formats = this.videos.formats,
         currPlaylist;
 
-    if (formats.length > currPos - 1) {
+    log('currPos: ', currPos);
+    if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
+    log('currPos: ', currPos);
 
     currPlaylist = uw.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];

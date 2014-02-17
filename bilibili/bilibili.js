@@ -34,11 +34,15 @@ var monkey = {
     log('getCid()');
     var iframe = uw.document.querySelector('iframe'),
         reg = /cid=(\d+)&aid=(\d+)/,
-        match = reg.exec(iframe.src);
+        match;
 
-    if (match && match.length === 3) {
-      this.cid = match[1];
-      this.getVideos();
+
+    if (iframe) {
+      match = reg.exec(iframe.src);
+      if (match && match.length === 3) {
+        this.cid = match[1];
+        this.getVideos();
+      }
     }
     this.createUI();
   },
