@@ -125,10 +125,15 @@ baofeng
 =======
 baofeng.com, 暴风极致影院, 里面只开放了480P格式的视频的下载通道.
 并且服务器提供的下载速度很低.
+目前已不可使用.
+
+justing
+=======
+justing.com.cn, 直接得到mp3的地址.
 
 
 COPYRIGHT
 =========
-`Copyright (C) 2013 LiuLang <gsushzhsosgsu@gmail.com>`
+`Copyright (C) 2013-2014 LiuLang <gsushzhsosgsu@gmail.com>`
 
 依照GNU General Public License v3协议发布, 协议内容请参看LICENSE文件.
