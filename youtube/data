@@ -1,0 +1,6 @@
+
+原始的视频地址:
+http://www.youtube.com/watch?v=1kT4UtmawvE
+
+获取视频信息的接口:
+https://www.youtube.com:443/get_video_info?&video_id=1kT4UtmawvE&el=embedded&ps=default&eurl=&gl=US&hl=en

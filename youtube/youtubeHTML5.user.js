@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name        Download Videos from YouTube
+// @name         youtubeHTML5
 // @description  Adds links to download flv, mp4 and webm from YouTube
 // @include      http://www.youtube.com/watch?v=*
 // @include      https://www.youtube.com/watch?v=*
-// @version      2.10
+// @version      2.11
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -161,10 +161,86 @@ var singleFile = {
 
 var monkey = {
   videoId: '',
-  videoInfoUrl: '',
+  videoInfoUrl: null,
   videoTitle: '',
-  stream: '',
+  stream: null,
+  adaptive_fmts: null,
   urlInfo: false,
+
+  // format list comes from https://github.com/rg3/youtube-dl
+  formats:  {
+    '5': {ext: 'flv', width: 400, height: 240, resolution: '240p'},
+    '6': {ext: 'flv', width: 450, height: 270, resolution: '270p'},
+    '13': {ext: '3gp', resolution: 'unknown'},
+    '17': {ext: '3gp', width: 176, height: 144, resolution: '144p'},
+    '18': {ext: 'mp4', width: 640, height: 360, resolution: '360p'},
+    '22': {ext: 'mp4', width: 1280, height: 720, resolution: '720p'},
+    '34': {ext: 'flv', width: 640, height: 360, resolution: '360p'},
+    '35': {ext: 'flv', width: 854, height: 480, resolution: '720p'},
+    '36': {ext: '3gp', width: 320, height: 240, resolution: '240p'},
+    '37': {ext: 'mp4', width: 1920, height: 1080, resolution: '1080p'},
+    '38': {ext: 'mp4', width: 4096, height: 3072, resolution: '4k'},
+    '43': {ext: 'webm', width: 640, height: 360, resolution: '360p'},
+    '44': {ext: 'webm', width: 854, height: 480, resolution: '480p'},
+    '45': {ext: 'webm', width: 1280, height: 720, resolution: '720p'},
+    '46': {ext: 'webm', width: 1920, height: 1080, resolution: '1080p'},
+
+
+    // 3d videos
+    '82': {'ext': 'mp4', 'height': 360, 'resolution': '360p', 'format_note': '3D', 'preference': -20},
+    '83': {'ext': 'mp4', 'height': 480, 'resolution': '480p', 'format_note': '3D', 'preference': -20},
+    '84': {'ext': 'mp4', 'height': 720, 'resolution': '720p', 'format_note': '3D', 'preference': -20},
+    '85': {'ext': 'mp4', 'height': 1080, 'resolution': '1080p', 'format_note': '3D', 'preference': -20},
+    '100': {'ext': 'webm', 'height': 360, 'resolution': '360p', 'format_note': '3D', 'preference': -20},
+    '101': {'ext': 'webm', 'height': 480, 'resolution': '480p', 'format_note': '3D', 'preference': -20},
+    '102': {'ext': 'webm', 'height': 720, 'resolution': '720p', 'format_note': '3D', 'preference': -20},
+
+    // Apple HTTP Live Streaming
+    '92': {'ext': 'mp4', 'height': 240, 'resolution': '240p', 'format_note': 'HLS', 'preference': -10},
+    '93': {'ext': 'mp4', 'height': 360, 'resolution': '360p', 'format_note': 'HLS', 'preference': -10},
+    '94': {'ext': 'mp4', 'height': 480, 'resolution': '480p', 'format_note': 'HLS', 'preference': -10},
+    '95': {'ext': 'mp4', 'height': 720, 'resolution': '720p', 'format_note': 'HLS', 'preference': -10},
+    '96': {'ext': 'mp4', 'height': 1080, 'resolution': '1080p', 'format_note': 'HLS', 'preference': -10},
+    '132': {'ext': 'mp4', 'height': 240, 'resolution': '240p', 'format_note': 'HLS', 'preference': -10},
+    '151': {'ext': 'mp4', 'height': 72, 'resolution': '72p', 'format_note': 'HLS', 'preference': -10},
+
+    // DASH mp4 video
+    '133': {'ext': 'mp4', 'width': 400, 'height': 240, 'resolution': '240p', 'format_note': 'DASH video', 'preference': -40},
+    '134': {'ext': 'mp4', 'width': 640, 'height': 360, 'resolution': '360p', 'format_note': 'DASH video', 'preference': -40},
+    '135': {'ext': 'mp4', 'width': 854, 'height': 480, 'resolution': '480p', 'format_note': 'DASH video', 'preference': -40},
+    '136': {'ext': 'mp4', 'width': 1280, 'height': 720, 'resolution': '720p', 'format_note': 'DASH video', 'preference': -40},
+    '137': {'ext': 'mp4', 'width': 1920, 'height': 1080, 'resolution': '1080p', 'format_note': 'DASH video', 'preference': -40},
+    '138': {'ext': 'mp4', 'width': 1921, 'height': 1081, 'resolution': '>1080p', 'format_note': 'DASH video', 'preference': -40},
+    '160': {'ext': 'mp4', 'width': 256, 'height': 192, 'resolution': '192p', 'format_note': 'DASH video', 'preference': -40},
+    '264': {'ext': 'mp4', 'width': 1920, 'height': 1080, 'resolution': '1080p', 'format_note': 'DASH video', 'preference': -40},
+
+    // Dash mp4 audio
+    '139': {'ext': 'm4a', 'format_note': 'DASH audio', 'vcodec': 'none', 'abr': 48, 'preference': -50},
+    '140': {'ext': 'm4a', 'format_note': 'DASH audio', 'vcodec': 'none', 'abr': 128, 'preference': -50},
+    '141': {'ext': 'm4a', 'format_note': 'DASH audio', 'vcodec': 'none', 'abr': 256, 'preference': -50},
+
+    // Dash webm
+    '167': {'ext': 'webm', 'height': 360, 'width': 640, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '360p'},
+    '168': {'ext': 'webm', 'height': 480, 'width': 854, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '480p'},
+    '169': {'ext': 'webm', 'height': 720, 'width': 1280, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '720p'},
+    '170': {'ext': 'webm', 'height': 1080, 'width': 1920, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '1080p'},
+    '218': {'ext': 'webm', 'height': 480, 'width': 854, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '480p'},
+    '219': {'ext': 'webm', 'height': 480, 'width': 854, 'format_note': 'DASH video', 'container': 'webm', 'vcodec': 'VP8', 'acodec': 'none', 'preference': -40, resolution: '480p'},
+    '242': {'ext': 'webm', 'height': 240, 'resolution': '240p', 'format_note': 'DASH webm', 'preference': -40},
+    '243': {'ext': 'webm', 'height': 360, 'resolution': '360p', 'format_note': 'DASH webm', 'preference': -40},
+    '244': {'ext': 'webm', 'height': 480, 'resolution': '480p', 'format_note': 'DASH webm', 'preference': -40},
+    '245': {'ext': 'webm', 'height': 480, 'resolution': '480p', 'format_note': 'DASH webm', 'preference': -40},
+    '246': {'ext': 'webm', 'height': 480, 'resolution': '480p', 'format_note': 'DASH webm', 'preference': -40},
+    '247': {'ext': 'webm', 'height': 720, 'resolution': '720p', 'format_note': 'DASH webm', 'preference': -40},
+    '248': {'ext': 'webm', 'height': 1080, 'resolution': '1080p', 'format_note': 'DASH webm', 'preference': -40},
+
+    // Dash webm audio
+    '171': {'ext': 'webm', 'vcodec': 'none', 'format_note': 'DASH webm audio', 'abr': 48, 'preference': -50},
+    '172': {'ext': 'webm', 'vcodec': 'none', 'format_note': 'DASH webm audio', 'abr': 256, 'preference': -50},
+
+    // RTMP (unnamed)
+    '_rtmp': {'protocol': 'rtmp'},
+  },
 
   run: function() {
     log('run() --');
@@ -229,7 +305,13 @@ var monkey = {
     }
 
     this.videoId = this.urlInfo.params['v'];
-    this.videoInfoUrl = '/get_video_info?video_id=' + this.videoId;
+    this.videoInfoUrl = [
+      '/get_video_info',
+      '?video_id=', this.videoId,
+      //'&el=player_embeded&hl=en&gl=US',
+      '&el=html5&hl=en&gl=US',
+      '&eurl=https://youtube.googleapis.com/v/', this.videoId,
+      ].join('');
     this.videoTitle = uw.document.title.substr(0, uw.document.title.length - 10);
 
     GM_xmlhttpRequest({
@@ -259,6 +341,7 @@ var monkey = {
 
     this.videoInfo = this.urlHashToObject(rawVideoInfo);
     this.stream = _parseStream(this.videoInfo.url_encoded_fmt_stream_map);
+    this.adaptive_fmts = _parseStream(this.videoInfo.adaptive_fmts)
     this.createUI();
   },
 
@@ -268,13 +351,7 @@ var monkey = {
   createUI: function() {
     log('createUI() -- ');
     log('this: ', this);
-    var types = {
-          'webm': 'webm',
-          'mp4%': 'mp4',
-          'x-fl': 'flv',
-          '3gpp': '3gp',
-        },
-        videos = {
+    var videos = {
           title: this.videoTitle,
           formats: [],
           links: [],
@@ -282,21 +359,49 @@ var monkey = {
           msg: '',
         },
         video,
+        format,
+        formatName,
+        url,
+        streams = this.stream.concat(this.adaptive_fmts),
         i;
 
-    if (this.stream.length === 0) {
-      videos.ok = false;
-      videos.msg = 'This video does not allowed to download';
-    } else {
-      for (i = 0; i < this.stream.length; i += 1) {
-        video = this.stream[i];
-        videos.formats.push(
-            video.quality + '-' + types[video.type.substr(8, 4)]);
-        videos.links.push(
-          decodeURIComponent(video.url) + '&signature=' + video.sig);
+    log(streams);
+    for (i = 0; video = streams[i]; i += 1) {
+      format = this.formats[video['itag']];
+      if (! format) {
+        error('current format not supported: ', video);
+        continue;
       }
+      formatName = []
+      if ('format_note' in format) {
+        formatName.push(format.format_note);
+      }
+      if ('resolution' in format) {
+        if (formatName.length > 0) {
+          formatName.push('-');
+        }
+        formatName.push(format.resolution);
+      }
+      if ('ext' in format) {
+        formatName.push('.');
+        formatName.push(format.ext);
+      }
+      formatName = formatName.join('');
+      if (videos.formats.indexOf(formatName) >= 0) {
+        continue;
+      }
+      videos.formats.push(formatName);
+      url = decodeURIComponent(video.url);
+      if ('sig' in video) {
+        url = url + '&signature=' + video.sig
+      }
+      videos.links.push(url);
     }
 
+    if (videos.links.length === 0) {
+      videos.ok = false;
+      videos.msg = 'This video does not allowed to download';
+    }
     singleFile.run(videos);
   },
 
