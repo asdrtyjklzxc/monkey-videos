@@ -130,6 +130,11 @@ baofeng.com, 暴风极致影院, 里面只开放了480P格式的视频的下载�
 justing
 =======
 justing.com.cn, 直接得到mp3的地址.
+justing.py 是python3版本的批量下载工具, 需要安装这些模块:
+
+* python3-gi
+* mutagenx  https://pypi.python.org/pypi/mutagenx
+* lxml http://lxml.de
 
 
 COPYRIGHT
