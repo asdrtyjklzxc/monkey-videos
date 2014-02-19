@@ -136,6 +136,10 @@ justing.py 是python3版本的批量下载工具, 需要安装这些模块:
 * mutagenx  https://pypi.python.org/pypi/mutagenx
 * lxml http://lxml.de
 
+wasu
+====
+wasu.cn, 华数TV.
+
 
 COPYRIGHT
 =========
