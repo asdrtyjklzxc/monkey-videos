@@ -38,7 +38,7 @@ CHUNK = 2 ** 14
 CONF_FILE = 'config.json'
 DEFAULT_CONF = {
         'basedir': os.path.expanduser('~/Music'), # 保存到这里
-        'max-id': 100,         # 最大页面id
+        'max-id': 74900,         # 最大页面id
         'curr-id': 1,          # 当前页面id
         'first-run': True,
         'window-size': (480, 320),
@@ -442,8 +442,20 @@ class App(Gtk.Window):
         def reset_sensitive(max_id, error):
             print('reset sensitive():', max_id)
             button.set_sensitive(True)
-            if max_id > self.conf['max-id']:
-                self.conf['max-id'] = max_id
+            diff = max_id - self.conf['max-id']
+            if diff <= 0:
+                return
+            self.conf['max-id'] = max_id
+            dialog = Gtk.MessageDialog(
+                    self,
+                    Gtk.DialogFlags.MODAL,
+                    Gtk.MessageType.INFO,
+                    Gtk.ButtonsType.CLOSE,
+                    '有更新')
+            dialog.format_secondary_text('最近更新了{0}首'.format(diff))
+            dialog.run()
+            dialog.destroy()
+
         button.set_sensitive(False)
         async_call(
                 binary_search,
