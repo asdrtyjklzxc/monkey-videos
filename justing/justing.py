@@ -4,12 +4,15 @@
 # Use of this source code is governed by GPLv3 license that can be found
 # in http://www.gnu.org/licenses/gpl-3.0.html
 
+__VERSION__ = '1.2'
+
 import json
+import math
 import os
 import random
 import sys
 import threading
-from threading import Thread
+from urllib.error import HTTPError
 from urllib.error import URLError
 from urllib import parse
 from urllib import request
@@ -65,6 +68,28 @@ def random_id(start=1, end=74699):
     random.shuffle(l)
     return l
 
+# calls f on another thread
+def async_call(func, *args, callback=None):
+    '''Execute this function in a new thread.
+
+    @param args, arguments passed to func.
+    @param callback, if callback is callable, it will be called in
+    Main-Thread
+    '''
+    def do_call(*args):
+        result = None
+        error = None
+
+        try:
+            result = func(*args)
+        except Exception as e:
+            error = e
+        if callable(callback):
+            GObject.idle_add(lambda: callback(result, error))
+
+    thread = threading.Thread(target=do_call, args=args)
+    thread.start()
+
 def load_conf():
     if not os.path.exists(CONF_FILE):
         dump_conf(DEFAULT_CONF)
@@ -82,6 +107,28 @@ def get_page_url(id_):
 def get_mp3_url(title):
     return 'http://dl.justing.com.cn/page/{0}.mp3'.format(
             parse.quote(title))
+
+def check_page_exists(id_):
+    url = get_page_url(id_)
+    try:
+        req = request.urlopen(url)
+        return True
+    except HTTPError as e:
+        return False
+
+def binary_search(start, end):
+    while start != end:
+        id_ = math.ceil((start + end) / 2)
+        print('current id:', id_)
+        if check_page_exists(id_):
+            start = math.ceil((start + end) / 2)
+            print('exists:', start, end)
+        else:
+            end = math.ceil((start + end) // 2)
+            print('not exists:', start, end)
+    return start
+
+
 
 def parse_page(id_):
     url = get_page_url(id_)
@@ -127,7 +174,7 @@ def parse_page(id_):
     return info
 
 
-class Downloader(GObject.GObject, Thread):
+class Downloader(GObject.GObject, threading.Thread):
     __gsignals__ = {
             'ready': (GObject.SIGNAL_RUN_LAST,
                 # song id, title
@@ -142,7 +189,7 @@ class Downloader(GObject.GObject, Thread):
 
     def __init__(self, app):
         GObject.GObject.__init__(self)
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self.app = app
         self._force_stop = False
         self.tree_iter = None
@@ -242,6 +289,7 @@ class App(Gtk.Window):
         start_button = Gtk.ToolButton('Start')
         start_button.set_icon_name('media-playback-start-symbolic')
         start_button.is_paused = False
+        start_button.set_tooltip_text('开始/停止')
         toolbar.insert(start_button, 0)
         start_button.connect('clicked', self.on_start_button_clicked)
 
@@ -250,6 +298,13 @@ class App(Gtk.Window):
         pref_button.props.margin_left = 10
         toolbar.insert(pref_button, 1)
         pref_button.connect('clicked', self.on_pref_button_clicked)
+
+        refresh_button = Gtk.ToolButton('Refresh')
+        refresh_button.set_icon_name('view-refresh-symbolic')
+        refresh_button.props.margin_left = 10
+        refresh_button.set_tooltip_text('自动获取网站的最大ID')
+        toolbar.insert(refresh_button, 2)
+        refresh_button.connect('clicked', self.on_refresh_button_clicked)
 
         # id, name, percent
         self.liststore = Gtk.ListStore(int, str, int)
@@ -261,7 +316,6 @@ class App(Gtk.Window):
         #percent_cell = Gtk.CellRendererProgress()
         #percent_col = Gtk.TreeViewColumn('Percent', percent_cell, value=2)
         #self.treeview.append_column(percent_col)
-
 
     def run(self):
         self.show_all()
@@ -383,6 +437,19 @@ class App(Gtk.Window):
 
     def on_pref_button_clicked(self, button):
         self.show_preference()
+
+    def on_refresh_button_clicked(self, button):
+        def reset_sensitive(max_id, error):
+            print('reset sensitive():', max_id)
+            button.set_sensitive(True)
+            if max_id > self.conf['max-id']:
+                self.conf['max-id'] = max_id
+        button.set_sensitive(False)
+        async_call(
+                binary_search,
+                self.conf['max-id'],          # start
+                self.conf['max-id'] + 2000,   # end
+                callback=reset_sensitive)
 
 
 def main():
