@@ -140,6 +140,10 @@ wasu
 ====
 wasu.cn, 华数TV.
 
+ku6
+===
+ku6.com, 酷6视频
+
 
 COPYRIGHT
 =========
