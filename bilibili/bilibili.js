@@ -30,21 +30,28 @@ var monkey = {
     this.title = uw.document.title;
   },
 
+  /**
+   * 获取 content ID.
+   */
   getCid: function() {
     log('getCid()');
     var iframe = uw.document.querySelector('iframe'),
+        flashvar = uw.document.querySelector('div#bofqi embed'),
         reg = /cid=(\d+)&aid=(\d+)/,
         match;
 
 
     if (iframe) {
       match = reg.exec(iframe.src);
-      if (match && match.length === 3) {
-        this.cid = match[1];
-        this.getVideos();
-      }
+    } else if (flashvar) {
+      log(flashvar.getAttribute('flashvars'));
+      match = reg.exec(flashvar.getAttribute('flashvars'));
     }
-    this.createUI();
+    log('match:', match);
+    if (match && match.length === 3) {
+      this.cid = match[1];
+      this.getVideos();
+    }
   },
 
   /**
