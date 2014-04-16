@@ -480,6 +480,7 @@ var monkey = {
     'flv': [],
     'mp4': [],
     'hd2': [],
+    'hd3': [],
   },
 
   // video title
@@ -574,6 +575,10 @@ var monkey = {
       formats.push('hd2');
     }
 
+    if (json.segs.hd3 && json.segs.hd3.length) {
+      formats.push('hd3');
+    }
+
     for (i = 0; format = formats[i]; i += 1) {
       fileId = this.getFileId(json.seed, json.streamfileids[format]);
       for (j = 0; j < json.segs[format].length; j += 1) {
@@ -585,9 +590,9 @@ var monkey = {
           fileId = fileId.slice(0, 8) + j.toString(16).toUpperCase() + 
                    fileId.slice(10);
         }
-        // 修正hd2的格式命名问题;
+        // 修正hd2|hd3的格式命名问题;
         tmp = format;
-        if (tmp === 'hd2') {
+        if (tmp === 'hd2' || tmp == 'hd3') {
           tmp = 'flv';
         }
         url = [
@@ -674,6 +679,10 @@ var monkey = {
     if (this.formats.hd2.length > 0) {
       videos.formats.push('超清');
       videos.links.push(this.formats.hd2);
+    }
+    if (this.formats.hd3.length > 0) {
+      videos.formats.push('1080P');
+      videos.links.push(this.formats.hd3);
     }
 
     multiFiles.run(videos);
