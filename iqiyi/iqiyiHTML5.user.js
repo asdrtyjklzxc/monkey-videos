@@ -2,7 +2,7 @@
 // @name         iqiyiHTML5
 // @description  play video with html5 in iqiyi.com
 // @include      http://*.iqiyi.com/*
-// @version      2.2
+// @version      2.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -533,7 +533,7 @@ var monkey = {
 
   getVid: function() {
     log('getVid() --');
-    var videoPlay = uw.document.querySelector('div.videoPlay div');
+    var videoPlay = uw.document.querySelector('div#flashbox');
     if (videoPlay && videoPlay.hasAttribute('data-player-videoid')) {
       this.vid = videoPlay.getAttribute('data-player-videoid');
     }

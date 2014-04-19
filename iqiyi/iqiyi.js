@@ -67,7 +67,7 @@ var monkey = {
 
   getVid: function() {
     log('getVid() --');
-    var videoPlay = uw.document.querySelector('div.videoPlay div');
+    var videoPlay = uw.document.querySelector('div#flashbox');
     if (videoPlay && videoPlay.hasAttribute('data-player-videoid')) {
       this.vid = videoPlay.getAttribute('data-player-videoid');
     }

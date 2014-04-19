@@ -2,7 +2,7 @@
 // @name         iqiyiHTML5
 // @description  play video with html5 in iqiyi.com
 // @include      http://*.iqiyi.com/*
-// @version      2.2
+// @version      2.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
