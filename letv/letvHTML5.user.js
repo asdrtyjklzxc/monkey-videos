@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on letv.com
 // @include      http://letv.com/*
 // @include      http://*.letv.com/*
-// @version      2.1
+// @version      2.2
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -162,22 +162,29 @@ var singleFile = {
 
 var monkey = {
   pid: '',
-  vid: '',
+  vid: '',   // video id
   title: '',
+  stime: 0, // server timestamp
+  tkey: 0,  // time key
 
-  // '350': 标清.
-  // '1000': 高清.
   videoUrl: {
     '350': null,
     '1000': null,
+    '1300': null,
+    '720p': null,
+    '1080p': null,
+  },
+  videoFormats: {
+    '350': '流畅',
+    '1000': '标清',
+    '1300': '高清',
+    '720p': '720P',
+    '1080p': '1080P',
   },
 
   run: function() {
     log('run() -- ');
-    this.showImages();
-
     var url = uw.location.href;
-    log('url:', url);
 
     if (url.search('yuanxian.letv') !== -1) {
       // movie info page.
@@ -187,19 +194,6 @@ var monkey = {
       this.getVid();
     } else {
       error('I do not know what to do!');
-    }
-  },
-
-  showImages: function() {
-    log('showImages() --');
-    var imgs = uw.document.getElementsByTagName('img'),
-        img,
-        i;
-
-    for (i = 0; img = imgs[i]; i += 1) {
-      if (img.hasAttribute('data-src')) {
-        img.src = img.getAttribute('data-src');
-      }
     }
   },
 
@@ -235,7 +229,7 @@ var monkey = {
     log('vidMatch: ', vidMatch);
     if (vidMatch && vidMatch.length === 2) {
       this.vid = vidMatch[1];
-      this.getVideoXML();
+      this.getTimestamp();
     } else {
       error('Failed to get video ID!');
       return;
@@ -243,11 +237,55 @@ var monkey = {
   },
 
   /**
+   * Get timestamp from server
+   */
+  getTimestamp: function() {
+    log('getTimestamp() --');
+    var tn = Math.random(),
+        url = 'http://api.letv.com/time?tn=' + tn.toString(),
+        that = this;
+
+    log('url:', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        log('response:', response);
+        var obj = JSON.parse(response.responseText);
+        that.stime = parseInt(obj.stime);
+        that.tkey = that.getKey(that.stime);
+        that.getVideoXML();
+      },
+    });
+  },
+
+  /**
+   * Get time key
+   * @param integer t, server time
+   */
+  getKey: function(t) {
+    log('getKey() --', t);
+    for(var e = 0, s = 0; s < 8; s += 1){
+            e = 1 & t;
+            t >>= 1;
+            e <<= 31;
+            t += e;
+    }
+    return t ^ 185025305;
+  },
+
+  /**
    * Get video info from an xml file
    */
   getVideoXML: function() {
     log('getVideoXML() --');
-    var url = 'http://www.letv.com/v_xml/' + this.vid + '.xml',
+    var url = [
+          'http://api.letv.com/mms/out/video/play?',
+          'id=', this.vid,
+          '&platid=1&splatid=101&format=1',
+          '&tkey=', this.tkey,
+          '&domain=http%3A%2F%2Fwww.letv.com'
+          ].join(''),
         that = this;
 
     log('videoXML url: ', url);
@@ -278,13 +316,29 @@ var monkey = {
   },
 
   /**
+   * Remove useless parameters in video link.
+   */
+  escapeUrl: function(url) {
+    log('escapeUrl() --', url);
+    var index = url.search('&platid');
+
+    if (index > -1) {
+      return url.substr(0, index);
+    } else {
+      error('Failed to escape url:', url);
+    }
+  },
+
+  /**
    * Parse video url
    */
   getVideoUrl: function(json) {
     log('getVideoUrl() --');
-    log('json.dispatch: ', json.dispatch);
-    this.videoUrl['350'] = json.dispatch && json.dispatch['350'] && json.dispatch['350'][0];
-    this.videoUrl['1000'] = json.dispatch && json.dispatch['1000'] && json.dispatch['1000'][0];
+    for (var key in this.videoUrl) {
+      if (key in json.dispatch) {
+        this.videoUrl[key] = this.escapeUrl(json.dispatch[key][0]);
+      }
+    }
     this.createUI();
   },
 
@@ -300,19 +354,14 @@ var monkey = {
           links: [],
           ok: true,
           msg: '',
-        };
-
-
-    // 标清:
-    if (this.videoUrl['350']) {
-      videos.links.push(this.videoUrl['350']);
-      videos.formats.push('标清');
-    }
-
-    // 高清:
-    if (this.videoUrl['1000']) {
-      videos.links.push(this.videoUrl['1000']);
-      videos.formats.push('高清');
+        },
+        type;
+  
+    for (type in this.videoFormats) {
+      if (this.videoUrl[type]) {
+        videos.links.push(this.videoUrl[type]);
+        videos.formats.push(this.videoFormats[type]);
+      }
     }
 
     singleFile.run(videos);

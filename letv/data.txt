@@ -2,3 +2,30 @@ http://www.letv.com/ptv/pplay/54431/1.html
 
 参考:
 http://webftp.bbs.hnol.net/dysr/201101/mingju4/letv/letv_movie_MVurl.htm
+
+
+http://www.letv.com/v_xml/2035648.xml
+http://182.118.126.15/60/34/23/letv-uts/14/ver_00_14-15306232-avc-259807-aac-31992-7290600-274254816-09e9c1eb84937f6e9c9c3a87e778825f-1396237457561_mp4/ver_00_16_4_4_3_265832_608744.ts?proxy=1033799435,2007471017&tag=&platid=1&tss=ios&splatid=101&playid=0&b=298&bf=23&nlh=3072&rd=1397224534522
+
+http://182.118.126.15/60/34/23/letv-uts/14/ver_00_14-15306232-avc-259807-aac-31992-7290600-274254816-09e9c1eb84937f6e9c9c3a87e778825f-1396237457561_mp4/ver_00_16_3_3_1_76328_532416.ts?proxy=1033799435,2007471017&tag=&platid=1&tss=ios&splatid=101&playid=0&b=298&bf=23&nlh=3072&rd=1397224534304
+
+http://182.118.126.15/60/34/23/letv-uts/14/ver_00_14-15306232-avc-259807-aac-31992-7290600-274254816-09e9c1eb84937f6e9c9c3a87e778825f-1396237457561_mp4/ver_00_16_2_2_1_84788_447628.ts?proxy=1033799435,2007471017&tag=&platid=1&tss=ios&splatid=101&playid=0&b=298&bf=23&nlh=3072&rd=1397224510786
+
+
+http://182.118.126.15/60/34/23/letv-uts/14/ver_00_14-15306232-avc-259807-aac-31992-7290600-274254816-09e9c1eb84937f6e9c9c3a87e778825f-1396237457561_mp4/ver_00_16_5_7_3_311704_874576.ts?proxy=1033799435,2007471017&tag=&platid=1&tss=ios&splatid=101&playid=0&b=298&bf=23&nlh=3072&rd=1397224808912
+
+
+http://g3.letv.com/vod/v1/NTkvMTQvNjUvbGV0di1ndWcvMTcvMTUzMjg1NzctYXZjLTM2MzM0Mi1hYWMtNjMwNDctMTQ5MzMtODMyOTQwLWZjZDc2ZDY2MTVkZjRiNmYzN2QzN2MyNzJlOTc3NzVlLTEzOTYyNTk4NjYxOTAuZmx2?platid=100&splatid=10000&tag=gug&gugtype=7&ch=null&playid=0&termid=1&pay=0&ostype=linux&hwtype=un&format=1&expect=3
+
+
+从这个API中获取视频的所有信息, 包括视频文件地址, 视频格式,
+视频的播放列表(m3u8格式的).
+http://api.letv.com/mms/out/video/play?id=20043184&platid=1&splatid=101&format=1&nextvid=2035648&tkey=2656306410&domain=http%3A%2F%2Fwww.letv.com
+其中, id是从URL中得到的video id.
+nextvid是当本集播放完后要载入的下一集.
+tkey这个还不清楚.
+
+=======
+tkey 的算法可以参考这两篇文章:
+http://www.ckplayer.com/bbs/forum.php?mod=viewthread&tid=6907
+http://suncom.diandian.com/post/2014-03-06/40061156311

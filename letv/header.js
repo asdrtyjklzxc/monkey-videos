@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on letv.com
 // @include      http://letv.com/*
 // @include      http://*.letv.com/*
-// @version      2.1
+// @version      2.2
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
