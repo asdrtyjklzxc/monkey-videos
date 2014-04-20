@@ -2,7 +2,8 @@
 // @name         acfunHTML5
 // @description  Play Videos with html5 on acfun.tv
 // @include      http://www.acfun.tv/v/*
-// @version      2.2
+// @include      http://www.acfun.com/v/*
+// @version      2.3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3
