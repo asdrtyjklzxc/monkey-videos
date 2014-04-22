@@ -2,7 +2,7 @@
 // @name         ku6HTML5
 // @description  Parse video link source for ku6.com
 // @include      http://v.ku6.com/*
-// @version      1.0
+// @version      1.1
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -481,8 +481,9 @@ var monkey = {
    * 获取video id, 用于构建下载链接.
    */
   getVid: function() {
+    log('getVid() --');
     var url = uw.location.href,
-        vid_reg = /\/([^\/]+)\.html$/,
+        vid_reg = /\/([^\/]+)\.html/,
         vid_match = vid_reg.exec(url);
 
     log(vid_match);
