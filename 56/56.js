@@ -3,7 +3,11 @@ var monkey = {
   title: '',
   id: '',
   json: null,
-  videos: null,
+  videos: {
+    'normal': '',
+    'clear': '',
+    'super': '',
+  },
   formats: {
     'normal': '标清',
     'clear': '高清',
@@ -57,12 +61,17 @@ var monkey = {
       onload: function(response) {
         log('response:', response);
         var txt = response.responseText,
-            json = JSON.parse(txt);
+            json = JSON.parse(txt),
+            video,
+            i;
 
         that.json = json;
         if (json.msg == 'ok' && json.status == '1') {
           that.title = json.info.Subject;
-          that.videos = json.info.rfiles;
+          for (i = 0; video = json.info.rfiles[i]; i = i + 1) {
+            that.videos = json.info.rfiles;
+            that.videos[video.type] = video.url;
+          }
         }
         that.createUI();
       },
@@ -71,6 +80,7 @@ var monkey = {
 
   createUI: function() {
     log('createUI() --');
+    log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -78,24 +88,31 @@ var monkey = {
           ok: true,
           msg: '',
         },
-        video = '',
-        video,
-        a,
+        type,
+        link,
         i;
 
     if (this.title.length === 0) {
       videos.ok = false;
       videos.msg = 'Failed to get playlist';
-      singleFile.run(videos);
+      multiFiles.run(videos);
       return;
     }
 
-    for (i = 0; i < this.videos.length; i += 1) {
-      video = this.videos[i];
-      videos.links.push(video.url);
-      videos.formats.push(this.formats[video.type]);
+    if (this.videos.normal.length > 0) {
+      videos.links.push([this.videos.normal]);
+      videos.formats.push(this.formats.normal);
     }
-    singleFile.run(videos);
+    if (this.videos.clear.length > 0) {
+      videos.links.push([this.videos.clear]);
+      videos.formats.push(this.formats.clear);
+    }
+    if (this.videos.super.length > 0) {
+      videos.links.push([this.videos.super]);
+      videos.formats.push(this.formats.super);
+    }
+    log(videos);
+    multiFiles.run(videos);
   },
 }
 

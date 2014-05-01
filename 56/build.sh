@@ -3,7 +3,7 @@
 OUTPUT='56HTML5.user.js'
 
 cat header.js > $OUTPUT
-cat ../singleFile.js >> $OUTPUT
+cat ../multiFiles.js >> $OUTPUT
 cat 56.js >> $OUTPUT
 
 echo "$OUTPUT rebuilt"
