@@ -255,6 +255,7 @@ var multiFiles = {
       '}',
       '.monkey-videos-panel .playlist-item {',
         'display: block;',
+        'margin-top: 8px;',
       '}',
       '.monkey-videos-panel #playlist-toggle {',
         'height: 10px;',

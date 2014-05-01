@@ -160,7 +160,7 @@ var monkey = {
         var json = JSON.parse(response.responseText),
             format;
         log('json: ', json);
-        that.title = json.data.name_cn;
+        that.title = json.data.name_cn || that.getTitle();
         if ((! json.data.fsps) || (! json.data.fsps.mult) ||
             (json.data.fsps.mult.length === 0) ||
             (! json.data.fsps.mult[0].cid)) {
@@ -174,6 +174,21 @@ var monkey = {
         }
       },
     });
+  },
+
+  /**
+   * Get title from document.tiel
+   */
+  getTitle: function() {
+    log('getTitle() --');
+    var title = uw.document.title,
+        online = title.search(' - 在线观看');
+
+    if (online > -1) {
+      return title.substr(0, online);
+    } else {
+      return title.substr(0, 12) + '..';
+    }
   },
 
   /**
@@ -218,17 +233,24 @@ var monkey = {
         },
         format;
 
-    for (format in this.formats) {
-      if (this.videos[format].length > 0) {
-        videos.formats.push(this.formats[format]);
-        videos.links.push(this.videos[format]);
-      }
+    if (this.videos[327680].length > 0) {
+      videos.links.push([this.videos[327680]]);
+      videos.formats.push(this.formats[327680]);
     }
+    if (this.videos[491520].length > 0) {
+      videos.links.push([this.videos[491520]]);
+      videos.formats.push(this.formats[491520]);
+    }
+    if (this.videos[737280].length > 0) {
+      videos.links.push([this.videos[737280]]);
+      videos.formats.push(this.formats[737280]);
+    }
+
     if (videos.links.length === 0) {
       videos.ok = false;
       videos.msg = 'Video source is not available.';
     }
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 }
 

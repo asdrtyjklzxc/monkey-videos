@@ -1,16 +1,19 @@
-* v2.1 - 2014.1.16
-Reconstructed
+v2.2 - 2014.5.2
+* Using multiFiles style
 
-* v1.3 - 2013.7.26
-Add pager.
-Show all images.
-Support UGC videos.
+v2.1 - 2014.1.16
+* Reconstructed
 
-* v1.2 - 2013.7.24
-支持超清视频.
+v1.3 - 2013.7.26
+* Add pager.
+* Show all images.
+* Support UGC videos.
 
-* v1.1 - 2013.7.24
-Fix video title.
+v1.2 - 2013.7.24
+* 支持超清视频.
 
-* v1.0 - 2013.7.24
-Project inited.
+v1.1 - 2013.7.24
+* Fix video title.
+
+v1.0 - 2013.7.24
+* Project inited.
