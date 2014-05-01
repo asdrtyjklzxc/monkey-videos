@@ -80,12 +80,12 @@ var monkey = {
 
     for (i = 0; video = this.videos[i]; i += 1) {
       if (video.length > 0) {
-        videos.links.push(video);
+        videos.links.push([video]);
         videos.formats.push(this.types[i]);
       }
     }
 
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 }
 
