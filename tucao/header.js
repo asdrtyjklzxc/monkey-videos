@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         tucaoHTML5
-// @version      2.1
+// @version      2.2
 // @include      http://www.tucao.cc/play/*
 // @description  Get video links in tucao.cc
 // @author       LiuLang

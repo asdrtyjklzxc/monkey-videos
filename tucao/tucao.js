@@ -4,14 +4,17 @@ var monkey = {
   url: '',
   title: '',
   playerId: '',
+  key: '',
+  timestamp: '',
   vid: '',
+  type: '',
   vids: [],
   pos: 0,
   videos: [],
-  formats: [],
+  format: '标清',
   redirect: false,
   types: {
-    sina: 'sina.php',
+    sina: 'sina',
     tudou: false,  // redirect to original url
     youku: false,  // redirect to original url
   },
@@ -44,6 +47,8 @@ var monkey = {
    */
   getTitle: function() {
     log('getTitle()');
+    var params;
+
     if (this.vids.length === 1 || uw.location.hash === '') {
       this.pos = 0;
       this.url = uw.location.href;
@@ -52,7 +57,9 @@ var monkey = {
       this.pos = parseInt(uw.location.hash.replace('#', '')) - 1;
       this.url = uw.location.href.replace(uw.location.hash, '');
     }
-    this.vid = this.vids[this.pos].split('|')[0];
+    params = this.getQueryVariable(this.vids[this.pos].split('|')[0]);
+    this.vid = params.vid;
+    this.type = params.type;
     if (this.vids.length === 1) {
       this.title = uw.document.title.substr(0, uw.document.title.length - 16);
     } else {
@@ -70,17 +77,20 @@ var monkey = {
         params,
         that = this;
 
-    params = this.getQueryVariable(this.vid);
-    if (this.types[params.type] === false) {
-      this.redirectTo(params);
+    if (this.types[this.type] === false) {
+      this.redirectTo();
       return;
     }
 
+    this.calcKey();
     url = [
-      'http://www.tucao.cc/api/',
-      this.types[params.type],
-      '?vid=',
-      params.vid,
+      'http://www.tucao.cc/api/playurl.php',
+      '?type=',
+      this.type,
+      '&vid=',
+      this.vid,
+      '&key=', this.key,
+      '&r=', this.timestamp
       ].join('');
 
     log('url: ', url);
@@ -90,27 +100,43 @@ var monkey = {
       onload: function(response) {
         log(response);
         var xml = that.parseXML(response.responseText),
-            durl = xml.querySelector('durl'),
-            urls = durl.querySelectorAll('url'),
+            durls = xml.querySelectorAll('durl'),
+            durl,
             url,
             i;
 
-        for (i = 0; url = urls[i]; i += 1) {
+        for (i = 0; durl = durls[i]; i += 1) {
+          url = durl.querySelector('url'); 
           that.videos.push(
             url.innerHTML.replace('<![CDATA[', '').replace(']]>', ''));
-          that.formats.push(' ');
         }
 
-        log(that);
         that.createUI();
       },
     });
   },
 
   /**
+   * 计算这个请求的授权key.
+   * 算法来自于: http://www.cnbeining.com/2014/05/serious-businesstucao-cc-c-video-resolution/
+   * @return [key, timestamp]
+   */
+  calcKey: function() {
+    log('calcKey () --');
+    var time = new Date().getTime(),
+        this.timestamp = Math.round(time / 1000);
+
+    var local3 = this.timestamp ^ 2774181285;
+    var local4 = parseInt(this.vid, 10);
+    var local5 = local3 + local4;
+    local5 = (local5 < 0) ? (-(local5) >> 0) : (local5 >> 0);
+    this.key = 'tucao' + local5.toString(16) + '.cc';
+  },
+
+  /**
    * Redirect to original url
    */
-  redirectTo: function(params) {
+  redirectTo: function() {
     log('redirectTo() --');
     var urls = {
           tudou: function(vid) {
@@ -122,7 +148,7 @@ var monkey = {
         };
 
     this.redirect = true;
-    this.videos.push(urls[params.type](params.vid));
+    this.videos.push(urls[this.type](this.vid));
     this.formats.push('原始地址');
     this.createUI();
   },
@@ -143,11 +169,9 @@ var monkey = {
         video,
         i;
 
-    for (i = 0; i < this.videos.length; i += 1) {
-      videos.links.push(this.videos[i]);
-      videos.formats.push(this.formats[i]);
-    }
-    singleFile.run(videos);
+    videos.links.push(this.videos);
+    videos.formats.push(this.format);
+    multiFiles.run(videos);
   },
 
   /**

@@ -1,0 +1,30 @@
+<!doctype html>
+<head>
+<title>hello</title>
+<script>
+  var calcKey = function() {
+    var time = 1398952367000,
+        timestamp = Math.round(time / 1000),
+        key,
+        log = console.log,
+        vid = "132552900";
+
+    log('timestamp: ', timestamp);
+    var local3 = timestamp ^ 2774181285;
+    log('local3: ', local3);
+    var local4 = parseInt(vid, 10);
+    log('local4: ', local4);
+    var local5 = local3 + local4;
+    log('local5: ', local5);
+    local5 = (local5 < 0) ? (-(local5) >> 0) : (local5 >> 0);
+    log('local5: ', local5);
+    key = 'tucao' + local5.toString(16) + '.cc';
+    console.log(key);
+    console.log(timestamp);
+  };
+  calcKey();
+</script>
+</head>
+<body>
+<h1>hello</h1>
+</body>
