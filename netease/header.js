@@ -2,7 +2,8 @@
 // @name         neteaseHTML5
 // @description  Play Videos with html5 on 163.com
 // @include      http://v.163.com/*
-// @version      2.1
+// @include      http://open.163.com/*
+// @version      2.2
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

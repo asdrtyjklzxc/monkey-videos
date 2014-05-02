@@ -83,7 +83,8 @@ var monkey = {
         rid = channel.getAttribute('rid'),
         sgms = xml.querySelectorAll('dragdata sgm'),
         server = xml.querySelector('dt sh').innerHTML,
-        key = xml.querySelector('dt key').innerHTML,
+        k = xml.querySelector('dt key').innerHTML,
+        key = '', // 32bits
         i;
 
     this.title = channel.getAttribute('nm');
@@ -96,8 +97,10 @@ var monkey = {
           String(i),
           '/',
           rid,
-          '?k=',
+          '?key=',
           key,
+          '&k=',
+          k,
           '&type=web.fpp',
           ].join(''));
       }

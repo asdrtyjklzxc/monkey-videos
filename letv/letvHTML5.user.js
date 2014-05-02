@@ -668,10 +668,12 @@ var monkey = {
         },
         types = ['350', '1000', '1300', '720p', '1080p'],
         type,
+        url,
         i;
   
     for (i = 0; type = types[i]; i += 1) {
-      if (this.videoUrl[type].length > 0) {
+      url = this.videoUrl[type];
+      if (url) {
         videos.links.push([this.videoUrl[type]]);
         videos.formats.push(this.videoFormats[type]);
       }

@@ -1,5 +1,9 @@
 
 var monkey = {
+
+  plid: '',
+  raw_vid: '',
+  title: '',
   videos: {
     sd: '',
     hd: '',
@@ -10,7 +14,6 @@ var monkey = {
     hd: '高清',
     shd: '超清',
   },
-  title: '',
   subs: {
   },
 
@@ -37,11 +40,13 @@ var monkey = {
         xmlUrl,
         that = this;
 
+    this.raw_vid = url[length - 1].replace('.html', '');
+    this.plid = this.raw_vid.split('_')[0];
     xmlUrl = [
       'http://live.ws.126.net/movie',
       url[length - 3],
       url[length - 2],
-      '2_' + url[length - 1].replace('html', 'xml'),
+      '2_' + this.raw_vid + '.xml',
       ].join('/');
     log('xmlUrl: ', xmlUrl);
 
@@ -75,6 +80,40 @@ var monkey = {
         for (i = 0; sub = subs[i]; i += 1) {
           subName = sub.querySelector('name').innerHTML + '字幕';
           that.subs[subName] = sub.querySelector('url').innerHTML;
+        }
+        that.getMobileOpenCourse();
+      },
+    });
+  },
+
+  /**
+   * AES ECB decrypt is too large to embed, so use another way.
+   */
+  getMobileOpenCourse: function() {
+    log('getMobileOpenCourse() --');
+    var url = 'http://mobile.open.163.com/movie/' + this.plid + '/getMoviesForAndroid.htm',
+        that = this;
+
+    log('url: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        log('response: ', response);
+        var json = JSON.parse(response.responseText),
+            video;
+
+        log('json: ', json);
+        that.title = json.title;
+        video = json.videoList[0].repovideourl;
+        if (that.videos.sd.length > 0) {
+          that.videos.sd = video;
+        }
+        if (that.videos.hd.length > 0) {
+          that.videos.hd = video.replace('_sd.', '_hd.');
+        }
+        if (that.videos.shd.length > 0) {
+          that.videos.shd = video.replace('_sd.', '_shd.');
         }
         that.createUI();
       },
@@ -119,20 +158,26 @@ var monkey = {
           ok: true,
           msg: '',
         },
-        format;
+        formats = ['sd', 'hd', 'shd'],
+        format,
+        url,
+        subName,
+        i;
 
-    for (format in this.videos) {
-      if (this.videos[format].length > 0) {
+    for (i = 0; format = formats[i]; i += 1) {
+      url = this.videos[format];
+      if (url.length > 0) {
+        videos.links.push([url]);
         videos.formats.push(this.types[format]);
-        videos.links.push(this.videos[format]);
       }
     }
     // TODO: add subtitle
-    if (videos.links.length === 0) {
-      videos.ok = false;
-      videos.msg = 'Failed to parse video source';
+    for (subName in this.subs) {
+      videos.links.push([this.subs[subName]]);
+      videos.formats.push(subName);
     }
-    singleFile.run(videos);
+    
+    multiFiles.run(videos);
   },
 
   /**

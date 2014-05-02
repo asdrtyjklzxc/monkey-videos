@@ -1,12 +1,12 @@
-* v2.1 - 2014.1.23
-Algorithm updated.
-Using md5() to calculate magic key for video link
+v2.1 - 2014.1.23
+* Algorithm updated.
+* Using md5() to calculate magic key for video link
 
-* v1.2 - 2013.11.1
-Algorithm updated.
+v1.2 - 2013.11.1
+* Algorithm updated.
 
-* v1.1 - 2013.3.24
-Now we can show all images in blog, not only images in article.
+v1.1 - 2013.3.24
+* Now we can show all images in blog, not only images in article.
 
-* v1.0 - 2013.3.24
-Prpoject inited.
+v1.0 - 2013.3.24
+* Prpoject inited.
