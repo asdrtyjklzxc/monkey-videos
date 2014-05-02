@@ -1,31 +1,33 @@
-* v2.2 - 2014.4.19
-Support new LeTV API
+v2.3 - 2014.5.2
+* Using multiFiles style
 
-* v2.1 - 2014.1.16
-Reconstructed
+v2.2 - 2014.4.19
+* Support new LeTV API
 
-* v1.7 - 2013.12.22
-Fixed: titleMatch is null.
+v2.1 - 2014.1.16
+* Reconstructed
 
-* v1.6 - 2013.7.26
-Show all images.
-Remove js dependency.
+v1.7 - 2013.12.22
+* Fixed: titleMatch is null.
 
-* v1.5 - 2013.7.6
-Fix the download link.
+v1.6 - 2013.7.26
+* Show all images.
+* Remove js dependency.
 
-* v1.4 - 2013.6.30
-Fix the json.dispatch bug.
+v1.5 - 2013.7.6
+* Fix the download link.
 
-* v1.3 -2013.6.21
-Support /ptv/vplay/
+v1.4 - 2013.6.30
+* Fix the json.dispatch bug.
 
-* v1.2 - 2013.4.24
-Can download VIP videos.
+v1.3 -2013.6.21
+* Support /ptv/vplay/
 
-* v1.1 - 2013.4.22
-Project works.
-Web age need enable js.
+v1.2 - 2013.4.24
+* Can download VIP videos.
 
-* v1.0 - 2013.2.16
-Project inited.
+v1.1 - 2013.4.22
+* Web age need enable js.
+
+v1.0 - 2013.2.16
+* Project inited.

@@ -264,6 +264,7 @@ var multiFiles = {
         'overflow-y: hidden;',
         'max-height: 90%;',
         'min-width: 100px;',
+        'text-align: left;',
       '}',
       '.monkey-videos-panel:hover {',
         'overflow-y: auto;',
@@ -273,6 +274,7 @@ var multiFiles = {
       '}',
       '.monkey-videos-panel .playlist-item {',
         'display: block;',
+        'margin-top: 8px;',
       '}',
       '.monkey-videos-panel #playlist-toggle {',
         'height: 10px;',
@@ -405,7 +407,10 @@ var multiFiles = {
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
-      if (i < 9) {
+      if (this.videos.links[pos].length == 1) {
+        a.innerHTML = this.videos.title;
+      }
+      else if (i < 9) {
         a.innerHTML = this.videos.title + '(0' + String(i + 1) + ')';
       } else {
         a.innerHTML = this.videos.title + '(' + String(i + 1) + ')';

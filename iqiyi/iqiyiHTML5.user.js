@@ -467,7 +467,9 @@ var multiFiles = {
 
 var monkey = {
   title: '',
-  vid: '', // default vid
+  vid: '', // default vid, data-player-videoid
+  aid: '', // album id, data-player-albumid
+  tvid: '', // data-player-tvid
   type: 0, // default type
   rcOrder: [96, 1, 4, 5, 10],
   rc: {
@@ -509,12 +511,6 @@ var monkey = {
     log('run() --');
     this.getTitle();
     this.getVid();
-    if (this.vid.length === 0) {
-      error('Error: failed to get video id');
-      return;
-    }
-    this.getVideoUrls(this.vid);
-    this.createPanel();
   },
 
   getTitle: function() {
@@ -536,21 +532,35 @@ var monkey = {
     var videoPlay = uw.document.querySelector('div#flashbox');
     if (videoPlay && videoPlay.hasAttribute('data-player-videoid')) {
       this.vid = videoPlay.getAttribute('data-player-videoid');
+      this.aid = videoPlay.getAttribute('data-player-aid');
+      this.tvid = videoPlay.getAttribute('data-player-tvid');
+      this.getVideoUrls();
+    } else {
+      error('Error: failed to get video id');
+      return;
     }
   },
 
-  getVideoUrls: function(vid) {
-    log('getVideoUrls() --', vid);
-    var url = 'http://cache.video.qiyi.com/v/' + vid,
+  getVideoUrls: function() {
+    log('getVideoUrls() --');
+    var url = 'http://cache.video.qiyi.com/vd/',
         that = this;
 
+    if (this.tvid) {
+      url = url + this.tvid + '/' + this.vid + '/';
+    } else {
+      error('Failed to construct video url!');
+      return;
+    }
+
+    log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
         log('response: ', response);
 
-        var xml = that.parseXML(response.responseText),
+        var json = JSON.parse(response.responseText),
             title,
             vid_elemes,
             vid_elem,
@@ -561,42 +571,34 @@ var monkey = {
             files,
             file;
 
-        log('xml: ', xml);
-        if (that.title.length === 0) {
-          title = xml.querySelector('title').innerHTML;
-          that.title = title.substring(9, title.length - 3);
-        }
+        log('json: ', json);
 
-        vid_elems = xml.querySelectorAll('relative data');
-        //if (that.jobs === 0) {
-          //that.jobs = vid_elems.length;
-          //log('that.job is: ', that.jobs, that, url);
-        //}
-        for (i = 0; vid_elem = vid_elems[i]; i += 1) {
-          type = vid_elem.getAttribute('version');
-          if (! that.rc[type]) {
-            error('Current video type not supported: ', type);
-            continue;
-          }
-          container = that.rc[type];
-          if (container.vid.length === 0) {
-            container.vid = vid_elem.innerHTML;
-            if (container.vid != vid && that.vid === vid) {
-              that.getVideoUrls(container.vid);
-            }
-            if (vid === that.vid) {
-              that.type = type;
-            }
-          }
-          if (container.vid === vid) {
-            files = xml.querySelectorAll('fileUrl file');
-            for (j = 0; file = files[j]; j += 1) {
-              container.links.push(file.innerHTML);
-            }
-            that.jobs += 1;
-            that.getKey(container);
-          }
-        }
+//        vid_elems = xml.querySelectorAll('relative data');
+//        for (i = 0; vid_elem = vid_elems[i]; i += 1) {
+//          type = vid_elem.getAttribute('version');
+//          if (! that.rc[type]) {
+//            error('Current video type not supported: ', type);
+//            continue;
+//          }
+//          container = that.rc[type];
+//          if (container.vid.length === 0) {
+//            container.vid = vid_elem.innerHTML;
+//            if (container.vid != vid && that.vid === vid) {
+//              that.getVideoUrls(container.vid);
+//            }
+//            if (vid === that.vid) {
+//              that.type = type;
+//            }
+//          }
+//          if (container.vid === vid) {
+//            files = xml.querySelectorAll('fileUrl file');
+//            for (j = 0; file = files[j]; j += 1) {
+//              container.links.push(file.innerHTML);
+//            }
+//            that.jobs += 1;
+//            that.getKey(container);
+//          }
+//        }
       },
     });
   },
@@ -622,6 +624,7 @@ var monkey = {
         log('response: ', response);
         var finalUrl = response.finalUrl;
 
+        log('finalUrl:', finalUrl);
         container.key = finalUrl.substr(finalUrl.search('key='));
         that.jobs -= 1;
         log('jobs: ', that.jobs, that);

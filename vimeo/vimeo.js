@@ -79,12 +79,16 @@ var monkey = {
         i;
 
     for (i = 0; video = this.videos[i]; i += 1) {
+      log(video);
       if (video.length > 0) {
         videos.links.push([video]);
         videos.formats.push(this.types[i]);
+      } else {
+        log('video is empty');
       }
     }
 
+    log(videos);
     multiFiles.run(videos);
   },
 }

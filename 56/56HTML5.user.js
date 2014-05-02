@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         56HTML5
 // @description  Play Videos with html5 on 56.com
-// @version      2.1
+// @version      2.2
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -274,6 +274,7 @@ var multiFiles = {
       '}',
       '.monkey-videos-panel .playlist-item {',
         'display: block;',
+        'margin-top: 8px;',
       '}',
       '.monkey-videos-panel #playlist-toggle {',
         'height: 10px;',
@@ -406,7 +407,10 @@ var multiFiles = {
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
-      if (i < 9) {
+      if (this.videos.links[pos].length == 1) {
+        a.innerHTML = this.videos.title;
+      }
+      else if (i < 9) {
         a.innerHTML = this.videos.title + '(0' + String(i + 1) + ')';
       } else {
         a.innerHTML = this.videos.title + '(' + String(i + 1) + ')';

@@ -194,16 +194,18 @@ var monkey = {
           ok: true,
           msg: '',
         },
-        type;
+        types = ['350', '1000', '1300', '720p', '1080p'],
+        type,
+        i;
   
-    for (type in this.videoFormats) {
-      if (this.videoUrl[type]) {
-        videos.links.push(this.videoUrl[type]);
+    for (i = 0; type = types[i]; i += 1) {
+      if (this.videoUrl[type].length > 0) {
+        videos.links.push([this.videoUrl[type]]);
         videos.formats.push(this.videoFormats[type]);
       }
     }
 
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 
   /**

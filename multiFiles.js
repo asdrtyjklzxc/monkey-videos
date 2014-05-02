@@ -388,7 +388,10 @@ var multiFiles = {
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
-      if (i < 9) {
+      if (this.videos.links[pos].length == 1) {
+        a.innerHTML = this.videos.title;
+      }
+      else if (i < 9) {
         a.innerHTML = this.videos.title + '(0' + String(i + 1) + ')';
       } else {
         a.innerHTML = this.videos.title + '(' + String(i + 1) + ')';
