@@ -15,10 +15,11 @@ var monkey = {
   },
   videoFormats: {
     '350': '流畅',
-    '1000': '标清',
-    '1300': '高清',
+    '1000': '高清',
+    '1300': '超清',
     '720p': '720P',
     '1080p': '1080P',
+    '4k': '4K', // does not support yet.
   },
 
   run: function() {
@@ -155,27 +156,17 @@ var monkey = {
   },
 
   /**
-   * Remove useless parameters in video link.
-   */
-  escapeUrl: function(url) {
-    log('escapeUrl() --', url);
-    var index = url.search('&platid');
-
-    if (index > -1) {
-      return url.substr(0, index);
-    } else {
-      error('Failed to escape url:', url);
-    }
-  },
-
-  /**
    * Parse video url
    */
   getVideoUrl: function(json) {
     log('getVideoUrl() --');
-    for (var key in this.videoUrl) {
+    var key,
+        url;
+
+    for (key in this.videoUrl) {
       if (key in json.dispatch) {
-        this.videoUrl[key] = this.escapeUrl(json.dispatch[key][0]);
+        url = json.dispatch[key][0] + '&termid=1&format=0&hwtype=un&ostype=Windows7&tag=letv&sign=letv&expect=1&pay=0&rateid=' + key;
+        this.videoUrl[key] = url;
       }
     }
     this.createUI();
@@ -208,19 +199,6 @@ var monkey = {
     }
 
     multiFiles.run(videos);
-  },
-
-  /**
-   * Create a new <style> tag with str as its content.
-   * @param string styleText
-   *   - The <style> tag content.
-   */
-  addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
-      style.innerHTML = styleText;
-    }
   },
 
   /**
