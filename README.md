@@ -134,6 +134,11 @@ ku6
 ku6.com, 酷6视频
 
 
+115
+===
+115.com, 可以直接播放115网盘里的视频, 不需要flash插件.
+
+
 COPYRIGHT
 =========
 `Copyright (C) 2013-2014 LiuLang <gsushzhsosgsu@gmail.com>`
