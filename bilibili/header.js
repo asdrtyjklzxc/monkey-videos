@@ -2,7 +2,7 @@
 // @name         bilibiliHTML5
 // @description  Get video link on bilibili.tv
 // @include      http://www.bilibili.tv/video/*
-// @version      2.2
+// @version      2.3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3

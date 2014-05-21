@@ -2,8 +2,7 @@
 var monkey = {
   cid: '',
   title: '',
-
-  videos: [],
+  oriurl: '',
 
   run: function() {
     log('run() --');
@@ -51,31 +50,32 @@ var monkey = {
     if (match && match.length === 3) {
       this.cid = match[1];
       this.getVideos();
+    } else {
+      error('Failed to get cid!');
     }
   },
 
   /**
-   * Get video links from interface.bilibili.tv
+   * Get original video links from interface.bilibili.cn
    */
   getVideos: function() {
     log('getVideos() -- ');
-    var url = 'http://interface.bilibili.tv/playurl?cid=' + this.cid,
+    var url = 'http://interface.bilibili.cn/player?cid=' + this.cid,
         that = this;
 
+    log('url:', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
-        var reg = /<url>.{9}([^\]]+)/g,
+        var reg = /<oriurl>(.+)<\/oriurl>/g,
             txt = response.responseText,
             match = reg.exec(txt);
 
-        while (match) {
-          that.videos.push(match[1]);
-          match = reg.exec(txt);
+        if (match && match.length === 2) {
+          that.oriurl = match[1];
+          that.createUI();
         }
-        that.createUI();
       },
     });
   },
@@ -84,23 +84,17 @@ var monkey = {
     log('createUI() --');
     log(this);
     var videos = {
-          title: this.title,
-          formats: [],
+          title: '视频的原始地址',
+          formats: [''],
           links: [],
           ok: true,
           msg: '',
         };
 
-    if (this.cid.length === 0) {
-      videos.ok = false;
-      videos.msg = 'Failed to get cid';
-    } else {
-      videos.formats.push('标清');
-      videos.links.push(this.videos);
-    }
+    videos.formats.push('');
+    videos.links.push(this.oriurl);
 
-    log('videos: ', videos);
-    multiFiles.run(videos);
+    singleFile.run(videos);
   },
 }
 
