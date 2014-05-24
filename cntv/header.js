@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         cntvHTML5
-// @version      2.1
+// @version      2.2
 // @include      http://tv.cntv.cn/video/*
+// @include      http://ent.cntv.cn/*
 // @include      http://search.cctv.com/playVideo.php*
 // @description  Play Videos with html5 on cntv.cn
 // @license      GPLv3
