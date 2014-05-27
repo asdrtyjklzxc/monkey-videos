@@ -8,11 +8,6 @@ var monkey = {
     'clear': '',
     'super': '',
   },
-  formats: {
-    'normal': '标清',
-    'clear': '高清',
-    'super': '超清',
-  },
 
   run: function() {
     log('run() --');
@@ -69,7 +64,6 @@ var monkey = {
         if (json.msg == 'ok' && json.status == '1') {
           that.title = json.info.Subject;
           for (i = 0; video = json.info.rfiles[i]; i = i + 1) {
-            that.videos = json.info.rfiles;
             that.videos[video.type] = video.url;
           }
         }
@@ -88,28 +82,19 @@ var monkey = {
           ok: true,
           msg: '',
         },
-        type,
+        formats = ['normal', 'clear', 'super'],
+        format_names = ['标清', '高清', '超清'],
+        format,
         link,
         i;
 
-    if (this.title.length === 0) {
-      videos.ok = false;
-      videos.msg = 'Failed to get playlist';
-      multiFiles.run(videos);
-      return;
-    }
-
-    if (this.videos.normal.length > 0) {
-      videos.links.push([this.videos.normal]);
-      videos.formats.push(this.formats.normal);
-    }
-    if (this.videos.clear.length > 0) {
-      videos.links.push([this.videos.clear]);
-      videos.formats.push(this.formats.clear);
-    }
-    if (this.videos.super.length > 0) {
-      videos.links.push([this.videos.super]);
-      videos.formats.push(this.formats.super);
+    for (i = 0; format = formats[i]; i += 1) {
+      if (format in this.videos && this.videos[format].length > 0) {
+        videos.links.push([this.videos[format]]);
+        videos.formats.push(format_names[i]);
+      } else {
+        error('This video type is not supported: ', format);
+      }
     }
     log(videos);
     multiFiles.run(videos);

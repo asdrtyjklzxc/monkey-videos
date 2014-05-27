@@ -61,9 +61,11 @@ var monkey = {
   getVideos: function() {
     log('getVideos() -- ');
     var url = 'http://interface.bilibili.cn/player?cid=' + this.cid,
+        url = 'http://interface.bilibili.cn/playurl?cid=' + this.cid,
         that = this;
 
     log('url:', url);
+    log('url2:', url2);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,

@@ -1,3 +1,6 @@
+v2.3 - 2014.5.27
+* Fixed: 'super' not in this.videos; reported by @ifounder
+
 v2.2 - 2014.5.1
 * Using multiFiles style
 
