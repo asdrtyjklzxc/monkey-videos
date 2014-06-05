@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on youku.com
 // @include      http://v.youku.com/v_show/id_*
 // @include      http://v.youku.com/v_playlist/*
-// @version      2.1
+// @version      2.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

@@ -9,17 +9,18 @@ var monkey = {
   json: null,
 
   // store video formats and its urls
-  formats: {
+  videos: {
     'flv': [],
     'mp4': [],
     'hd2': [],
-    'hd3': [],
   },
 
   // video title
   title: '',
   // store video id
   videoId: '',
+  // background jobs
+  jobs: 0,
 
   run: function() {
     this.getVideoId();
@@ -67,7 +68,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response:', response);
+        log('response:', response && response.finalUrl);
         that.json = JSON.parse(response.responseText);
         if (that.json) {
           that.decodeURL();
@@ -81,113 +82,67 @@ var monkey = {
    */
   decodeURL: function() {
     log('decodeURL() --');
-    var urlPrefix = 'http://f.youku.com/player/getFlvPath/sid/00_00/st/',
-        url,
-        title,
-        fileId,
-        format,
-        formats = [],
-        json,
-        tmp,
-        i,
-        j;
-    
-    json = this.json.data[0];
+    var json = this.json.data[0];
+
     // 设定视频的标题;
     this.title = json.title;
     // 检测可用的格式;
     if (json.segs.flv && json.segs.flv.length) {
-      formats.push('flv');
+      this.jobs += 1;
+      this.getM3U8('flv');
     }
-
     if (json.segs.mp4 && json.segs.mp4.length) {
-      formats.push('mp4');
+      this.jobs += 1;
+      this.getM3U8('mp4');
     }
-
     if (json.segs.hd2 && json.segs.hd2.length) {
-      formats.push('hd2');
+      this.jobs += 1;
+      this.getM3U8('hd2');
     }
-
-    if (json.segs.hd3 && json.segs.hd3.length) {
-      formats.push('hd3');
-    }
-
-    for (i = 0; format = formats[i]; i += 1) {
-      fileId = this.getFileId(json.seed, json.streamfileids[format]);
-      for (j = 0; j < json.segs[format].length; j += 1) {
-        // 修正了编码问题, 应该用十六进制的序号;
-        if (j < 16) {
-          fileId = fileId.slice(0, 9) + j.toString(16).toUpperCase() + 
-                   fileId.slice(10);
-        } else {
-          fileId = fileId.slice(0, 8) + j.toString(16).toUpperCase() + 
-                   fileId.slice(10);
-        }
-        // 修正hd2|hd3的格式命名问题;
-        tmp = format;
-        if (tmp === 'hd2' || tmp == 'hd3') {
-          tmp = 'flv';
-        }
-        url = [
-            urlPrefix,
-            tmp,
-            '/fileid/',
-            fileId,
-            '?K=',
-            json.segs[format][j].k,
-            ',k2:',
-            json.segs[format][j].k2
-            ].join('');
-
-        this.formats[format][j] = url;
-      }
-    }
-    // 调用UI函数;
-    this.createUI();
   },
 
   /**
-   * Get file id of each video file.
-   *
-   * This function is the key to decode youku video source.
-   * @param string seed
-   *  - the file seed number.
-   * @param string fileId
-   *  - file Id.
-   * @return string
-   *  - return decrypted file id.
+   * Get m3u8 playlist for specific video format.
    */
-  getFileId: function(seed, fileId) {
-    log('getFileId() --');
-    function getFileIdMixed(seed) {
-      var mixed = [],
-          source = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP' +
-            'QRSTUVWXYZ/\\:._-1234567890',
-          len = source.length,
-          index,
-          i;
+  getM3U8: function(format) {
+    log('getM3U8() -- ', format);
+    var url,
+        that = this;
     
-      for (i = 0; i < len; i += 1) {
-          seed = (seed * 211 + 30031) % 65536;
-          index = Math.floor(seed / 65536 * source.length);
-          mixed.push(source.charAt(index));
-          source = source.replace(source.charAt(index), '');
-      }
-      return mixed;
-    }
+    url = [
+      'http://v.youku.com/player/getM3U8/vid/',
+      this.videoId,
+      '/type/',
+      format,
+      '/ts/v.m3u8',
+      ].join('');
+    log(url);
+    GM_xmlhttpRequest({
+      url: url,
+      method: 'GET',
+      onload: function(response) {
+        log('response:', response);
 
-    var mixed = getFileIdMixed(seed),
-        ids = fileId.split('\*'),
-        len = ids.length - 1,
-        realId = '',
-        idx,
-        i;
+        var txt = response.responseText,
+            video_reg = /^(http.+)\.ts.+$/gm,
+            m = video_reg.exec(txt);
+        old_link = '';
+        new_link = '';
+        while (m && m.length === 2) {
+          new_link = m[1];
+          if (new_link !== old_link) {
+            that.videos[format].push(new_link);
+            old_link = new_link;
+          }
+          m = video_reg.exec(txt);
+        }
+        that.jobs -= 1;
 
-    for (i = 0; i < len; i += 1) {
-      idx = parseInt(ids[i]);
-      realId += mixed[idx];
-    }
-    return realId;
+        if (that.jobs === 0) {
+          that.createUI();
+        }
+      },
+    });
   },
 
   /**
@@ -195,27 +150,24 @@ var monkey = {
    */
   createUI: function() {
     log('createUI() --');
+    log(this);
     var videos = {
           title: this.title,
           formats: [],
           links: [],
         };
 
-    if (this.formats.flv.length > 0) {
+    if (this.videos.flv.length > 0) {
       videos.formats.push('标清');
-      videos.links.push(this.formats.flv);
+      videos.links.push(this.videos.flv);
     }
-    if (this.formats.mp4.length > 0) {
+    if (this.videos.mp4.length > 0) {
       videos.formats.push('高清');
-      videos.links.push(this.formats.mp4);
+      videos.links.push(this.videos.mp4);
     }
-    if (this.formats.hd2.length > 0) {
+    if (this.videos.hd2.length > 0) {
       videos.formats.push('超清');
-      videos.links.push(this.formats.hd2);
-    }
-    if (this.formats.hd3.length > 0) {
-      videos.formats.push('1080P');
-      videos.links.push(this.formats.hd3);
+      videos.links.push(this.videos.hd2);
     }
 
     multiFiles.run(videos);
