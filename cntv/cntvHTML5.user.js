@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         cntvHTML5
-// @version      2.2
+// @version      2.3
 // @include      http://tv.cntv.cn/video/*
 // @include      http://ent.cntv.cn/*
 // @include      http://search.cctv.com/playVideo.php*
@@ -13,11 +13,6 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
-
 
 /**
  * base64 function wrap
@@ -213,10 +208,10 @@ var multiFiles = {
   videos: null,
 
   run: function(videos) {
-    log('multiFiles.run() --');
+    console.log('multiFiles.run() --');
     this.videos = videos;
     if ((!videos.formats) || (videos.formats.length === 0)) {
-      error('Error: no video formats specified!');
+      console.error('Error: no video formats specified!');
       return;
     }
     this.removeOldPanels();
@@ -224,8 +219,9 @@ var multiFiles = {
   },
 
   removeOldPanels: function() {
-    log('removeOldPanels() --');
-    var panels = uw.document.querySelectorAll('.monkey-videos-panel'),
+    console.log('removeOldPanels() --');
+    var panels = unsafeWindow.document.querySelectorAll(
+          '.monkey-videos-panel'),
         panel,
         i;
 
@@ -238,8 +234,8 @@ var multiFiles = {
    * Create the control panel.
    */
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
         div,
         form,
         label,
@@ -295,27 +291,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlistWrap = uw.document.createElement('div');
+    playlistWrap = unsafeWindow.document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = uw.document.createElement('form');
+    form = unsafeWindow.document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = uw.document.createElement('label');
+      label = unsafeWindow.document.createElement('label');
       form.appendChild(label);
-      input = uw.document.createElement('input');
+      input = unsafeWindow.document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = uw.document.createElement('span');
+      span = unsafeWindow.document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -328,24 +324,25 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = uw.document.createElement('a');
+    a = unsafeWindow.document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
     a.href = '';
     form.appendChild(a);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector('.monkey-videos-panel .playlist-wrap');
+      var wrap = unsafeWindow.document.querySelector(
+            '.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -367,19 +364,19 @@ var multiFiles = {
   },
 
   loadDefault: function() {
-    log('loadDefault() --');
+    console.log('loadDefault() --');
     // Load default type of playlist.
     var currPos = GM_getValue('format', 0),
         formats = this.videos.formats,
         currPlaylist;
 
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
     if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
 
-    currPlaylist = uw.document.querySelectorAll(
+    currPlaylist = unsafeWindow.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -394,8 +391,9 @@ var multiFiles = {
    * Empty playlist first, and add new links of specific video format.
    */
   modifyList: function(pos) {
-    log('modifyList(), pos = ', pos);
-    var playlist = uw.document.querySelector('.monkey-videos-panel .playlist'),
+    console.log('modifyList(), pos = ', pos);
+    var playlist = unsafeWindow.document.querySelector(
+          '.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -404,7 +402,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -420,7 +418,8 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    uw.document.querySelector('.playlist-m3u').href = this.plsDataScheme();
+    unsafeWindow.document.querySelector(
+      '.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -431,7 +430,7 @@ var multiFiles = {
    *  - Data scheme containting playlist.
    */
   plsDataScheme: function() {
-    log('plsDataSchema() --');
+    console.log('plsDataSchema() --');
     return 'data:audio/x-m3u;charset=UTF-8;base64,' +
       base64.encode(this.generatePls());
   },
@@ -442,9 +441,10 @@ var multiFiles = {
    * - playlist content.
    */
   generatePls: function() {
-    log('generatePls() --');
+    console.log('generatePls() --');
     var output = [],
-        links = uw.document.querySelectorAll('.monkey-videos-panel .playlist-item'),
+        links = unsafeWindow.document.querySelectorAll(
+            '.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -462,9 +462,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -481,22 +481,23 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.router();
   },
 
   router: function() {
-    log('router() --');
-    var href = uw.location.href,
+    console.log('router() --');
+    var href = unsafeWindow.location.href,
         schema;
     if (href.search('search.cctv.com/playVideo.php?') > -1) {
-      schema = this.hashToObject(uw.location.search.substr(1));
+      schema = this.hashToObject(unsafeWindow.location.search.substr(1));
       this.pid = schema.detailsid;
       this.title = decodeURI(schema.title);
       this.getVideoInfo();
     } else if (href.search('tv.cntv.cn/video/') > -1) {
       this.pid = href.match(/\/([^\/]+)$/)[1];
-      this.title = uw.document.title.substring(0, uw.document.title.length-8);
+      this.title = unsafeWindow.document.title.substring(
+          0, unsafeWindow.document.title.length-8);
       this.getVideoInfo();
     } else {
       this.getPidFromSource();
@@ -507,14 +508,14 @@ var monkey = {
    * Get video pid from html source file
    */
   getPidFromSource: function() {
-    log('getPidFromSource() --');
+    console.log('getPidFromSource() --');
     var that = this;
 
     GM_xmlhttpRequest({
-      url: uw.location.href,
+      url: unsafeWindow.location.href,
       method: 'GET',
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         that.parsePid(response.responseText);
       },
     });
@@ -524,7 +525,7 @@ var monkey = {
    * Parse txt and get pid of video
    */
   parsePid: function(txt) {
-    log('parsePid() --');
+    console.log('parsePid() --');
     var pidReg = /code\.begin-->([^<]+)/,
         pidMatch = pidReg.exec(txt),
         titleReg = /title\.begin-->([^<]+)/,
@@ -533,15 +534,15 @@ var monkey = {
     if (titleMatch && titleMatch.length === 2) {
       this.title = titleMatch[1];
     } else {
-      this.title = uw.document.title;
+      this.title = unsafeWindow.document.title;
     }
 
-    log('pidMatch:', pidMatch);
+    console.log('pidMatch:', pidMatch);
     if (pidMatch && pidMatch.length === 2) {
       this.pid = pidMatch[1];
       this.getVideoInfo();
     } else {
-      error('Failed to get Pid');
+      console.error('Failed to get Pid');
       return;
     }
   },
@@ -550,24 +551,24 @@ var monkey = {
    * Get video info, including formats and uri
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = [
           'http://vdn.apps.cntv.cn/api/getHttpVideoInfo.do?',
           'tz=-8&from=000tv&idlr=32&modified=false&idl=32&pid=',
           this.pid,
           '&url=',
-          uw.location.href,
+          unsafeWindow.location.href,
         ].join(''),
         that = this;
 
-    log('url:', url);
+    console.log('url:', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.json = JSON.parse(response.responseText);
-        log('that: ', that);
+        console.log('that: ', that);
         that.parseVideos();
       },
     });
@@ -577,7 +578,7 @@ var monkey = {
    * Parse video info from json object.
    */
   parseVideos: function() {
-    log('parseVideos() --');
+    console.log('parseVideos() --');
     var chapter;
 
     for (chapter in this.json.video) {
@@ -593,7 +594,7 @@ var monkey = {
    * Parse specified chapter, list of video links.
    */
   parseChapter: function(chapter) {
-    log('parseChapter() --');
+    console.log('parseChapter() --');
     var item,
         i;
 
@@ -609,8 +610,8 @@ var monkey = {
    * Call multiFiles.js to construct UI widgets.
    */
   createUI: function() {
-    log('createUI() --');
-    log('this: ', this);
+    console.log('createUI() --');
+    console.log('this: ', this);
     var videos = {
           title: this.title,
           formats: [],
@@ -635,9 +636,9 @@ var monkey = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },

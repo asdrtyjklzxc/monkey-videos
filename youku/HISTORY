@@ -1,111 +1,114 @@
-* 2.3 2014.6.5
+v2.4 2014.6.12
+* Fixed: console.log must be bound to console object in Firefox 30
+
+v2.3 2014.6.5
 * Support new algorithm.
 * Discard 1080P
 
-* 2.2 2014.4.17
+v2.2 2014.4.17
 * Support 1080P
 
-* 2.1 2014.1.15
+v2.1 2014.1.15
 * Reconstructed
 
-* 1.28 2013.12.8
-Add a greasemonkey option to save last choice.
+v1.28 2013.12.8
+* Add a greasemonkey option to save last choice.
 
-* 1.27 2013.11.21
-Add a toggle button to show/hide playlist.
+v1.27 2013.11.21
+* Add a toggle button to show/hide playlist.
 
-* 1.26 2013.8.28
-Fix video link when > 16.
+v1.26 2013.8.28
+* Fix video link when > 16.
 
-* 1.25 2013.8.12
-Replace pls with m3u.
+v1.25 2013.8.12
+* Replace pls with m3u.
 
-* 1.24 2013.7.15
-Show log
+v1.24 2013.7.15
+* Show log
 
-*1.23 2013.5.11
-Metadata changed.
+v1.23 2013.5.11
+* Metadata changed.
 
-* 1.22 2013.4.11
-Support Greasemonkey 1.8.
+v1.22 2013.4.11
+* Support Greasemonkey 1.8.
 
-* 1.21 2013.3.27
-Add autoscroll for video playlist.
+v1.21 2013.3.27
+* Add autoscroll for video playlist.
 
-* 1.20 2013.3.18
-Add @grant, @run-at segment.
-Main page no need to enable js environment.
+v1.20 2013.3.18
+* Add @grant, @run-at segment.
+* Main page no need to enable js environment.
 
-* 1.19 2013.3.5
-Fix: failed to hide the none existed videos.
-   - hd = []; hd === [] // will return false, so we have to use
-     hd.length > 0 to check that array not empty.
+v1.19 2013.3.5
+* Fixed: failed to hide the none existed videos.
+         hd = []; hd === [] // will return false, so we have to use
+         hd.length > 0 to check that array not empty.
 
-* 1.18 2013.3.5
-Fix: failed to display different video formats. Replacing that with yk.
+1.18 2013.3.5
+* Fix: failed to display different video formats. Replacing that with yk.
 
-* 1.17 2013.3.3
-Fix the z-index bug.
+v1.17 2013.3.3
+* Fix the z-index bug.
 
-* 1.16 2013.3.3
-Using that to replace yk in a subfunction.
+v1.16 2013.3.3
+* Using that to replace yk in a subfunction.
 
-* 1.15 2013.3.3
-修复了部分播放列表无法使用的问题;
-Beautify and redesign this program;
+v1.15 2013.3.3
+* 修复了部分播放列表无法使用的问题;
+* Beautify and redesign this program;
 
-* 1.14 2013.1.31
-加入了生成pls列表文件的功能;
-取消了对youku.com的依赖;
+v1.14 2013.1.31
+* 加入了生成pls列表文件的功能;
+* 取消了对youku.com的依赖;
 
-* 1.13 2013.1.25
-修复unsafeWindow的问题;
-修改了label与input的位置关系, 以方便点击;
+v1.13 2013.1.25
+* 修复unsafeWindow的问题;
+* 修改了label与input的位置关系, 以方便点击;
 
-* 1.12 2012.10.1
-修改了标题的命名方式
+1.12 2012.10.1
+* 修改了标题的命名方式
 
-* 1.11 2012.7.21
-修改了显示面版的字符长度, 使标题能全部显示;
-修改了圆角及与页边的距离;
+v1.11 2012.7.21
+* 修改了显示面版的字符长度, 使标题能全部显示;
+* 修改了圆角及与页边的距离;
 
-* 1.10 2012.4.2
-修正部分v.youku.com/v_playlist错误;
-修正视频下载列表的显示;
+v1.10 2012.4.2
+* 修正部分v.youku.com/v_playlist错误;
+* 修正视频下载列表的显示;
 
-* v1.9 2012.3.28
-修正iceweasel中格式的选择问题;
+v1.9 2012.3.28
+* 修正iceweasel中格式的选择问题;
 
-* v1.8
-修正了URL编码问题; 选择格式时自动调节播话器尺寸; 2012.2.23
+v1.8
+* 修正了URL编码问题; 选择格式时自动调节播话器尺寸; 2012.2.23
 
-* v1.7
-加入了对v_playlist的支持;
+v1.7
+* 加入了对v_playlist的支持;
 
-* v1.6
-优化了启动优先级;
+v1.6
+* 优化了启动优先级;
 
-* v1.5
-视频格式的选择更简单;
-加入 '下载' 按纽, 用于下载m3u列表;
-修改@include 链接, 以支持v.youku.com/v_playlist/*;
+v1.5
+* 视频格式的选择更简单;
+* 加入 '下载' 按纽, 用于下载m3u列表;
+* 修改@include 链接, 以支持v.youku.com/v_playlist/*;
 
-* v1.4
-给<video>加了一个box-shadow; 
-加入自动播放flv的效果;
-加入关灯时自动将panel隐藏到右下角的效果;
-修正了mp4, hd2格式的url无法获取的bug;
-移除了yk.checkFormat() 函数;
-优化了格式选择的效果;
+v1.4
+* 给<video>加了一个box-shadow; 
+* 加入自动播放flv的效果;
+* 加入关灯时自动将panel隐藏到右下角的效果;
+* 修正了mp4, hd2格式的url无法获取的bug;
+* 移除了yk.checkFormat() 函数;
+* 优化了格式选择的效果;
 
-* v1.3
-更新了UI; 支持视频格式的选择;
+v1.3
+* 更新了UI; 支持视频格式的选择;
 
-* v1.2
-支持Firefox 及 Opera, 生成m3u播放列表;
+v1.2
+* 支持Firefox 及 Opera, 生成m3u播放列表;
 
-* v1.1
-加入<video> 移除flash;
+v1.1
+* 加入<video> 移除flash;
 
-* v1.0 2012.2.11
-project inited
+v1.0 2012.2.11
+* project inited

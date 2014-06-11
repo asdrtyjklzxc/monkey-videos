@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on youku.com
 // @include      http://v.youku.com/v_show/id_*
 // @include      http://v.youku.com/v_playlist/*
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -12,8 +12,4 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 

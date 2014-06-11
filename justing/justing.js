@@ -4,13 +4,13 @@ var monkey = {
   link: '',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.createUI();
   },
 
   getTitle: function() {
-    var titleElem = uw.document.querySelector('div#title');
+    var titleElem = unsafeWindow.document.querySelector('div#title');
     if (titleElem) {
       this.title = titleElem.innerHTML;
       this.link = encodeURI([
@@ -21,8 +21,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           links: [],

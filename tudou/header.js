@@ -4,7 +4,7 @@
 // @include      http://www.tudou.com/albumplay/*
 // @include      http://www.tudou.com/listplay/*
 // @include      http://www.tudou.com/programs/view/*
-// @version      2.1
+// @version      2.2
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3
@@ -13,8 +13,4 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 

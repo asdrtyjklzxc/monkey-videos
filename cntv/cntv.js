@@ -9,22 +9,23 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.router();
   },
 
   router: function() {
-    log('router() --');
-    var href = uw.location.href,
+    console.log('router() --');
+    var href = unsafeWindow.location.href,
         schema;
     if (href.search('search.cctv.com/playVideo.php?') > -1) {
-      schema = this.hashToObject(uw.location.search.substr(1));
+      schema = this.hashToObject(unsafeWindow.location.search.substr(1));
       this.pid = schema.detailsid;
       this.title = decodeURI(schema.title);
       this.getVideoInfo();
     } else if (href.search('tv.cntv.cn/video/') > -1) {
       this.pid = href.match(/\/([^\/]+)$/)[1];
-      this.title = uw.document.title.substring(0, uw.document.title.length-8);
+      this.title = unsafeWindow.document.title.substring(
+          0, unsafeWindow.document.title.length-8);
       this.getVideoInfo();
     } else {
       this.getPidFromSource();
@@ -35,14 +36,14 @@ var monkey = {
    * Get video pid from html source file
    */
   getPidFromSource: function() {
-    log('getPidFromSource() --');
+    console.log('getPidFromSource() --');
     var that = this;
 
     GM_xmlhttpRequest({
-      url: uw.location.href,
+      url: unsafeWindow.location.href,
       method: 'GET',
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         that.parsePid(response.responseText);
       },
     });
@@ -52,7 +53,7 @@ var monkey = {
    * Parse txt and get pid of video
    */
   parsePid: function(txt) {
-    log('parsePid() --');
+    console.log('parsePid() --');
     var pidReg = /code\.begin-->([^<]+)/,
         pidMatch = pidReg.exec(txt),
         titleReg = /title\.begin-->([^<]+)/,
@@ -61,15 +62,15 @@ var monkey = {
     if (titleMatch && titleMatch.length === 2) {
       this.title = titleMatch[1];
     } else {
-      this.title = uw.document.title;
+      this.title = unsafeWindow.document.title;
     }
 
-    log('pidMatch:', pidMatch);
+    console.log('pidMatch:', pidMatch);
     if (pidMatch && pidMatch.length === 2) {
       this.pid = pidMatch[1];
       this.getVideoInfo();
     } else {
-      error('Failed to get Pid');
+      console.error('Failed to get Pid');
       return;
     }
   },
@@ -78,24 +79,24 @@ var monkey = {
    * Get video info, including formats and uri
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = [
           'http://vdn.apps.cntv.cn/api/getHttpVideoInfo.do?',
           'tz=-8&from=000tv&idlr=32&modified=false&idl=32&pid=',
           this.pid,
           '&url=',
-          uw.location.href,
+          unsafeWindow.location.href,
         ].join(''),
         that = this;
 
-    log('url:', url);
+    console.log('url:', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.json = JSON.parse(response.responseText);
-        log('that: ', that);
+        console.log('that: ', that);
         that.parseVideos();
       },
     });
@@ -105,7 +106,7 @@ var monkey = {
    * Parse video info from json object.
    */
   parseVideos: function() {
-    log('parseVideos() --');
+    console.log('parseVideos() --');
     var chapter;
 
     for (chapter in this.json.video) {
@@ -121,7 +122,7 @@ var monkey = {
    * Parse specified chapter, list of video links.
    */
   parseChapter: function(chapter) {
-    log('parseChapter() --');
+    console.log('parseChapter() --');
     var item,
         i;
 
@@ -137,8 +138,8 @@ var monkey = {
    * Call multiFiles.js to construct UI widgets.
    */
   createUI: function() {
-    log('createUI() --');
-    log('this: ', this);
+    console.log('createUI() --');
+    console.log('this: ', this);
     var videos = {
           title: this.title,
           formats: [],
@@ -163,9 +164,9 @@ var monkey = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },

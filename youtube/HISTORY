@@ -1,33 +1,36 @@
-* v2.1 - 2014.1.16
-Reconstructed
+v2.2 - 2014.6.12
+* Fixed: console.log must be bound to console object in Firefox 30
 
-* v1.10 - 2013.5.11
-Metadata changed, port to github.com
+v2.1 - 2014.1.16
+* Reconstructed
 
-* v1.9 - 2013.5.11
-Automatically show video description.
+v1.10 - 2013.5.11
+* Metadata changed, port to github.com
 
-* v1.8 - 2013.5.3
-Show all the images automatically.
+v1.9 - 2013.5.11
+* Automatically show video description.
 
-* v1.7 - 2013.4.11
-Modify the UI.
-Disable feathers.
+v1.8 - 2013.5.3
+* Show all the images automatically.
 
-* v1.6 - 2013.4.6
-No need the page to enable javascript.
-Autoload the video thumb.
+v1.7 - 2013.4.11
+* Modify the UI.
+* Disable feathers.
 
-* v1.5 - 2013.1.20
-修复了显示为undefined的bug.
-为下载链接加入了扩展名.
+v1.6 - 2013.4.6
+* No need the page to enable javascript.
+* Autoload the video thumb.
 
-* v1.4 - 2013.1.19
-支持新版的youtube.com
+v1.5 - 2013.1.20
+* 修复了显示为undefined的bug.
+* 为下载链接加入了扩展名.
 
-* v1.3 - 2012.10.8
-youtube发生了更新, 原来的解析方式失败.
+v1.4 - 2013.1.19
+* 支持新版的youtube.com
 
-* v1.2 - 2012.07.21
-增加了文件的扩展名;
-修正了无法获取video_title的bug;
+v1.3 - 2012.10.8
+* youtube发生了更新, 原来的解析方式失败.
+
+v1.2 - 2012.07.21
+* 增加了文件的扩展名;
+* 修正了无法获取video_title的bug;

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ppsHTML5
-// @version      2.1
+// @version      2.2
 // @include      http://v.pps.tv/play_*
 // @include      http://ipd.pps.tv/play_*
 // @description  Play Videos with html5 on pps.com
@@ -12,9 +12,4 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
-
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 

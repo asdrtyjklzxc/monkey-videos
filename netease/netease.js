@@ -18,10 +18,10 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
 
     this.getTitle();
-    if (uw.document.title.search('网易公开课') > -1) {
+    if (unsafeWindow.document.title.search('网易公开课') > -1) {
       this.getOpenCourseSource();
     } else {
       this.getSource();
@@ -29,13 +29,13 @@ var monkey = {
   },
 
   getTitle: function() {
-    log('getTitle() --');
-    this.title = uw.document.title;
+    console.log('getTitle() --');
+    this.title = unsafeWindow.document.title;
   },
 
   getOpenCourseSource: function() {
-    log('getOpenCourseSource() --');
-    var url = uw.document.location.href.split('/'),
+    console.log('getOpenCourseSource() --');
+    var url = unsafeWindow.document.location.href.split('/'),
         length = url.length,
         xmlUrl,
         that = this;
@@ -48,13 +48,13 @@ var monkey = {
       url[length - 2],
       '2_' + this.raw_vid + '.xml',
       ].join('/');
-    log('xmlUrl: ', xmlUrl);
+    console.log('xmlUrl: ', xmlUrl);
 
     GM_xmlhttpRequest({
       method: 'GET',
       url: xmlUrl,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var xml = that.parseXML(response.responseText),
             type,
             video,
@@ -90,20 +90,20 @@ var monkey = {
    * AES ECB decrypt is too large to embed, so use another way.
    */
   getMobileOpenCourse: function() {
-    log('getMobileOpenCourse() --');
+    console.log('getMobileOpenCourse() --');
     var url = 'http://mobile.open.163.com/movie/' + this.plid + '/getMoviesForAndroid.htm',
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var json = JSON.parse(response.responseText),
             video;
 
-        log('json: ', json);
+        console.log('json: ', json);
         that.title = json.title;
         video = json.videoList[0].repovideourl;
         if (that.videos.sd.length > 0) {
@@ -121,8 +121,8 @@ var monkey = {
   },
 
   getSource: function() {
-    log('getSource() --');
-    var scripts = uw.document.querySelectorAll('script'),
+    console.log('getSource() --');
+    var scripts = unsafeWindow.document.querySelectorAll('script'),
         script,
         reg = /<source[\s\S]+src="([^"]+)"/,
         match,
@@ -132,14 +132,14 @@ var monkey = {
 
     for (i = 0; script = scripts[i]; i += 1) {
       match = reg.exec(script.innerHTML);
-      log(match);
+      console.log(match);
       if (match && match.length > 1) {
         this.videos.sd = match[1].replace('-mobile.mp4', '.flv');
         this.createUI();
         return true;
       }
       m3u8Match = m3u8Reg.exec(script.innerHTML);
-      log(m3u8Match);
+      console.log(m3u8Match);
       if (m3u8Match && m3u8Match.length > 1) {
         this.videos.sd = m3u8Match[1].replace('-list', '') + '.mp4';
         this.createUI();
@@ -149,8 +149,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -188,11 +188,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;

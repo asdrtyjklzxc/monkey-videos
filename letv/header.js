@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on letv.com
 // @include      http://letv.com/*
 // @include      http://*.letv.com/*
-// @version      2.4
+// @version      2.5
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -13,8 +13,3 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
-

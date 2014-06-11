@@ -83,7 +83,7 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getURLInfo();
     this.hideAlert();
     this.showThumb();
@@ -94,16 +94,17 @@ var monkey = {
    * parse location.href
    */
   getURLInfo: function() {
-    this.urlInfo = this.parseURI(uw.location.href);
+    this.urlInfo = this.parseURI(unsafeWindow.location.href);
   },
 
   /**
    * Show image thumb of videos.
    */
   showThumb: function() {
-    log('showThumb() --');
-    var imgs = uw.document.querySelectorAll('img'),
-        watchMore = uw.document.querySelector('#watch-more-related'),
+    console.log('showThumb() --');
+    var imgs = unsafeWindow.document.querySelectorAll('img'),
+        watchMore = unsafeWindow.document.querySelector(
+            '#watch-more-related'),
         img,
         i;
 
@@ -121,8 +122,8 @@ var monkey = {
    * Hide the alert info.
    */
   hideAlert: function() {
-    var alerts = uw.document.querySelectorAll('.yt-alert'),
-        oo = uw.document.querySelector('#oo'),
+    var alerts = unsafeWindow.document.querySelectorAll('.yt-alert'),
+        oo = unsafeWindow.document.querySelector('#oo'),
         alert,
         i;
     for (i = 0; alert = alerts[i]; i += 1) {
@@ -137,7 +138,7 @@ var monkey = {
    * Get video url info:
    */
   getVideo: function () {
-    log('getVideo()--');
+    console.log('getVideo()--');
     var that = this;
 
     if (!this.urlInfo.params['v']) {
@@ -152,13 +153,14 @@ var monkey = {
       '&el=html5&hl=en&gl=US',
       '&eurl=https://youtube.googleapis.com/v/', this.videoId,
       ].join('');
-    this.videoTitle = uw.document.title.substr(0, uw.document.title.length - 10);
+    this.videoTitle = unsafeWindow.document.title.substr(
+        0, unsafeWindow.document.title.length - 10);
 
     GM_xmlhttpRequest({
       method: 'GET',
       url: this.videoInfoUrl,
       onload: function(response) {
-        log('xhr response: ', response);
+        console.log('xhr response: ', response);
         that.parseStream(response.responseText);
       },
     });
@@ -168,7 +170,7 @@ var monkey = {
    * Parse stream info from xhr text:
    */
   parseStream: function(rawVideoInfo) {
-    log('parseStream() ---');
+    console.log('parseStream() ---');
     var that = this;
 
     /**
@@ -189,8 +191,8 @@ var monkey = {
    * Create download list:
    */
   createUI: function() {
-    log('createUI() -- ');
-    log('this: ', this);
+    console.log('createUI() -- ');
+    console.log('this: ', this);
     var videos = {
           title: this.videoTitle,
           formats: [],
@@ -208,7 +210,7 @@ var monkey = {
     for (i = 0; video = streams[i]; i += 1) {
       format = this.formats[video['itag']];
       if (! format) {
-        error('current format not supported: ', video);
+        console.error('current format not supported: ', video);
         continue;
       }
       formatName = []
@@ -268,7 +270,7 @@ var monkey = {
    * operations are used (to normalize results across browsers).
    */
   parseURI: function(url) {
-    var a =  uw.document.createElement('a');
+    var a =  unsafeWindow.document.createElement('a');
     a.href = url;
     return {
       source: url,

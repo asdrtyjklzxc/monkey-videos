@@ -6,7 +6,7 @@ var monkey = {
   run: function() {
     this.getVid();
     if (this.vid.length === 0) {
-      error('Failed to get video id!');
+      console.error('Failed to get video id!');
       this.createUI();
     } else {
       this.getVideoLink();
@@ -14,27 +14,28 @@ var monkey = {
   },
 
   getVid: function() {
-    log('getVid()');
-    var videos = uw.document.querySelectorAll('div#area-part-view div.l a'),
+    console.log('getVid()');
+    var videos = unsafeWindow.document.querySelectorAll(
+          'div#area-part-view div.l a'),
         video,
         i;
 
-    log('videos: ', videos);
+    console.log('videos: ', videos);
     for (i = 0; video = videos[i]; i += 1) {
       if (video.className.search('active') > 0) {
         this.vid = video.getAttribute('data-vid');
         return;
       }
     }
-    error('Failed to get vid');
+    console.error('Failed to get vid');
   },
 
   /**
    * Get video link from a json object
    */
   getVideoLink: function() {
-    log('getVideoLink()');
-    log(this);
+    console.log('getVideoLink()');
+    console.log(this);
     //var url = 'http://www.acfun.tv/api/getVideoByID.aspx?vid=' + this.vid,
     var url = 'http://www.acfun.tv/video/getVideo.aspx?id=' + this.vid,
         that = this;
@@ -43,7 +44,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         var json = JSON.parse(response.responseText);
 
         if (json.success) {
@@ -55,8 +56,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: '原始地址',
           formats: [],

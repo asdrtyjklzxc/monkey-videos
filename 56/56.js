@@ -10,12 +10,12 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getID();
     if (this.id.length > 0) {
       this.getPlaylist();
     } else {
-      error('Failed to get video id!');
+      console.error('Failed to get video id!');
       return;
     }
   },
@@ -24,37 +24,37 @@ var monkey = {
    * Get video id
    */
   getID: function() {
-    log('getID() --');
-    var url = uw.location.href,
+    console.log('getID() --');
+    var url = unsafeWindow.location.href,
         idReg = /\/v_(\w+)\.html/,
         idMatch = idReg.exec(url),
         albumIDReg = /_vid-(\w+)\.html/,
         albumIDMatch = albumIDReg.exec(url);
 
-    log(idMatch);
-    log(albumIDMatch);
+    console.log(idMatch);
+    console.log(albumIDMatch);
     if (idMatch && idMatch.length === 2) {
       this.id = idMatch[1]; 
     } else if (albumIDMatch && albumIDMatch.length === 2) {
       this.id = albumIDMatch[1];
     }
-    log(this);
+    console.log(this);
   },
 
   /**
    * Get video playlist from a json object
    */
   getPlaylist: function() {
-    log('getPlaylist() --');
+    console.log('getPlaylist() --');
     var url = 'http://vxml.56.com/json/' + this.id + '/?src=out',
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'get',
       url: url,
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         var txt = response.responseText,
             json = JSON.parse(txt),
             video,
@@ -73,8 +73,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -93,10 +93,10 @@ var monkey = {
         videos.links.push([this.videos[format]]);
         videos.formats.push(format_names[i]);
       } else {
-        error('This video type is not supported: ', format);
+        console.error('This video type is not supported: ', format);
       }
     }
-    log(videos);
+    console.log(videos);
     multiFiles.run(videos);
   },
 }

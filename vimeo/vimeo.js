@@ -7,7 +7,7 @@ var monkey = {
   types: ['mobile', 'hd', 'sd'],
 
   run: function() {
-    log('run() -- ');
+    console.log('run() -- ');
     this.getVid();
   },
 
@@ -15,9 +15,9 @@ var monkey = {
    * Get current video id
    */
   getVid: function() {
-    log('getVid() --');
+    console.log('getVid() --');
     var reg = /vimeo\.com\/(\d+)/,
-        url = uw.document.location.href;
+        url = unsafeWindow.document.location.href;
     this.vid = reg.exec(url)[1];
     this.getVideoById();
   },
@@ -26,7 +26,7 @@ var monkey = {
    * Get video links
    */
   getVideoById: function() {
-    log('getVideoById() --');
+    console.log('getVideoById() --');
     var url = 'http://player.vimeo.com/video/' + this.vid,
         that = this;
 
@@ -34,7 +34,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var txt = response.responseText,
             titleReg = /<title>([^<]+)</,
             titleMatch = titleReg.exec(txt),
@@ -48,7 +48,7 @@ var monkey = {
         if (titleMatch && titleMatch.length === 2) {
           that.title = titleMatch[1];
         } else {
-          that.title = uw.document.title;
+          that.title = unsafeWindow.document.title;
         }
 
         if (mobileMatch && mobileMatch.length === 2) {
@@ -66,8 +66,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log('this: ', this);
+    console.log('createUI() --');
+    console.log('this: ', this);
     var videos = {
           title: this.title,
           formats: [],
@@ -79,16 +79,16 @@ var monkey = {
         i;
 
     for (i = 0; video = this.videos[i]; i += 1) {
-      log(video);
+      console.log(video);
       if (video.length > 0) {
         videos.links.push([video]);
         videos.formats.push(this.types[i]);
       } else {
-        log('video is empty');
+        console.log('video is empty');
       }
     }
 
-    log(videos);
+    console.log(videos);
     multiFiles.run(videos);
   },
 }

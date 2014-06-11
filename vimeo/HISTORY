@@ -1,3 +1,6 @@
+v2.3 - 2014.6.12
+* Fixed: console.log must be bound to console object in Firefox 30
+
 v2.2 - 2014.5.1
 * Using multiFiles style
 

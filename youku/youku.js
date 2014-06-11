@@ -34,15 +34,15 @@ var monkey = {
    *   http://v.youku.com/v_playlist/f17273995o1p0.html
    */
   getVideoId: function() {
-    log('getVideoId() --');
-    var url = uw.location.href,
+    console.log('getVideoId() --');
+    var url = unsafeWindow.location.href,
         idReg = /(?:id_)(.*)(?:.html)/, 
         idMatch = idReg.exec(url),
         idReg2 = /(?:v_playlist\/f)(.*)(?:o1p\d.html)/,
         idMatch2 = idReg2.exec(url);
 
-    log('idMatch: ', idMatch);
-    log('idMatch2: ', idMatch2);
+    console.log('idMatch: ', idMatch);
+    console.log('idMatch2: ', idMatch2);
     if (idMatch && idMatch.length === 2) {
       this.videoId = idMatch[1];
       this.getPlayList();
@@ -50,7 +50,7 @@ var monkey = {
       this.videoId = idMatch2[1];
       this.getPlayList();
     } else {
-      error('Failed to get video id!');
+      console.error('Failed to get video id!');
     }
   },
 
@@ -58,17 +58,17 @@ var monkey = {
    * Get video playlist.
    */
   getPlayList: function() {
-    log('getPlayList() --');
+    console.log('getPlayList() --');
     var url = 'http://v.youku.com/player/getPlayList/VideoIDS/' +
           this.videoId,
         that = this;
     
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response:', response && response.finalUrl);
+        console.log('response:', response && response.finalUrl);
         that.json = JSON.parse(response.responseText);
         if (that.json) {
           that.decodeURL();
@@ -81,7 +81,7 @@ var monkey = {
    * Decrypted the video link from json object.
    */
   decodeURL: function() {
-    log('decodeURL() --');
+    console.log('decodeURL() --');
     var json = this.json.data[0];
 
     // 设定视频的标题;
@@ -105,7 +105,7 @@ var monkey = {
    * Get m3u8 playlist for specific video format.
    */
   getM3U8: function(format) {
-    log('getM3U8() -- ', format);
+    console.log('getM3U8() -- ', format);
     var url,
         that = this;
     
@@ -116,12 +116,12 @@ var monkey = {
       format,
       '/ts/v.m3u8',
       ].join('');
-    log(url);
+    console.log(url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
 
         var txt = response.responseText,
             video_reg = /^(http.+)\.ts.+$/gm,
@@ -149,8 +149,8 @@ var monkey = {
    * construct video data and create UI widgets.
    */
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],

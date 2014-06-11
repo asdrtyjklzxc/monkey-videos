@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on acfun.tv
 // @include      http://www.acfun.tv/v/*
 // @include      http://www.acfun.com/v/*
-// @version      2.3
+// @version      2.4
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3
@@ -12,10 +12,6 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 
 
 var singleFile = {
@@ -29,17 +25,17 @@ var singleFile = {
   videos: null,
 
   run: function(videos) {
-    log('run() -- ');
+    console.log('run() -- ');
     this.videos = videos;
     this.createPanel();
     this.createPlaylist();
   },
 
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
-        playlist = uw.document.createElement('div'),
-        playlistToggle = uw.document.createElement('div');
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
+        playlist = unsafeWindow.document.createElement('div'),
+        playlistToggle = unsafeWindow.document.createElement('div');
 
     this.addStyle([
       '.monkey-videos-panel {',
@@ -84,19 +80,19 @@ var singleFile = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlist= uw.document.createElement('div');
+    playlist= unsafeWindow.document.createElement('div');
     playlist.className = 'playlist-wrap';
     panel.appendChild(playlist);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector(
+      var wrap = unsafeWindow.document.querySelector(
             '.monkey-videos-panel .playlist-wrap');
 
       if (wrap.style.display === 'none') {
@@ -118,15 +114,15 @@ var singleFile = {
   },
 
   createPlaylist: function() {
-    log('createPlayList() -- ');
-    var playlist = uw.document.querySelector(
+    console.log('createPlayList() -- ');
+    var playlist = unsafeWindow.document.querySelector(
           '.monkey-videos-panel .playlist-wrap'),
         a,
         i;
 
     if (!this.videos.ok) {
-      error(this.videos.msg);
-      a = uw.document.createElement('span');
+      console.error(this.videos.msg);
+      a = unsafeWindow.document.createElement('span');
       a.title = this.videos.msg;
       a.innerHTML = this.videos.msg;
       playlist.appendChild(a);
@@ -134,7 +130,7 @@ var singleFile = {
     }
 
     for (i = 0; i < this.videos.links.length; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       a.className = 'playlist-item';
       a.innerHTML = this.videos.title + '(' + this.videos.formats[i] + ')';
       a.title = a.innerHTML;
@@ -149,10 +145,10 @@ var singleFile = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    log('addStyle() --');
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    console.log('addStyle() --');
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -166,7 +162,7 @@ var monkey = {
   run: function() {
     this.getVid();
     if (this.vid.length === 0) {
-      error('Failed to get video id!');
+      console.error('Failed to get video id!');
       this.createUI();
     } else {
       this.getVideoLink();
@@ -174,27 +170,28 @@ var monkey = {
   },
 
   getVid: function() {
-    log('getVid()');
-    var videos = uw.document.querySelectorAll('div#area-part-view div.l a'),
+    console.log('getVid()');
+    var videos = unsafeWindow.document.querySelectorAll(
+          'div#area-part-view div.l a'),
         video,
         i;
 
-    log('videos: ', videos);
+    console.log('videos: ', videos);
     for (i = 0; video = videos[i]; i += 1) {
       if (video.className.search('active') > 0) {
         this.vid = video.getAttribute('data-vid');
         return;
       }
     }
-    error('Failed to get vid');
+    console.error('Failed to get vid');
   },
 
   /**
    * Get video link from a json object
    */
   getVideoLink: function() {
-    log('getVideoLink()');
-    log(this);
+    console.log('getVideoLink()');
+    console.log(this);
     //var url = 'http://www.acfun.tv/api/getVideoByID.aspx?vid=' + this.vid,
     var url = 'http://www.acfun.tv/video/getVideo.aspx?id=' + this.vid,
         that = this;
@@ -203,7 +200,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         var json = JSON.parse(response.responseText);
 
         if (json.success) {
@@ -215,8 +212,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: '原始地址',
           formats: [],

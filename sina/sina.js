@@ -16,14 +16,14 @@ var monkey = {
   },
 
   run: function() {
-    var loc = uw.location.href;
+    var loc = unsafeWindow.location.href;
     if (loc.search('/vlist/') > -1) {
       this.getVlist();
     } else if (loc.search('video.sina.com.cn') > -1 ||
                loc.search('open.sina.com.cn') > -1) {
       this.getVid(loc);
     } else {
-      error('This page is not supported!');
+      console.error('This page is not supported!');
       return;
     }
   },
@@ -34,11 +34,11 @@ var monkey = {
    * http://video.sina.com.cn/news/vlist/zt/chczlj2013/?opsubject_id=top12#109873117
    */
   getVlist: function() {
-    log('getVlist() --');
-    var h4s = uw.document.querySelectorAll('h4.video_btn'),
+    console.log('getVlist() --');
+    var h4s = unsafeWindow.document.querySelectorAll('h4.video_btn'),
         h4,
         i,
-        lis = uw.document.querySelectorAll('ul#video_list li'),
+        lis = unsafeWindow.document.querySelectorAll('ul#video_list li'),
         li,
         As,
         A,
@@ -72,7 +72,7 @@ var monkey = {
   },
 
   getVlistItem: function(div) {
-    log('getVlistItem() --', div);
+    console.log('getVlistItem() --', div);
     if (div.hasAttribute('data-url')) {
       this.getVid(div.getAttribute('data-url'));
     } else if (div.nodeName === 'A' && div.className === 'btn_play') {
@@ -82,7 +82,7 @@ var monkey = {
     } else if (div.hasAttribute('vurl')) {
       this.getVid(div.getAttribute('vurl'));
     } else {
-      error('Failed to get vid!', div);
+      console.error('Failed to get vid!', div);
       return;
     }
   },
@@ -91,14 +91,14 @@ var monkey = {
    * Get Video vid and hdVid.
    */
   getVid: function(url) {
-    log('getVid() --', url);
+    console.log('getVid() --', url);
     var that = this;
 
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log(response);
+        console.log(response);
         var reg = /vid:['"](\d{5,})['"]/,
             txt = response.responseText,
             match = reg.exec(txt),
@@ -132,7 +132,7 @@ var monkey = {
    * Calcuate video information url
    */
   getURLByVid: function(vid) {
-    log('getURLByVid() -- ', vid);
+    console.log('getURLByVid() -- ', vid);
     var randInt = parseInt(Math.random() * 1000),
         time = parseInt(Date.now() / 1000) >> 6,
         key = '';
@@ -144,9 +144,9 @@ var monkey = {
       randInt,
       ].join('');
     key = md5(key);
-    log('key: ', key);
+    console.log('key: ', key);
     key = key.substring(0, 16) + time;
-    log('key: ', key);
+    console.log('key: ', key);
 
     return [
       'http://v.iask.com/v_play.php?',
@@ -169,8 +169,8 @@ var monkey = {
    * Get video info specified by vid.
    */
   getVideoByVid: function(container) {
-    log('getVideoByVid() --', container);
-    log(this);
+    console.log('getVideoByVid() --', container);
+    console.log(this);
     var that = this;
     container.url = this.getURLByVid(container.vid),
 
@@ -178,7 +178,7 @@ var monkey = {
       method: 'GET',
       url: container.url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var reg = /<url>.{9}([^\]]+)/g,
             txt = response.responseText,
             match = reg.exec(txt);
@@ -197,8 +197,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           formats: [],
           links: [],
@@ -213,7 +213,7 @@ var monkey = {
       videos.formats.push(this.hdVideo.format);
       videos.links.push(this.hdVideo.links);
     }
-    log('videos: ', videos);
+    console.log('videos: ', videos);
     multiFiles.run(videos);
   },
 }

@@ -3,7 +3,7 @@
 // @description Play Videos with html5 on funshion.com
 // @include     http://www.funshion.com/vplay/*
 // @include     http://funshion.com/vplay/*
-// @version     2.2
+// @version     2.3
 // @license     GPLv3
 // @author      LiuLang
 // @email       gsushzhsosgsu@gmail.com
@@ -12,10 +12,6 @@
 // @grant       GM_xmlhttpRequest
 // @run-at      document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 
 
 /**
@@ -212,10 +208,10 @@ var multiFiles = {
   videos: null,
 
   run: function(videos) {
-    log('multiFiles.run() --');
+    console.log('multiFiles.run() --');
     this.videos = videos;
     if ((!videos.formats) || (videos.formats.length === 0)) {
-      error('Error: no video formats specified!');
+      console.error('Error: no video formats specified!');
       return;
     }
     this.removeOldPanels();
@@ -223,8 +219,9 @@ var multiFiles = {
   },
 
   removeOldPanels: function() {
-    log('removeOldPanels() --');
-    var panels = uw.document.querySelectorAll('.monkey-videos-panel'),
+    console.log('removeOldPanels() --');
+    var panels = unsafeWindow.document.querySelectorAll(
+          '.monkey-videos-panel'),
         panel,
         i;
 
@@ -237,8 +234,8 @@ var multiFiles = {
    * Create the control panel.
    */
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
         div,
         form,
         label,
@@ -294,27 +291,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlistWrap = uw.document.createElement('div');
+    playlistWrap = unsafeWindow.document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = uw.document.createElement('form');
+    form = unsafeWindow.document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = uw.document.createElement('label');
+      label = unsafeWindow.document.createElement('label');
       form.appendChild(label);
-      input = uw.document.createElement('input');
+      input = unsafeWindow.document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = uw.document.createElement('span');
+      span = unsafeWindow.document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -327,24 +324,25 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = uw.document.createElement('a');
+    a = unsafeWindow.document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
     a.href = '';
     form.appendChild(a);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector('.monkey-videos-panel .playlist-wrap');
+      var wrap = unsafeWindow.document.querySelector(
+            '.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -366,19 +364,19 @@ var multiFiles = {
   },
 
   loadDefault: function() {
-    log('loadDefault() --');
+    console.log('loadDefault() --');
     // Load default type of playlist.
     var currPos = GM_getValue('format', 0),
         formats = this.videos.formats,
         currPlaylist;
 
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
     if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
 
-    currPlaylist = uw.document.querySelectorAll(
+    currPlaylist = unsafeWindow.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -393,8 +391,9 @@ var multiFiles = {
    * Empty playlist first, and add new links of specific video format.
    */
   modifyList: function(pos) {
-    log('modifyList(), pos = ', pos);
-    var playlist = uw.document.querySelector('.monkey-videos-panel .playlist'),
+    console.log('modifyList(), pos = ', pos);
+    var playlist = unsafeWindow.document.querySelector(
+          '.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -403,7 +402,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -419,7 +418,8 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    uw.document.querySelector('.playlist-m3u').href = this.plsDataScheme();
+    unsafeWindow.document.querySelector(
+      '.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -430,7 +430,7 @@ var multiFiles = {
    *  - Data scheme containting playlist.
    */
   plsDataScheme: function() {
-    log('plsDataSchema() --');
+    console.log('plsDataSchema() --');
     return 'data:audio/x-m3u;charset=UTF-8;base64,' +
       base64.encode(this.generatePls());
   },
@@ -441,9 +441,10 @@ var multiFiles = {
    * - playlist content.
    */
   generatePls: function() {
-    log('generatePls() --');
+    console.log('generatePls() --');
     var output = [],
-        links = uw.document.querySelectorAll('.monkey-videos-panel .playlist-item'),
+        links = unsafeWindow.document.querySelectorAll(
+            '.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -461,9 +462,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -488,7 +489,7 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.router();
   },
   
@@ -496,7 +497,7 @@ var monkey = {
    * router control
    */
   router: function() {
-    var url = uw.location.href;
+    var url = unsafeWindow.location.href;
 
     if (url.search('subject/play/') > 1 ||
         url.search('/vplay/') > 1 ) {
@@ -506,7 +507,7 @@ var monkey = {
     } else if (url.search('uvideo/play/') > 1) {
       this.getUGCID();
     } else {
-      error('Error: current page is not supported!');
+      console.error('Error: current page is not supported!');
     }
   },
 
@@ -515,39 +516,39 @@ var monkey = {
    * For uvideo/play/'.
    */
   getUGCID: function() {
-    log('getUGCID() --');
+    console.log('getUGCID() --');
     var urlReg = /uvideo\/play\/(\d+)$/,
-        urlMatch = urlReg.exec(uw.location.href);
+        urlMatch = urlReg.exec(unsafeWindow.location.href);
 
-    log('urlMatch: ', urlMatch);
+    console.log('urlMatch: ', urlMatch);
     if (urlMatch.length === 2) {
       this.mediaid = urlMatch[1];
       this.getUGCVideoInfo();
     } else {
-      error('Failed to parse video ID!');
+      console.error('Failed to parse video ID!');
     }
   },
 
   getUGCVideoInfo: function() {
-    log('getUGCVideoInfo() --');
+    console.log('getUGCVideoInfo() --');
     var url = 'http://api.funshion.com/ajax/get_media_data/ugc/' + this.mediaid,
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.json = JSON.parse(response.responseText);
-        log('json: ', that.json);
+        console.log('json: ', that.json);
         that.decodeUGCVideoInfo();
       },
     });
   },
 
   decodeUGCVideoInfo: function() {
-    log('decodeUGCVideoInfo() --');
+    console.log('decodeUGCVideoInfo() --');
     var url = [
           'http://jobsfe.funshion.com/query/v1/mp4/',
           this.json.data.hashid,
@@ -556,28 +557,28 @@ var monkey = {
         ].join(''),
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.appendUGCVideo(JSON.parse(response.responseText));
       },
     });
   },
 
   appendUGCVideo: function(videoJson) {
-    log('appendUGCVideo() --');
-    log('this: ', this);
-    log('videoJson:', videoJson);
+    console.log('appendUGCVideo() --');
+    console.log('this: ', this);
+    console.log('videoJson:', videoJson);
     var fileformat = this.fileformats[videoJson.playlist[0].bits];
 
     info = {
       title: this.json.data.name_cn,
       href: videoJson.playlist[0].urls[0],
     };
-    log('info: ', info);
+    console.log('info: ', info);
 
     this._appendVideo(info);
   },
@@ -588,15 +589,15 @@ var monkey = {
    * For subject/play/'.
    */
   getVid: function() {
-    log('getVid() --');
-    var url = uw.location.href,
+    console.log('getVid() --');
+    var url = unsafeWindow.location.href,
         urlReg = /subject\/play\/(\d+)\/(\d+)$/,
         urlMatch = urlReg.exec(url),
         urlReg2 = /\/vplay\/m-(\d+)/,
         urlMatch2 = urlReg2.exec(url);
 
-    log('urlMatch: ', urlMatch);
-    log('urlMatch2: ', urlMatch2);
+    console.log('urlMatch: ', urlMatch);
+    console.log('urlMatch2: ', urlMatch2);
     if (urlMatch && urlMatch.length === 3) {
       this.mediaid = urlMatch[1];
       this.number = parseInt(urlMatch[2]);
@@ -604,7 +605,7 @@ var monkey = {
       this.mediaid = urlMatch2[1];
       this.number = 1;
     } else {
-      error('Failed to parse video ID!');
+      console.error('Failed to parse video ID!');
       return;
     }
     this.getVideoInfo();
@@ -614,7 +615,7 @@ var monkey = {
    * Download a json file containing video info
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = [
           'http://api.funshion.com/ajax/get_web_fsp/',
           this.mediaid,
@@ -622,15 +623,15 @@ var monkey = {
         ].join(''),
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var json = JSON.parse(response.responseText),
             format;
-        log('json: ', json);
+        console.log('json: ', json);
         that.title = json.data.name_cn || that.getTitle();
         if ((! json.data.fsps) || (! json.data.fsps.mult) ||
             (json.data.fsps.mult.length === 0) ||
@@ -651,8 +652,8 @@ var monkey = {
    * Get title from document.tiel
    */
   getTitle: function() {
-    log('getTitle() --');
-    var title = uw.document.title,
+    console.log('getTitle() --');
+    var title = unsafeWindow.document.title,
         online = title.search(' - 在线观看');
 
     if (online > -1) {
@@ -666,7 +667,7 @@ var monkey = {
    * Get Video source link.
    */
   getVideoLink: function(format) {
-    log('getVideoLink() --');
+    console.log('getVideoLink() --');
     var url = [
       'http://jobsfe.funshion.com/query/v1/mp4/',
       this.mediaid,
@@ -675,14 +676,14 @@ var monkey = {
       ].join(''),
       that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var json = JSON.parse(response.responseText);
-        log('json: ', json);
+        console.log('json: ', json);
         that.videos[format] = json.playlist[0].urls[0];
         that.jobs = that.jobs - 1;
         if (that.jobs === 0) {
@@ -693,8 +694,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],

@@ -21,7 +21,7 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.router();
   },
 
@@ -29,8 +29,8 @@ var monkey = {
    * Page router control
    */
   router: function() {
-    log('router() --');
-    var scripts = uw.document.querySelectorAll('script'),
+    console.log('router() --');
+    var scripts = unsafeWindow.document.querySelectorAll('script'),
         script,
         titleReg = /kw:\s*['"]([^'"]+)['"]/,
         titleMatch,
@@ -43,7 +43,7 @@ var monkey = {
     for (i = 0; script = scripts[i]; i += 1) {
       if (this.vcode.length === 0) {
         vcodeMatch = vcodeReg.exec(script.innerHTML);
-        log('vcodeMatch:', vcodeMatch);
+        console.log('vcodeMatch:', vcodeMatch);
         if (vcodeMatch && vcodeMatch.length > 1) {
           this.vcode = vcodeMatch[1];
           this.redirectToYouku();
@@ -53,7 +53,7 @@ var monkey = {
 
       if (this.title.length === 0) {
         titleMatch = titleReg.exec(script.innerHTML);
-        log('titleMatch:', titleMatch);
+        console.log('titleMatch:', titleMatch);
         if (titleMatch) {
           this.title = titleMatch[1];
         }
@@ -61,7 +61,7 @@ var monkey = {
 
       if (this.iid.length === 0) {
         iidMatch = iidReg.exec(script.innerHTML);
-        log('iidMatch:', iidMatch);
+        console.log('iidMatch:', iidMatch);
         if (iidMatch) {
           this.iid = iidMatch[1];
           this.getByIid();
@@ -76,8 +76,8 @@ var monkey = {
    * Get video info by vid
    */
   getByIid: function() {
-    log('getByIid()');
-    log(this);
+    console.log('getByIid()');
+    console.log(this);
 
     var that = this,
         url = 'http://www.tudou.com/outplay/goto/getItemSegs.action?iid=' +
@@ -87,7 +87,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('respone:', response);
+        console.log('respone:', response);
         that.segs = JSON.parse(response.responseText);
         that.getAllVideos();
       },
@@ -95,16 +95,16 @@ var monkey = {
   },
 
 //  getPlayList: function() {
-//    log('getPlayList()');
-//    log(this);
+//    console.log('getPlayList()');
+//    console.log(this);
 //  },
 
   /**
    * Get all video links
    */
   getAllVideos: function() {
-    log('getAllVideos() --');
-    log(this);
+    console.log('getAllVideos() --');
+    console.log(this);
     var key,
         videos,
         video,
@@ -113,7 +113,7 @@ var monkey = {
     for (key in this.segs) {
       videos = this.segs[key];
       for (i = 0; video = videos[i]; i += 1) {
-        log(key, video);
+        console.log(key, video);
         this.links[key] = [];
         this.totalJobs += 1;
         this.getVideoUrl(key, video['k'], video['no']);
@@ -126,7 +126,7 @@ var monkey = {
    * Get video url
    */
   getVideoUrl: function(key, k, num) {
-    log('getVideoUrl() --');
+    console.log('getVideoUrl() --');
     var url = 'http://ct.v2.tudou.com/f?id=' + k,
         that = this;
 
@@ -134,7 +134,7 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) { 
-        log('response:', response);
+        console.log('response:', response);
         var reg = /<f[^>]+>([^<]+)</,
             match = reg.exec(response.responseText);
 
@@ -162,8 +162,8 @@ var monkey = {
    * Construct UI widgets
    */
   createUI: function() {
-    log('createUI()');
-    log(this);
+    console.log('createUI()');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -177,7 +177,7 @@ var monkey = {
       videos.formats.push(this.formats[type]);
     }
 
-    log('videos: ', videos);
+    console.log('videos: ', videos);
     multiFiles.run(videos);
   },
 
@@ -189,11 +189,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
-      xmlDoc = (new uw.DOMParser()).parseFromString(str, 'text/xml');
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
+      xmlDoc = (new unsafeWindow.DOMParser()).parseFromString(str, 'text/xml');
     } else {
-      error('parseXML() error: not support current web browser!');
+      console.error('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;
@@ -203,7 +203,7 @@ var monkey = {
    * Redirect window location.
    */
   redirect: function(url) {
-    uw.location = url;
+    unsafeWindow.location = url;
   },
 };
 

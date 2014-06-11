@@ -23,8 +23,8 @@ var monkey = {
   },
 
   run: function() {
-    log('run() -- ');
-    var url = uw.location.href;
+    console.log('run() -- ');
+    var url = unsafeWindow.location.href;
 
     if (url.search('yuanxian.letv') !== -1) {
       // movie info page.
@@ -33,7 +33,7 @@ var monkey = {
                url.search('ptv/vplay/' > 1)) {
       this.getVid();
     } else {
-      error('I do not know what to do!');
+      console.error('I do not know what to do!');
     }
   },
 
@@ -41,10 +41,10 @@ var monkey = {
    * Show original video link in video index page.
    */
   addLinkToYuanxian: function() {
-    log('addLinkToYuanxian() --');
-    var pid = uw.__INFO__.video.pid,
+    console.log('addLinkToYuanxian() --');
+    var pid = unsafeWindow.__INFO__.video.pid,
         url = 'http://www.letv.com/ptv/pplay/' + pid + '.html',
-        titleLink = uw.document.querySelector('dl.w424 dt a');
+        titleLink = unsafeWindow.document.querySelector('dl.w424 dt a');
 
     titleLink.href = url;
   },
@@ -53,25 +53,25 @@ var monkey = {
    * Get video id
    */
   getVid: function() {
-    log('getVid() --')
-    var input = uw.document.querySelector('.add input'),
+    console.log('getVid() --')
+    var input = unsafeWindow.document.querySelector('.add input'),
         vidReg = /\/(\d+)\.html$/,
         vidMatch;
 
-    log(input);
+    console.log(input);
     if (input && input.hasAttribute('value')) {
       vidMatch = vidReg.exec(input.getAttribute('value'));
     } else {
-      error('Failed to get input element');
+      console.error('Failed to get input element');
       return;
     }
 
-    log('vidMatch: ', vidMatch);
+    console.log('vidMatch: ', vidMatch);
     if (vidMatch && vidMatch.length === 2) {
       this.vid = vidMatch[1];
       this.getTimestamp();
     } else {
-      error('Failed to get video ID!');
+      console.error('Failed to get video ID!');
       return;
     }
   },
@@ -80,17 +80,17 @@ var monkey = {
    * Get timestamp from server
    */
   getTimestamp: function() {
-    log('getTimestamp() --');
+    console.log('getTimestamp() --');
     var tn = Math.random(),
         url = 'http://api.letv.com/time?tn=' + tn.toString(),
         that = this;
 
-    log('url:', url);
+    console.log('url:', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         var obj = JSON.parse(response.responseText);
         that.stime = parseInt(obj.stime);
         that.tkey = that.getKey(that.stime);
@@ -104,7 +104,7 @@ var monkey = {
    * @param integer t, server time
    */
   getKey: function(t) {
-    log('getKey() --', t);
+    console.log('getKey() --', t);
     for(var e = 0, s = 0; s < 8; s += 1){
             e = 1 & t;
             t >>= 1;
@@ -118,7 +118,7 @@ var monkey = {
    * Get video info from an xml file
    */
   getVideoXML: function() {
-    log('getVideoXML() --');
+    console.log('getVideoXML() --');
     var url = [
           'http://api.letv.com/mms/out/video/play?',
           'id=', this.vid,
@@ -128,12 +128,12 @@ var monkey = {
           ].join(''),
         that = this;
 
-    log('videoXML url: ', url);
+    console.log('videoXML url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var txt = response.responseText,
             //xml = that.parseXML(txt);
             jsonReg = /<playurl><!\[CDATA\[([\s\S]+)\]\]><\/playurl/,
@@ -141,15 +141,15 @@ var monkey = {
             jsonTxt = '',
             json = '';
 
-        log('match: ', match);
+        console.log('match: ', match);
         if (match && match.length == 2) {
           jsonTxt = match[1];
           json = JSON.parse(jsonTxt);
-          log('json: ', json);
+          console.log('json: ', json);
           that.title = json.title;
           that.getVideoUrl(json);
         } else {
-          error('Failed to get video json');
+          console.error('Failed to get video json');
         }
       },
     });
@@ -159,7 +159,7 @@ var monkey = {
    * Parse video url
    */
   getVideoUrl: function(json) {
-    log('getVideoUrl() --');
+    console.log('getVideoUrl() --');
     var key,
         url;
 
@@ -176,8 +176,8 @@ var monkey = {
    * construct ui widgets.
    */
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -209,11 +209,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;

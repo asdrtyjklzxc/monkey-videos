@@ -2,7 +2,7 @@
 // @name         justingHTML5
 // @description  Get mp3 source link in justing.com
 // @include      http://www.justing.com.cn/page/*
-// @version      1.0
+// @version      1.1
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -11,11 +11,6 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
-
 
 var singleFile = {
   // videos is an object containing video info.
@@ -28,17 +23,17 @@ var singleFile = {
   videos: null,
 
   run: function(videos) {
-    log('run() -- ');
+    console.log('run() -- ');
     this.videos = videos;
     this.createPanel();
     this.createPlaylist();
   },
 
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
-        playlist = uw.document.createElement('div'),
-        playlistToggle = uw.document.createElement('div');
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
+        playlist = unsafeWindow.document.createElement('div'),
+        playlistToggle = unsafeWindow.document.createElement('div');
 
     this.addStyle([
       '.monkey-videos-panel {',
@@ -83,19 +78,19 @@ var singleFile = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlist= uw.document.createElement('div');
+    playlist= unsafeWindow.document.createElement('div');
     playlist.className = 'playlist-wrap';
     panel.appendChild(playlist);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector(
+      var wrap = unsafeWindow.document.querySelector(
             '.monkey-videos-panel .playlist-wrap');
 
       if (wrap.style.display === 'none') {
@@ -117,15 +112,15 @@ var singleFile = {
   },
 
   createPlaylist: function() {
-    log('createPlayList() -- ');
-    var playlist = uw.document.querySelector(
+    console.log('createPlayList() -- ');
+    var playlist = unsafeWindow.document.querySelector(
           '.monkey-videos-panel .playlist-wrap'),
         a,
         i;
 
     if (!this.videos.ok) {
-      error(this.videos.msg);
-      a = uw.document.createElement('span');
+      console.error(this.videos.msg);
+      a = unsafeWindow.document.createElement('span');
       a.title = this.videos.msg;
       a.innerHTML = this.videos.msg;
       playlist.appendChild(a);
@@ -133,7 +128,7 @@ var singleFile = {
     }
 
     for (i = 0; i < this.videos.links.length; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       a.className = 'playlist-item';
       a.innerHTML = this.videos.title + '(' + this.videos.formats[i] + ')';
       a.title = a.innerHTML;
@@ -148,10 +143,10 @@ var singleFile = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    log('addStyle() --');
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    console.log('addStyle() --');
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -163,13 +158,13 @@ var monkey = {
   link: '',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.createUI();
   },
 
   getTitle: function() {
-    var titleElem = uw.document.querySelector('div#title');
+    var titleElem = unsafeWindow.document.querySelector('div#title');
     if (titleElem) {
       this.title = titleElem.innerHTML;
       this.link = encodeURI([
@@ -180,8 +175,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           links: [],

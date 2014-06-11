@@ -5,7 +5,7 @@ var monkey = {
   oriurl: '',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.getCid();
   },
@@ -14,8 +14,8 @@ var monkey = {
    * Get video title
    */
   getTitle: function() {
-    log('getTitle()');
-    var metas = uw.document.querySelectorAll('meta'),
+    console.log('getTitle()');
+    var metas = unsafeWindow.document.querySelectorAll('meta'),
         meta,
         i;
 
@@ -26,16 +26,16 @@ var monkey = {
         return;
       }
     }
-    this.title = uw.document.title;
+    this.title = unsafeWindow.document.title;
   },
 
   /**
    * 获取 content ID.
    */
   getCid: function() {
-    log('getCid()');
-    var iframe = uw.document.querySelector('iframe'),
-        flashvar = uw.document.querySelector('div#bofqi embed'),
+    console.log('getCid()');
+    var iframe = unsafeWindow.document.querySelector('iframe'),
+        flashvar = unsafeWindow.document.querySelector('div#bofqi embed'),
         reg = /cid=(\d+)&aid=(\d+)/,
         match;
 
@@ -43,15 +43,15 @@ var monkey = {
     if (iframe) {
       match = reg.exec(iframe.src);
     } else if (flashvar) {
-      log(flashvar.getAttribute('flashvars'));
+      console.log(flashvar.getAttribute('flashvars'));
       match = reg.exec(flashvar.getAttribute('flashvars'));
     }
-    log('match:', match);
+    console.log('match:', match);
     if (match && match.length === 3) {
       this.cid = match[1];
       this.getVideos();
     } else {
-      error('Failed to get cid!');
+      console.error('Failed to get cid!');
     }
   },
 
@@ -59,13 +59,13 @@ var monkey = {
    * Get original video links from interface.bilibili.cn
    */
   getVideos: function() {
-    log('getVideos() -- ');
+    console.log('getVideos() -- ');
     var url = 'http://interface.bilibili.cn/player?cid=' + this.cid,
         url = 'http://interface.bilibili.cn/playurl?cid=' + this.cid,
         that = this;
 
-    log('url:', url);
-    log('url2:', url2);
+    console.log('url:', url);
+    console.log('url2:', url2);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
@@ -83,8 +83,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: '视频的原始地址',
           formats: [''],

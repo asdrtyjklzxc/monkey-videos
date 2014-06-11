@@ -20,7 +20,7 @@ var monkey = {
   },
 
   run: function() {
-    log('run()');
+    console.log('run()');
     this.getVid();
   },
 
@@ -28,8 +28,9 @@ var monkey = {
    * Get video id
    */
   getVid: function() {
-    log('getVid() -- ');
-    var playerCode = uw.document.querySelectorAll('ul#player_code li');
+    console.log('getVid() -- ');
+    var playerCode = unsafeWindow.document.querySelectorAll(
+          'ul#player_code li');
 
     if (playerCode && playerCode.length === 2) {
       this.vids = playerCode[0].firstChild.nodeValue.split('**');
@@ -46,22 +47,24 @@ var monkey = {
    * Get video title
    */
   getTitle: function() {
-    log('getTitle()');
+    console.log('getTitle()');
     var params;
 
-    if (this.vids.length === 1 || uw.location.hash === '') {
+    if (this.vids.length === 1 || unsafeWindow.location.hash === '') {
       this.pos = 0;
-      this.url = uw.location.href;
+      this.url = unsafeWindow.location.href;
     } else {
       // hash starts with 1, not 0
-      this.pos = parseInt(uw.location.hash.replace('#', '')) - 1;
-      this.url = uw.location.href.replace(uw.location.hash, '');
+      this.pos = parseInt(unsafeWindow.location.hash.replace('#', '')) - 1;
+      this.url = unsafeWindow.location.href.replace(
+          unsafeWindow.location.hash, '');
     }
     params = this.getQueryVariable(this.vids[this.pos].split('|')[0]);
     this.vid = params.vid;
     this.type = params.type;
     if (this.vids.length === 1) {
-      this.title = uw.document.title.substr(0, uw.document.title.length - 16);
+      this.title = unsafeWindow.document.title.substr(
+          0, unsafeWindow.document.title.length - 16);
     } else {
       this.title = this.vids[this.pos].split('|')[1];
     }
@@ -72,7 +75,7 @@ var monkey = {
    * Get original url
    */
   getUrl: function(type) {
-    log('getUrl()');
+    console.log('getUrl()');
     var url,
         params,
         that = this;
@@ -93,12 +96,12 @@ var monkey = {
       '&r=', this.timestamp
       ].join('');
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log(response);
+        console.log(response);
         var xml = that.parseXML(response.responseText),
             durls = xml.querySelectorAll('durl'),
             durl,
@@ -122,7 +125,7 @@ var monkey = {
    * @return [key, timestamp]
    */
   calcKey: function() {
-    log('calcKey () --');
+    console.log('calcKey () --');
     var time = new Date().getTime(),
         this.timestamp = Math.round(time / 1000);
 
@@ -137,7 +140,7 @@ var monkey = {
    * Redirect to original url
    */
   redirectTo: function() {
-    log('redirectTo() --');
+    console.log('redirectTo() --');
     var urls = {
           tudou: function(vid) {
             return 'http://www.tudou.com/programs/view/' + vid + '/';
@@ -157,8 +160,8 @@ var monkey = {
    * Construct ui widgets
    */
   createUI: function() {
-    log('createUI() -- ');
-    log(this);
+    console.log('createUI() -- ');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -182,11 +185,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;

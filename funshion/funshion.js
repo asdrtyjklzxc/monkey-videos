@@ -17,7 +17,7 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.router();
   },
   
@@ -25,7 +25,7 @@ var monkey = {
    * router control
    */
   router: function() {
-    var url = uw.location.href;
+    var url = unsafeWindow.location.href;
 
     if (url.search('subject/play/') > 1 ||
         url.search('/vplay/') > 1 ) {
@@ -35,7 +35,7 @@ var monkey = {
     } else if (url.search('uvideo/play/') > 1) {
       this.getUGCID();
     } else {
-      error('Error: current page is not supported!');
+      console.error('Error: current page is not supported!');
     }
   },
 
@@ -44,39 +44,39 @@ var monkey = {
    * For uvideo/play/'.
    */
   getUGCID: function() {
-    log('getUGCID() --');
+    console.log('getUGCID() --');
     var urlReg = /uvideo\/play\/(\d+)$/,
-        urlMatch = urlReg.exec(uw.location.href);
+        urlMatch = urlReg.exec(unsafeWindow.location.href);
 
-    log('urlMatch: ', urlMatch);
+    console.log('urlMatch: ', urlMatch);
     if (urlMatch.length === 2) {
       this.mediaid = urlMatch[1];
       this.getUGCVideoInfo();
     } else {
-      error('Failed to parse video ID!');
+      console.error('Failed to parse video ID!');
     }
   },
 
   getUGCVideoInfo: function() {
-    log('getUGCVideoInfo() --');
+    console.log('getUGCVideoInfo() --');
     var url = 'http://api.funshion.com/ajax/get_media_data/ugc/' + this.mediaid,
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.json = JSON.parse(response.responseText);
-        log('json: ', that.json);
+        console.log('json: ', that.json);
         that.decodeUGCVideoInfo();
       },
     });
   },
 
   decodeUGCVideoInfo: function() {
-    log('decodeUGCVideoInfo() --');
+    console.log('decodeUGCVideoInfo() --');
     var url = [
           'http://jobsfe.funshion.com/query/v1/mp4/',
           this.json.data.hashid,
@@ -85,28 +85,28 @@ var monkey = {
         ].join(''),
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         that.appendUGCVideo(JSON.parse(response.responseText));
       },
     });
   },
 
   appendUGCVideo: function(videoJson) {
-    log('appendUGCVideo() --');
-    log('this: ', this);
-    log('videoJson:', videoJson);
+    console.log('appendUGCVideo() --');
+    console.log('this: ', this);
+    console.log('videoJson:', videoJson);
     var fileformat = this.fileformats[videoJson.playlist[0].bits];
 
     info = {
       title: this.json.data.name_cn,
       href: videoJson.playlist[0].urls[0],
     };
-    log('info: ', info);
+    console.log('info: ', info);
 
     this._appendVideo(info);
   },
@@ -117,15 +117,15 @@ var monkey = {
    * For subject/play/'.
    */
   getVid: function() {
-    log('getVid() --');
-    var url = uw.location.href,
+    console.log('getVid() --');
+    var url = unsafeWindow.location.href,
         urlReg = /subject\/play\/(\d+)\/(\d+)$/,
         urlMatch = urlReg.exec(url),
         urlReg2 = /\/vplay\/m-(\d+)/,
         urlMatch2 = urlReg2.exec(url);
 
-    log('urlMatch: ', urlMatch);
-    log('urlMatch2: ', urlMatch2);
+    console.log('urlMatch: ', urlMatch);
+    console.log('urlMatch2: ', urlMatch2);
     if (urlMatch && urlMatch.length === 3) {
       this.mediaid = urlMatch[1];
       this.number = parseInt(urlMatch[2]);
@@ -133,7 +133,7 @@ var monkey = {
       this.mediaid = urlMatch2[1];
       this.number = 1;
     } else {
-      error('Failed to parse video ID!');
+      console.error('Failed to parse video ID!');
       return;
     }
     this.getVideoInfo();
@@ -143,7 +143,7 @@ var monkey = {
    * Download a json file containing video info
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = [
           'http://api.funshion.com/ajax/get_web_fsp/',
           this.mediaid,
@@ -151,15 +151,15 @@ var monkey = {
         ].join(''),
         that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var json = JSON.parse(response.responseText),
             format;
-        log('json: ', json);
+        console.log('json: ', json);
         that.title = json.data.name_cn || that.getTitle();
         if ((! json.data.fsps) || (! json.data.fsps.mult) ||
             (json.data.fsps.mult.length === 0) ||
@@ -180,8 +180,8 @@ var monkey = {
    * Get title from document.tiel
    */
   getTitle: function() {
-    log('getTitle() --');
-    var title = uw.document.title,
+    console.log('getTitle() --');
+    var title = unsafeWindow.document.title,
         online = title.search(' - 在线观看');
 
     if (online > -1) {
@@ -195,7 +195,7 @@ var monkey = {
    * Get Video source link.
    */
   getVideoLink: function(format) {
-    log('getVideoLink() --');
+    console.log('getVideoLink() --');
     var url = [
       'http://jobsfe.funshion.com/query/v1/mp4/',
       this.mediaid,
@@ -204,14 +204,14 @@ var monkey = {
       ].join(''),
       that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var json = JSON.parse(response.responseText);
-        log('json: ', json);
+        console.log('json: ', json);
         that.videos[format] = json.playlist[0].urls[0];
         that.jobs = that.jobs - 1;
         if (that.jobs === 0) {
@@ -222,8 +222,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],

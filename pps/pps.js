@@ -16,20 +16,20 @@ var monkey = {
   fromIqiyi: false,
 
   run: function() {
-    log('run()');
-    if (uw.location.href.search('pps.tv/play_') !== -1) {
+    console.log('run()');
+    if (unsafeWindow.location.href.search('pps.tv/play_') !== -1) {
       this.getId();
     } else {
-      error('Failed to get vid!');
+      console.error('Failed to get vid!');
     }
   },
 
   getId: function() {
-    log('getId() -- ');
+    console.log('getId() -- ');
     var vidReg = /play_([\s\S]+)\.html/,
-        vidMatch = vidReg.exec(uw.document.location.href),
+        vidMatch = vidReg.exec(unsafeWindow.document.location.href),
         titleReg = /([\s\S]+)-在线观看/,
-        titleMatch = titleReg.exec(uw.document.title);
+        titleMatch = titleReg.exec(unsafeWindow.document.title);
     if (vidMatch) {
       this.vid = vidMatch[1];
     }
@@ -44,7 +44,7 @@ var monkey = {
   },
 
   getUrl: function(type) {
-    log('getUrl()');
+    console.log('getUrl()');
     var url = [
       'http://dp.ppstv.com/get_play_url_cdn.php?sid=',
       this.vid,
@@ -53,12 +53,12 @@ var monkey = {
       ].join(''),
       that = this;
 
-    log('url: ', url);
+    console.log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log(response);
+        console.log(response);
         var txt = response.responseText;
 
         if (txt.search('.pfv?') > 0) {
@@ -73,8 +73,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],

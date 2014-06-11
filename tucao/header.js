@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         tucaoHTML5
-// @version      2.2
+// @version      2.3
 // @include      http://www.tucao.cc/play/*
 // @description  Get video links in tucao.cc
 // @author       LiuLang
@@ -11,8 +11,4 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 

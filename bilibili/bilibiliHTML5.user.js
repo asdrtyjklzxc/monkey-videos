@@ -2,7 +2,7 @@
 // @name         bilibiliHTML5
 // @description  Get video link on bilibili.tv
 // @include      http://www.bilibili.tv/video/*
-// @version      2.3
+// @version      2.4
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3
@@ -11,10 +11,6 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 
 
 var singleFile = {
@@ -28,17 +24,17 @@ var singleFile = {
   videos: null,
 
   run: function(videos) {
-    log('run() -- ');
+    console.log('run() -- ');
     this.videos = videos;
     this.createPanel();
     this.createPlaylist();
   },
 
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
-        playlist = uw.document.createElement('div'),
-        playlistToggle = uw.document.createElement('div');
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
+        playlist = unsafeWindow.document.createElement('div'),
+        playlistToggle = unsafeWindow.document.createElement('div');
 
     this.addStyle([
       '.monkey-videos-panel {',
@@ -83,19 +79,19 @@ var singleFile = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlist= uw.document.createElement('div');
+    playlist= unsafeWindow.document.createElement('div');
     playlist.className = 'playlist-wrap';
     panel.appendChild(playlist);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector(
+      var wrap = unsafeWindow.document.querySelector(
             '.monkey-videos-panel .playlist-wrap');
 
       if (wrap.style.display === 'none') {
@@ -117,15 +113,15 @@ var singleFile = {
   },
 
   createPlaylist: function() {
-    log('createPlayList() -- ');
-    var playlist = uw.document.querySelector(
+    console.log('createPlayList() -- ');
+    var playlist = unsafeWindow.document.querySelector(
           '.monkey-videos-panel .playlist-wrap'),
         a,
         i;
 
     if (!this.videos.ok) {
-      error(this.videos.msg);
-      a = uw.document.createElement('span');
+      console.error(this.videos.msg);
+      a = unsafeWindow.document.createElement('span');
       a.title = this.videos.msg;
       a.innerHTML = this.videos.msg;
       playlist.appendChild(a);
@@ -133,7 +129,7 @@ var singleFile = {
     }
 
     for (i = 0; i < this.videos.links.length; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       a.className = 'playlist-item';
       a.innerHTML = this.videos.title + '(' + this.videos.formats[i] + ')';
       a.title = a.innerHTML;
@@ -148,10 +144,10 @@ var singleFile = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    log('addStyle() --');
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    console.log('addStyle() --');
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -164,7 +160,7 @@ var monkey = {
   oriurl: '',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.getCid();
   },
@@ -173,8 +169,8 @@ var monkey = {
    * Get video title
    */
   getTitle: function() {
-    log('getTitle()');
-    var metas = uw.document.querySelectorAll('meta'),
+    console.log('getTitle()');
+    var metas = unsafeWindow.document.querySelectorAll('meta'),
         meta,
         i;
 
@@ -185,16 +181,16 @@ var monkey = {
         return;
       }
     }
-    this.title = uw.document.title;
+    this.title = unsafeWindow.document.title;
   },
 
   /**
    * 获取 content ID.
    */
   getCid: function() {
-    log('getCid()');
-    var iframe = uw.document.querySelector('iframe'),
-        flashvar = uw.document.querySelector('div#bofqi embed'),
+    console.log('getCid()');
+    var iframe = unsafeWindow.document.querySelector('iframe'),
+        flashvar = unsafeWindow.document.querySelector('div#bofqi embed'),
         reg = /cid=(\d+)&aid=(\d+)/,
         match;
 
@@ -202,15 +198,15 @@ var monkey = {
     if (iframe) {
       match = reg.exec(iframe.src);
     } else if (flashvar) {
-      log(flashvar.getAttribute('flashvars'));
+      console.log(flashvar.getAttribute('flashvars'));
       match = reg.exec(flashvar.getAttribute('flashvars'));
     }
-    log('match:', match);
+    console.log('match:', match);
     if (match && match.length === 3) {
       this.cid = match[1];
       this.getVideos();
     } else {
-      error('Failed to get cid!');
+      console.error('Failed to get cid!');
     }
   },
 
@@ -218,11 +214,13 @@ var monkey = {
    * Get original video links from interface.bilibili.cn
    */
   getVideos: function() {
-    log('getVideos() -- ');
+    console.log('getVideos() -- ');
     var url = 'http://interface.bilibili.cn/player?cid=' + this.cid,
+        url = 'http://interface.bilibili.cn/playurl?cid=' + this.cid,
         that = this;
 
-    log('url:', url);
+    console.log('url:', url);
+    console.log('url2:', url2);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
@@ -240,8 +238,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: '视频的原始地址',
           formats: [''],

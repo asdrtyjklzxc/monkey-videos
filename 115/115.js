@@ -9,13 +9,13 @@ var monkey = {
   },
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
   },
 
   getTitle: function() {
-    log('getTitle() --');
-    var scripts = uw.document.querySelectorAll('script'),
+    console.log('getTitle() --');
+    var scripts = unsafeWindow.document.querySelectorAll('script'),
         script,
         content,
         i,
@@ -23,19 +23,19 @@ var monkey = {
         url_match,
         download_url;
 
-    this.title = uw.document.title;
+    this.title = unsafeWindow.document.title;
     for (i = 0; script = scripts[i]; i += 1) {
       content = script.innerHTML;
       if (content.search('var download_url')) {
         url_match = url_reg.exec(content);
-        log(url_match);
+        console.log(url_match);
         if (url_match && url_match.length === 2) {
           download_url = url_match[0];
           eval(download_url); // will override download_url
           this.download_url = download_url;
           break;
         } else {
-          error('Failed to match download url!');
+          console.error('Failed to match download url!');
         }
       }
     }
@@ -43,13 +43,13 @@ var monkey = {
     if (this.download_url != null) {
       this.createUI();
     } else {
-      error('Will not create UI!');
+      console.error('Will not create UI!');
     }
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],

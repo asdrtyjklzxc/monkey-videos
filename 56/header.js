@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         56HTML5
 // @description  Play Videos with html5 on 56.com
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -12,8 +12,4 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 

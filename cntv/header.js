@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         cntvHTML5
-// @version      2.2
+// @version      2.3
 // @include      http://tv.cntv.cn/video/*
 // @include      http://ent.cntv.cn/*
 // @include      http://search.cctv.com/playVideo.php*
@@ -13,8 +13,3 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
-

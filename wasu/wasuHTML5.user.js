@@ -2,7 +2,7 @@
 // @name         wasuHTML5
 // @description  Get video source on wasu.cn
 // @include      http://www.wasu.cn/Play/show/id/*
-// @version      1.2
+// @version      1.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -11,10 +11,6 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 
 
 /**
@@ -211,10 +207,10 @@ var multiFiles = {
   videos: null,
 
   run: function(videos) {
-    log('multiFiles.run() --');
+    console.log('multiFiles.run() --');
     this.videos = videos;
     if ((!videos.formats) || (videos.formats.length === 0)) {
-      error('Error: no video formats specified!');
+      console.error('Error: no video formats specified!');
       return;
     }
     this.removeOldPanels();
@@ -222,8 +218,9 @@ var multiFiles = {
   },
 
   removeOldPanels: function() {
-    log('removeOldPanels() --');
-    var panels = uw.document.querySelectorAll('.monkey-videos-panel'),
+    console.log('removeOldPanels() --');
+    var panels = unsafeWindow.document.querySelectorAll(
+          '.monkey-videos-panel'),
         panel,
         i;
 
@@ -236,8 +233,8 @@ var multiFiles = {
    * Create the control panel.
    */
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
         div,
         form,
         label,
@@ -293,27 +290,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlistWrap = uw.document.createElement('div');
+    playlistWrap = unsafeWindow.document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = uw.document.createElement('form');
+    form = unsafeWindow.document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = uw.document.createElement('label');
+      label = unsafeWindow.document.createElement('label');
       form.appendChild(label);
-      input = uw.document.createElement('input');
+      input = unsafeWindow.document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = uw.document.createElement('span');
+      span = unsafeWindow.document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -326,24 +323,25 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = uw.document.createElement('a');
+    a = unsafeWindow.document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
     a.href = '';
     form.appendChild(a);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector('.monkey-videos-panel .playlist-wrap');
+      var wrap = unsafeWindow.document.querySelector(
+            '.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -365,19 +363,19 @@ var multiFiles = {
   },
 
   loadDefault: function() {
-    log('loadDefault() --');
+    console.log('loadDefault() --');
     // Load default type of playlist.
     var currPos = GM_getValue('format', 0),
         formats = this.videos.formats,
         currPlaylist;
 
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
     if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
 
-    currPlaylist = uw.document.querySelectorAll(
+    currPlaylist = unsafeWindow.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -392,8 +390,9 @@ var multiFiles = {
    * Empty playlist first, and add new links of specific video format.
    */
   modifyList: function(pos) {
-    log('modifyList(), pos = ', pos);
-    var playlist = uw.document.querySelector('.monkey-videos-panel .playlist'),
+    console.log('modifyList(), pos = ', pos);
+    var playlist = unsafeWindow.document.querySelector(
+          '.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -402,7 +401,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -418,7 +417,8 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    uw.document.querySelector('.playlist-m3u').href = this.plsDataScheme();
+    unsafeWindow.document.querySelector(
+      '.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -429,7 +429,7 @@ var multiFiles = {
    *  - Data scheme containting playlist.
    */
   plsDataScheme: function() {
-    log('plsDataSchema() --');
+    console.log('plsDataSchema() --');
     return 'data:audio/x-m3u;charset=UTF-8;base64,' +
       base64.encode(this.generatePls());
   },
@@ -440,9 +440,10 @@ var multiFiles = {
    * - playlist content.
    */
   generatePls: function() {
-    log('generatePls() --');
+    console.log('generatePls() --');
     var output = [],
-        links = uw.document.querySelectorAll('.monkey-videos-panel .playlist-item'),
+        links = unsafeWindow.document.querySelectorAll(
+            '.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -460,9 +461,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -478,7 +479,7 @@ var monkey = {
   format: '高清',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getVid();
   },
 
@@ -486,9 +487,9 @@ var monkey = {
    * Get video id
    */
   getVid: function() {
-    log('getVid() --');
+    console.log('getVid() --');
     var idReg = /show\/id\/(\d+)/,
-        idMatch = idReg.exec(uw.document.location.href);
+        idMatch = idReg.exec(unsafeWindow.document.location.href);
 
     if (idMatch && idMatch.length === 2) {
       this.id = idMatch[1];
@@ -502,7 +503,7 @@ var monkey = {
    * Get video information from an xml file.
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = 'http://www.wasu.cn/Api/getPlayInfoById/id/' + this.id + '/datatype/xml',
         that = this;
 
@@ -510,7 +511,7 @@ var monkey = {
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var xmlObj = that.parseXML(response.responseText);
         if (! xmlObj) {
           that.createUI();
@@ -525,7 +526,7 @@ var monkey = {
   },
 
   modifyLink: function() {
-    log('modifyLink() --');
+    console.log('modifyLink() --');
     if (this.rawLink.length === 0) {
       return;
     }
@@ -533,8 +534,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -561,11 +562,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;

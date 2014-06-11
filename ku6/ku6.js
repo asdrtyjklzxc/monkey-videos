@@ -7,7 +7,7 @@ var monkey = {
   type: '标清',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getVid();
   },
 
@@ -15,12 +15,12 @@ var monkey = {
    * 获取video id, 用于构建下载链接.
    */
   getVid: function() {
-    log('getVid() --');
-    var url = uw.location.href,
+    console.log('getVid() --');
+    var url = unsafeWindow.location.href,
         vid_reg = /\/([^\/]+)\.html/,
         vid_match = vid_reg.exec(url);
 
-    log(vid_match);
+    console.log(vid_match);
     if (vid_match && vid_match.length == 2) {
       this.vid = vid_match[1];
       this.getVideo();
@@ -28,18 +28,18 @@ var monkey = {
   },
 
   getVideo: function() {
-    log('getVideo() --');
+    console.log('getVideo() --');
     var url = 'http://v.ku6.com/fetchVideo4Player/' + this.vid + '.html',
         that = this;
 
-    log('url:', url);
+    console.log('url:', url);
     GM_xmlhttpRequest({
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response:', response);
+        console.log('response:', response);
         var video_obj = JSON.parse(response.responseText);
-        log(video_obj);
+        console.log(video_obj);
         that.title = video_obj.data.t;
         that.links = video_obj.data.f.split(',');
         that.createUI();
@@ -48,8 +48,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -61,7 +61,7 @@ var monkey = {
       videos.links.push(this.links);
       multiFiles.run(videos);
     } else {
-      error('this.video is empty');
+      console.error('this.video is empty');
     }
   },
 };

@@ -1,3 +1,6 @@
+v2.2 - 2014.6.12
+* Fixed: console.log must be bound to console object in Firefox 30
+
 v2.1 - 2014.1.23
 * Algorithm updated.
 * Using md5() to calculate magic key for video link

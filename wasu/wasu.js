@@ -8,7 +8,7 @@ var monkey = {
   format: '高清',
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getVid();
   },
 
@@ -16,9 +16,9 @@ var monkey = {
    * Get video id
    */
   getVid: function() {
-    log('getVid() --');
+    console.log('getVid() --');
     var idReg = /show\/id\/(\d+)/,
-        idMatch = idReg.exec(uw.document.location.href);
+        idMatch = idReg.exec(unsafeWindow.document.location.href);
 
     if (idMatch && idMatch.length === 2) {
       this.id = idMatch[1];
@@ -32,7 +32,7 @@ var monkey = {
    * Get video information from an xml file.
    */
   getVideoInfo: function() {
-    log('getVideoInfo() --');
+    console.log('getVideoInfo() --');
     var url = 'http://www.wasu.cn/Api/getPlayInfoById/id/' + this.id + '/datatype/xml',
         that = this;
 
@@ -40,7 +40,7 @@ var monkey = {
       url: url,
       method: 'GET',
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var xmlObj = that.parseXML(response.responseText);
         if (! xmlObj) {
           that.createUI();
@@ -55,7 +55,7 @@ var monkey = {
   },
 
   modifyLink: function() {
-    log('modifyLink() --');
+    console.log('modifyLink() --');
     if (this.rawLink.length === 0) {
       return;
     }
@@ -63,8 +63,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
@@ -91,11 +91,11 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;
