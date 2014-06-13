@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         sinaHTML5
 // @description  Modify image path to display them directly.
-// @version      2.1
+// @version      2.2
 // @include      http://video.sina.com.cn/*
 // @include      http://open.sina.com.cn/course/*
 // @author       LiuLang
@@ -12,10 +12,6 @@
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // ==/UserScript==
-
-var uw = unsafeWindow,
-    log = uw.console.log,
-    error = uw.console.error;
 
 
 /**
@@ -212,10 +208,10 @@ var multiFiles = {
   videos: null,
 
   run: function(videos) {
-    log('multiFiles.run() --');
+    console.log('multiFiles.run() --');
     this.videos = videos;
     if ((!videos.formats) || (videos.formats.length === 0)) {
-      error('Error: no video formats specified!');
+      console.error('Error: no video formats specified!');
       return;
     }
     this.removeOldPanels();
@@ -223,8 +219,9 @@ var multiFiles = {
   },
 
   removeOldPanels: function() {
-    log('removeOldPanels() --');
-    var panels = uw.document.querySelectorAll('.monkey-videos-panel'),
+    console.log('removeOldPanels() --');
+    var panels = unsafeWindow.document.querySelectorAll(
+          '.monkey-videos-panel'),
         panel,
         i;
 
@@ -237,8 +234,8 @@ var multiFiles = {
    * Create the control panel.
    */
   createPanel: function() {
-    log('createPanel() --');
-    var panel = uw.document.createElement('div'),
+    console.log('createPanel() --');
+    var panel = unsafeWindow.document.createElement('div'),
         div,
         form,
         label,
@@ -294,27 +291,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    uw.document.body.appendChild(panel);
+    unsafeWindow.document.body.appendChild(panel);
 
-    playlistWrap = uw.document.createElement('div');
+    playlistWrap = unsafeWindow.document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = uw.document.createElement('form');
+    form = unsafeWindow.document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = uw.document.createElement('label');
+      label = unsafeWindow.document.createElement('label');
       form.appendChild(label);
-      input = uw.document.createElement('input');
+      input = unsafeWindow.document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = uw.document.createElement('span');
+      span = unsafeWindow.document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -327,24 +324,26 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = uw.document.createElement('a');
+    a = unsafeWindow.document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
+    a.download = this.videos.title + '.m3u';
     a.href = '';
     form.appendChild(a);
 
-    div = uw.document.createElement('div');
+    div = unsafeWindow.document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = uw.document.createElement('div');
+    playlistToggle = unsafeWindow.document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = uw.document.querySelector('.monkey-videos-panel .playlist-wrap');
+      var wrap = unsafeWindow.document.querySelector(
+            '.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -366,19 +365,19 @@ var multiFiles = {
   },
 
   loadDefault: function() {
-    log('loadDefault() --');
+    console.log('loadDefault() --');
     // Load default type of playlist.
     var currPos = GM_getValue('format', 0),
         formats = this.videos.formats,
         currPlaylist;
 
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
     if (formats.length <= currPos) {
       currPos = formats.length - 1;
     }
-    log('currPos: ', currPos);
+    console.log('currPos: ', currPos);
 
-    currPlaylist = uw.document.querySelectorAll(
+    currPlaylist = unsafeWindow.document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -393,8 +392,9 @@ var multiFiles = {
    * Empty playlist first, and add new links of specific video format.
    */
   modifyList: function(pos) {
-    log('modifyList(), pos = ', pos);
-    var playlist = uw.document.querySelector('.monkey-videos-panel .playlist'),
+    console.log('modifyList(), pos = ', pos);
+    var playlist = unsafeWindow.document.querySelector(
+          '.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -403,7 +403,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = uw.document.createElement('a');
+      a = unsafeWindow.document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -419,7 +419,8 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    uw.document.querySelector('.playlist-m3u').href = this.plsDataScheme();
+    unsafeWindow.document.querySelector(
+      '.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -430,7 +431,7 @@ var multiFiles = {
    *  - Data scheme containting playlist.
    */
   plsDataScheme: function() {
-    log('plsDataSchema() --');
+    console.log('plsDataSchema() --');
     return 'data:audio/x-m3u;charset=UTF-8;base64,' +
       base64.encode(this.generatePls());
   },
@@ -441,9 +442,10 @@ var multiFiles = {
    * - playlist content.
    */
   generatePls: function() {
-    log('generatePls() --');
+    console.log('generatePls() --');
     var output = [],
-        links = uw.document.querySelectorAll('.monkey-videos-panel .playlist-item'),
+        links = unsafeWindow.document.querySelectorAll(
+            '.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -461,9 +463,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = uw.document.createElement('style');
-    if (uw.document.head) {
-      uw.document.head.appendChild(style);
+    var style = unsafeWindow.document.createElement('style');
+    if (unsafeWindow.document.head) {
+      unsafeWindow.document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -761,14 +763,14 @@ var monkey = {
   },
 
   run: function() {
-    var loc = uw.location.href;
+    var loc = unsafeWindow.location.href;
     if (loc.search('/vlist/') > -1) {
       this.getVlist();
     } else if (loc.search('video.sina.com.cn') > -1 ||
                loc.search('open.sina.com.cn') > -1) {
       this.getVid(loc);
     } else {
-      error('This page is not supported!');
+      console.error('This page is not supported!');
       return;
     }
   },
@@ -779,11 +781,11 @@ var monkey = {
    * http://video.sina.com.cn/news/vlist/zt/chczlj2013/?opsubject_id=top12#109873117
    */
   getVlist: function() {
-    log('getVlist() --');
-    var h4s = uw.document.querySelectorAll('h4.video_btn'),
+    console.log('getVlist() --');
+    var h4s = unsafeWindow.document.querySelectorAll('h4.video_btn'),
         h4,
         i,
-        lis = uw.document.querySelectorAll('ul#video_list li'),
+        lis = unsafeWindow.document.querySelectorAll('ul#video_list li'),
         li,
         As,
         A,
@@ -817,7 +819,7 @@ var monkey = {
   },
 
   getVlistItem: function(div) {
-    log('getVlistItem() --', div);
+    console.log('getVlistItem() --', div);
     if (div.hasAttribute('data-url')) {
       this.getVid(div.getAttribute('data-url'));
     } else if (div.nodeName === 'A' && div.className === 'btn_play') {
@@ -827,7 +829,7 @@ var monkey = {
     } else if (div.hasAttribute('vurl')) {
       this.getVid(div.getAttribute('vurl'));
     } else {
-      error('Failed to get vid!', div);
+      console.error('Failed to get vid!', div);
       return;
     }
   },
@@ -836,14 +838,14 @@ var monkey = {
    * Get Video vid and hdVid.
    */
   getVid: function(url) {
-    log('getVid() --', url);
+    console.log('getVid() --', url);
     var that = this;
 
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log(response);
+        console.log(response);
         var reg = /vid:['"](\d{5,})['"]/,
             txt = response.responseText,
             match = reg.exec(txt),
@@ -877,7 +879,7 @@ var monkey = {
    * Calcuate video information url
    */
   getURLByVid: function(vid) {
-    log('getURLByVid() -- ', vid);
+    console.log('getURLByVid() -- ', vid);
     var randInt = parseInt(Math.random() * 1000),
         time = parseInt(Date.now() / 1000) >> 6,
         key = '';
@@ -889,9 +891,9 @@ var monkey = {
       randInt,
       ].join('');
     key = md5(key);
-    log('key: ', key);
+    console.log('key: ', key);
     key = key.substring(0, 16) + time;
-    log('key: ', key);
+    console.log('key: ', key);
 
     return [
       'http://v.iask.com/v_play.php?',
@@ -914,8 +916,8 @@ var monkey = {
    * Get video info specified by vid.
    */
   getVideoByVid: function(container) {
-    log('getVideoByVid() --', container);
-    log(this);
+    console.log('getVideoByVid() --', container);
+    console.log(this);
     var that = this;
     container.url = this.getURLByVid(container.vid),
 
@@ -923,7 +925,7 @@ var monkey = {
       method: 'GET',
       url: container.url,
       onload: function(response) {
-        log('response: ', response);
+        console.log('response: ', response);
         var reg = /<url>.{9}([^\]]+)/g,
             txt = response.responseText,
             match = reg.exec(txt);
@@ -942,8 +944,8 @@ var monkey = {
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var videos = {
           formats: [],
           links: [],
@@ -958,7 +960,7 @@ var monkey = {
       videos.formats.push(this.hdVideo.format);
       videos.links.push(this.hdVideo.links);
     }
-    log('videos: ', videos);
+    console.log('videos: ', videos);
     multiFiles.run(videos);
   },
 }

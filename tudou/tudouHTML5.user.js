@@ -329,6 +329,7 @@ var multiFiles = {
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
+    a.download = this.videos.title + '.m3u';
     a.href = '';
     form.appendChild(a);
 
