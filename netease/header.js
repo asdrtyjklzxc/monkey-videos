@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on 163.com
 // @include      http://v.163.com/*
 // @include      http://open.163.com/*
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

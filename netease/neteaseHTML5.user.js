@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on 163.com
 // @include      http://v.163.com/*
 // @include      http://open.163.com/*
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -474,7 +474,8 @@ var multiFiles = {
 
 var monkey = {
 
-  plid: '',
+  plid: '',  // playlist id
+  mid: '',   // video id
   raw_vid: '',
   title: '',
   videos: {
@@ -515,6 +516,7 @@ var monkey = {
 
     this.raw_vid = url[length - 1].replace('.html', '');
     this.plid = this.raw_vid.split('_')[0];
+    this.mid = this.raw_vid.split('_')[1];
     xmlUrl = [
       'http://live.ws.126.net/movie',
       url[length - 3],
@@ -574,20 +576,27 @@ var monkey = {
       onload: function(response) {
         console.log('response: ', response);
         var json = JSON.parse(response.responseText),
-            video;
+            video,
+            i;
 
         console.log('json: ', json);
         that.title = json.title;
-        video = json.videoList[0].repovideourl;
+        for (i = 0; i < json.videoList.length; i += 1) {
+          if (json.videoList[i].mid === that.mid) {
+            video = json.videoList[i].repovideourl;
+            break;
+          }
+        }
+        console.log(video);
         if (that.videos.sd.length > 0) {
-          that.videos.sd = video;
+          that.videos.sd = video.replace('mobilev', 'movieMP4');
         }
         if (that.videos.hd.length > 0) {
-          that.videos.hd = video.replace('_sd.', '_hd.');
+          that.videos.hd = video.replace('mobilev', 'movieMP4');
         }
-        if (that.videos.shd.length > 0) {
-          that.videos.shd = video.replace('_sd.', '_shd.');
-        }
+        //if (that.videos.shd.length > 0) {
+          //that.videos.shd = video.replace('_sd.', '_shd.');
+        //}
         that.createUI();
       },
     });
@@ -644,7 +653,6 @@ var monkey = {
         videos.formats.push(this.types[format]);
       }
     }
-    // TODO: add subtitle
     for (subName in this.subs) {
       videos.links.push([this.subs[subName]]);
       videos.formats.push(subName);
