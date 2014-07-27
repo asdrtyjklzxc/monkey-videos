@@ -2,6 +2,7 @@
 // @name         bilibiliHTML5
 // @description  Get video link on bilibili.tv
 // @include      http://www.bilibili.tv/video/*
+// @include      http://www.bilibili.com/video/*
 // @version      2.4
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -216,11 +217,9 @@ var monkey = {
   getVideos: function() {
     console.log('getVideos() -- ');
     var url = 'http://interface.bilibili.cn/player?cid=' + this.cid,
-        url = 'http://interface.bilibili.cn/playurl?cid=' + this.cid,
         that = this;
 
     console.log('url:', url);
-    console.log('url2:', url2);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
