@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on vimeo.com
 // @include      http://vimeo.com/*
 // @include      https://vimeo.com/*
-// @version      2.2
+// @version      2.3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3

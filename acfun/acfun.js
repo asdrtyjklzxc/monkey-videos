@@ -15,7 +15,7 @@ var monkey = {
 
   getVid: function() {
     console.log('getVid()');
-    var videos = unsafeWindow.document.querySelectorAll(
+    var videos = document.querySelectorAll(
           'div#area-part-view div.l a'),
         video,
         i;

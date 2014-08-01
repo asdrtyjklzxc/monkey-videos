@@ -18,9 +18,9 @@ var singleFile = {
 
   createPanel: function() {
     console.log('createPanel() --');
-    var panel = unsafeWindow.document.createElement('div'),
-        playlist = unsafeWindow.document.createElement('div'),
-        playlistToggle = unsafeWindow.document.createElement('div');
+    var panel = document.createElement('div'),
+        playlist = document.createElement('div'),
+        playlistToggle = document.createElement('div');
 
     this.addStyle([
       '.monkey-videos-panel {',
@@ -65,20 +65,19 @@ var singleFile = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    unsafeWindow.document.body.appendChild(panel);
+    document.body.appendChild(panel);
 
-    playlist= unsafeWindow.document.createElement('div');
+    playlist= document.createElement('div');
     playlist.className = 'playlist-wrap';
     panel.appendChild(playlist);
 
-    playlistToggle = unsafeWindow.document.createElement('div');
+    playlistToggle = document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = unsafeWindow.document.querySelector(
-            '.monkey-videos-panel .playlist-wrap');
+      var wrap = document.querySelector('.monkey-videos-panel .playlist-wrap');
 
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
@@ -100,14 +99,13 @@ var singleFile = {
 
   createPlaylist: function() {
     console.log('createPlayList() -- ');
-    var playlist = unsafeWindow.document.querySelector(
-          '.monkey-videos-panel .playlist-wrap'),
+    var playlist = document.querySelector('.monkey-videos-panel .playlist-wrap'),
         a,
         i;
 
     if (!this.videos.ok) {
       console.error(this.videos.msg);
-      a = unsafeWindow.document.createElement('span');
+      a = document.createElement('span');
       a.title = this.videos.msg;
       a.innerHTML = this.videos.msg;
       playlist.appendChild(a);
@@ -115,7 +113,7 @@ var singleFile = {
     }
 
     for (i = 0; i < this.videos.links.length; i += 1) {
-      a = unsafeWindow.document.createElement('a');
+      a = document.createElement('a');
       a.className = 'playlist-item';
       a.innerHTML = this.videos.title + '(' + this.videos.formats[i] + ')';
       a.title = a.innerHTML;
@@ -131,9 +129,9 @@ var singleFile = {
    */
   addStyle: function(styleText) {
     console.log('addStyle() --');
-    var style = unsafeWindow.document.createElement('style');
-    if (unsafeWindow.document.head) {
-      unsafeWindow.document.head.appendChild(style);
+    var style = document.createElement('style');
+    if (document.head) {
+      document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },

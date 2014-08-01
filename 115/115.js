@@ -15,7 +15,7 @@ var monkey = {
 
   getTitle: function() {
     console.log('getTitle() --');
-    var scripts = unsafeWindow.document.querySelectorAll('script'),
+    var scripts = document.querySelectorAll('script'),
         script,
         content,
         i,
@@ -23,7 +23,7 @@ var monkey = {
         url_match,
         download_url;
 
-    this.title = unsafeWindow.document.title;
+    this.title = document.title;
     for (i = 0; script = scripts[i]; i += 1) {
       content = script.innerHTML;
       if (content.search('var download_url')) {

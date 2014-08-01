@@ -2,7 +2,7 @@
 // @name         wasuHTML5
 // @description  Get video source on wasu.cn
 // @include      http://www.wasu.cn/Play/show/id/*
-// @version      1.3
+// @version      1.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

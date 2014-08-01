@@ -29,7 +29,7 @@ var monkey = {
    */
   getVid: function() {
     console.log('getVid() -- ');
-    var playerCode = unsafeWindow.document.querySelectorAll(
+    var playerCode = document.querySelectorAll(
           'ul#player_code li');
 
     if (playerCode && playerCode.length === 2) {
@@ -50,21 +50,19 @@ var monkey = {
     console.log('getTitle()');
     var params;
 
-    if (this.vids.length === 1 || unsafeWindow.location.hash === '') {
+    if (this.vids.length === 1 || location.hash === '') {
       this.pos = 0;
-      this.url = unsafeWindow.location.href;
+      this.url = location.href;
     } else {
       // hash starts with 1, not 0
-      this.pos = parseInt(unsafeWindow.location.hash.replace('#', '')) - 1;
-      this.url = unsafeWindow.location.href.replace(
-          unsafeWindow.location.hash, '');
+      this.pos = parseInt(location.hash.replace('#', '')) - 1;
+      this.url = location.href.replace(location.hash, '');
     }
     params = this.getQueryVariable(this.vids[this.pos].split('|')[0]);
     this.vid = params.vid;
     this.type = params.type;
     if (this.vids.length === 1) {
-      this.title = unsafeWindow.document.title.substr(
-          0, unsafeWindow.document.title.length - 16);
+      this.title = document.title.substr(0, document.title.length - 16);
     } else {
       this.title = this.vids[this.pos].split('|')[1];
     }
@@ -185,8 +183,7 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
+    if (document.implementation && document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
       console.log('parseXML() error: not support current web browser!');

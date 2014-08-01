@@ -5,6 +5,7 @@ var monkey = {
   mid: '',   // video id
   raw_vid: '',
   title: '',
+  pl_title: '', // playlist title
   videos: {
     sd: '',
     hd: '',
@@ -22,7 +23,7 @@ var monkey = {
     console.log('run() --');
 
     this.getTitle();
-    if (unsafeWindow.document.title.search('网易公开课') > -1) {
+    if (document.title.search('网易公开课') > -1) {
       this.getOpenCourseSource();
     } else {
       this.getSource();
@@ -31,12 +32,12 @@ var monkey = {
 
   getTitle: function() {
     console.log('getTitle() --');
-    this.title = unsafeWindow.document.title;
+    this.title = document.title;
   },
 
   getOpenCourseSource: function() {
     console.log('getOpenCourseSource() --');
-    var url = unsafeWindow.document.location.href.split('/'),
+    var url = document.location.href.split('/'),
         length = url.length,
         xmlUrl,
         that = this;
@@ -107,14 +108,15 @@ var monkey = {
             i;
 
         console.log('json: ', json);
-        that.title = json.title;
         for (i = 0; i < json.videoList.length; i += 1) {
           if (json.videoList[i].mid === that.mid) {
             video = json.videoList[i].repovideourl;
+            that.title = json.videoList[i].title;
+            that.pl_title = json.title;
             break;
           }
         }
-        console.log(video);
+
         if (that.videos.sd.length > 0) {
           that.videos.sd = video.replace('mobilev', 'movieMP4');
         }
@@ -131,7 +133,7 @@ var monkey = {
 
   getSource: function() {
     console.log('getSource() --');
-    var scripts = unsafeWindow.document.querySelectorAll('script'),
+    var scripts = document.querySelectorAll('script'),
         script,
         reg = /<source[\s\S]+src="([^"]+)"/,
         match,
@@ -173,6 +175,10 @@ var monkey = {
         subName,
         i;
 
+    if (this.pl_title.length > 0) {
+      videos.title = this.pl_title + '-' + this.title;
+    }
+
     for (i = 0; format = formats[i]; i += 1) {
       url = this.videos[format];
       if (url.length > 0) {
@@ -196,8 +202,7 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
+    if (document.implementation && document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
       console.log('parseXML() error: not support current web browser!');

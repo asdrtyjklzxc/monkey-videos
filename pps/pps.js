@@ -17,7 +17,7 @@ var monkey = {
 
   run: function() {
     console.log('run()');
-    if (unsafeWindow.location.href.search('pps.tv/play_') !== -1) {
+    if (location.href.search('pps.tv/play_') !== -1) {
       this.getId();
     } else {
       console.error('Failed to get vid!');
@@ -27,9 +27,9 @@ var monkey = {
   getId: function() {
     console.log('getId() -- ');
     var vidReg = /play_([\s\S]+)\.html/,
-        vidMatch = vidReg.exec(unsafeWindow.document.location.href),
+        vidMatch = vidReg.exec(document.location.href),
         titleReg = /([\s\S]+)-在线观看/,
-        titleMatch = titleReg.exec(unsafeWindow.document.title);
+        titleMatch = titleReg.exec(document.title);
     if (vidMatch) {
       this.vid = vidMatch[1];
     }

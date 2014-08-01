@@ -63,7 +63,7 @@ var monkey = {
 
   router: function() {
     console.log('router() -- ');
-    var host = unsafeWindow.document.location.hostname;
+    var host = document.location.hostname;
     if (host === 'my.tv.sohu.com') {
       this.getUGCId();
     } else if (host === 'tv.sohu.com') {
@@ -78,7 +78,7 @@ var monkey = {
    */
   getUGCId: function() {
     console.log('getUGCId() -- ');
-    var scripts = unsafeWindow.document.querySelectorAll('script'),
+    var scripts = document.querySelectorAll('script'),
         script,
         vidReg = /var vid\s+=\s+'(\d+)'/,
         vidMatch,
@@ -104,7 +104,7 @@ var monkey = {
       }
     }
     if (this.vid.length > 0) {
-      this.referer = unsafeWindow.escape(unsafeWindow.location.href);
+      this.referer = escape(location.href);
       this.p2.vid = this.vid;
       this.getUGCVideoJSON('p2');
     } else {
@@ -211,11 +211,11 @@ var monkey = {
    */
   getId: function() {
     console.log('getId() --');
-    this.vid = unsafeWindow.vid;
-    this.p2.vid = unsafeWindow.vid;
-    this.plid = unsafeWindow.playlistId;
-    this.title = unsafeWindow.document.title.split('-')[0].trim();
-    this.referer = unsafeWindow.escape(unsafeWindow.location.href);
+    this.vid = vid;
+    this.p2.vid = vid;
+    this.plid = playlistId;
+    this.title = document.title.split('-')[0].trim();
+    this.referer = escape(location.href);
     this.jobs += 1;
     this.getVideoJSON('p2');
   },

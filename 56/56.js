@@ -25,7 +25,7 @@ var monkey = {
    */
   getID: function() {
     console.log('getID() --');
-    var url = unsafeWindow.location.href,
+    var url = location.href,
         idReg = /\/v_(\w+)\.html/,
         idMatch = idReg.exec(url),
         albumIDReg = /_vid-(\w+)\.html/,

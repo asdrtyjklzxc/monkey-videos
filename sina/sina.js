@@ -16,7 +16,7 @@ var monkey = {
   },
 
   run: function() {
-    var loc = unsafeWindow.location.href;
+    var loc = location.href;
     if (loc.search('/vlist/') > -1) {
       this.getVlist();
     } else if (loc.search('video.sina.com.cn') > -1 ||
@@ -35,10 +35,10 @@ var monkey = {
    */
   getVlist: function() {
     console.log('getVlist() --');
-    var h4s = unsafeWindow.document.querySelectorAll('h4.video_btn'),
+    var h4s = document.querySelectorAll('h4.video_btn'),
         h4,
         i,
-        lis = unsafeWindow.document.querySelectorAll('ul#video_list li'),
+        lis = document.querySelectorAll('ul#video_list li'),
         li,
         As,
         A,

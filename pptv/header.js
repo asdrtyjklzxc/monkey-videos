@@ -12,7 +12,7 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-var uw = unsafeWindow,
+var uw = window,
     log = uw.console.log,
     error = uw.console.error;
 

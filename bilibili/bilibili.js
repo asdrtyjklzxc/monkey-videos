@@ -15,7 +15,7 @@ var monkey = {
    */
   getTitle: function() {
     console.log('getTitle()');
-    var metas = unsafeWindow.document.querySelectorAll('meta'),
+    var metas = document.querySelectorAll('meta'),
         meta,
         i;
 
@@ -26,7 +26,7 @@ var monkey = {
         return;
       }
     }
-    this.title = unsafeWindow.document.title;
+    this.title = document.title;
   },
 
   /**
@@ -34,8 +34,8 @@ var monkey = {
    */
   getCid: function() {
     console.log('getCid()');
-    var iframe = unsafeWindow.document.querySelector('iframe'),
-        flashvar = unsafeWindow.document.querySelector('div#bofqi embed'),
+    var iframe = document.querySelector('iframe'),
+        flashvar = document.querySelector('div#bofqi embed'),
         reg = /cid=(\d+)&aid=(\d+)/,
         match;
 

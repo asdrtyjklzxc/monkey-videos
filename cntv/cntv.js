@@ -15,17 +15,16 @@ var monkey = {
 
   router: function() {
     console.log('router() --');
-    var href = unsafeWindow.location.href,
+    var href = location.href,
         schema;
     if (href.search('search.cctv.com/playVideo.php?') > -1) {
-      schema = this.hashToObject(unsafeWindow.location.search.substr(1));
+      schema = this.hashToObject(location.search.substr(1));
       this.pid = schema.detailsid;
       this.title = decodeURI(schema.title);
       this.getVideoInfo();
     } else if (href.search('tv.cntv.cn/video/') > -1) {
       this.pid = href.match(/\/([^\/]+)$/)[1];
-      this.title = unsafeWindow.document.title.substring(
-          0, unsafeWindow.document.title.length-8);
+      this.title = document.title.substring(0, document.title.length - 8);
       this.getVideoInfo();
     } else {
       this.getPidFromSource();
@@ -40,7 +39,7 @@ var monkey = {
     var that = this;
 
     GM_xmlhttpRequest({
-      url: unsafeWindow.location.href,
+      url: location.href,
       method: 'GET',
       onload: function(response) {
         console.log('response:', response);
@@ -62,7 +61,7 @@ var monkey = {
     if (titleMatch && titleMatch.length === 2) {
       this.title = titleMatch[1];
     } else {
-      this.title = unsafeWindow.document.title;
+      this.title = document.title;
     }
 
     console.log('pidMatch:', pidMatch);
@@ -85,7 +84,7 @@ var monkey = {
           'tz=-8&from=000tv&idlr=32&modified=false&idl=32&pid=',
           this.pid,
           '&url=',
-          unsafeWindow.location.href,
+          location.href,
         ].join(''),
         that = this;
 
@@ -164,9 +163,9 @@ var monkey = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = unsafeWindow.document.createElement('style');
-    if (unsafeWindow.document.head) {
-      unsafeWindow.document.head.appendChild(style);
+    var style = document.createElement('style');
+    if (document.head) {
+      document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },

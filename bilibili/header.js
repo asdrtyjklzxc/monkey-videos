@@ -3,7 +3,7 @@
 // @description  Get video link on bilibili.tv
 // @include      http://www.bilibili.tv/video/*
 // @include      http://www.bilibili.com/video/*
-// @version      2.4
+// @version      2.5
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3

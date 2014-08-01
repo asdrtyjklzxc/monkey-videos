@@ -18,7 +18,7 @@ var monkey = {
   getVid: function() {
     console.log('getVid() --');
     var idReg = /show\/id\/(\d+)/,
-        idMatch = idReg.exec(unsafeWindow.document.location.href);
+        idMatch = idReg.exec(document.location.href);
 
     if (idMatch && idMatch.length === 2) {
       this.id = idMatch[1];
@@ -91,8 +91,7 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
+    if (document.implementation && document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
       console.log('parseXML() error: not support current web browser!');

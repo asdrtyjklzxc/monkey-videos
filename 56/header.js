@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         56HTML5
 // @description  Play Videos with html5 on 56.com
-// @version      2.4
+// @version      2.5
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

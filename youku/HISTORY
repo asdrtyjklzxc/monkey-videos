@@ -1,3 +1,6 @@
+v2.5 2014.8.2
+* Fixed: Permission denied to access object, in Greasemonkey 2.0+
+
 v2.4 2014.6.12
 * Fixed: console.log must be bound to console object in Firefox 30
 

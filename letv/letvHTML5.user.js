@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on letv.com
 // @include      http://letv.com/*
 // @include      http://*.letv.com/*
-// @version      2.5
+// @version      2.6
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -220,8 +220,7 @@ var multiFiles = {
 
   removeOldPanels: function() {
     console.log('removeOldPanels() --');
-    var panels = unsafeWindow.document.querySelectorAll(
-          '.monkey-videos-panel'),
+    var panels = document.querySelectorAll('.monkey-videos-panel'),
         panel,
         i;
 
@@ -235,7 +234,7 @@ var multiFiles = {
    */
   createPanel: function() {
     console.log('createPanel() --');
-    var panel = unsafeWindow.document.createElement('div'),
+    var panel = document.createElement('div'),
         div,
         form,
         label,
@@ -291,27 +290,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    unsafeWindow.document.body.appendChild(panel);
+    document.body.appendChild(panel);
 
-    playlistWrap = unsafeWindow.document.createElement('div');
+    playlistWrap = document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = unsafeWindow.document.createElement('div');
+    div = document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = unsafeWindow.document.createElement('form');
+    form = document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = unsafeWindow.document.createElement('label');
+      label = document.createElement('label');
       form.appendChild(label);
-      input = unsafeWindow.document.createElement('input');
+      input = document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = unsafeWindow.document.createElement('span');
+      span = document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -324,7 +323,7 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = unsafeWindow.document.createElement('a');
+    a = document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
@@ -332,18 +331,17 @@ var multiFiles = {
     a.href = '';
     form.appendChild(a);
 
-    div = unsafeWindow.document.createElement('div');
+    div = document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = unsafeWindow.document.createElement('div');
+    playlistToggle = document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = unsafeWindow.document.querySelector(
-            '.monkey-videos-panel .playlist-wrap');
+      var wrap = document.querySelector('.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -377,7 +375,7 @@ var multiFiles = {
     }
     console.log('currPos: ', currPos);
 
-    currPlaylist = unsafeWindow.document.querySelectorAll(
+    currPlaylist = document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -393,8 +391,7 @@ var multiFiles = {
    */
   modifyList: function(pos) {
     console.log('modifyList(), pos = ', pos);
-    var playlist = unsafeWindow.document.querySelector(
-          '.monkey-videos-panel .playlist'),
+    var playlist = document.querySelector('.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -403,7 +400,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = unsafeWindow.document.createElement('a');
+      a = document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -419,8 +416,7 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    unsafeWindow.document.querySelector(
-      '.playlist-m3u').href = this.plsDataScheme();
+    document.querySelector('.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -444,8 +440,7 @@ var multiFiles = {
   generatePls: function() {
     console.log('generatePls() --');
     var output = [],
-        links = unsafeWindow.document.querySelectorAll(
-            '.monkey-videos-panel .playlist-item'),
+        links = document.querySelectorAll('.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -463,9 +458,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = unsafeWindow.document.createElement('style');
-    if (unsafeWindow.document.head) {
-      unsafeWindow.document.head.appendChild(style);
+    var style = document.createElement('style');
+    if (document.head) {
+      document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -497,7 +492,7 @@ var monkey = {
 
   run: function() {
     console.log('run() -- ');
-    var url = unsafeWindow.location.href;
+    var url = location.href;
 
     if (url.search('yuanxian.letv') !== -1) {
       // movie info page.
@@ -515,9 +510,9 @@ var monkey = {
    */
   addLinkToYuanxian: function() {
     console.log('addLinkToYuanxian() --');
-    var pid = unsafeWindow.__INFO__.video.pid,
+    var pid = __INFO__.video.pid,
         url = 'http://www.letv.com/ptv/pplay/' + pid + '.html',
-        titleLink = unsafeWindow.document.querySelector('dl.w424 dt a');
+        titleLink = document.querySelector('dl.w424 dt a');
 
     titleLink.href = url;
   },
@@ -527,7 +522,7 @@ var monkey = {
    */
   getVid: function() {
     console.log('getVid() --')
-    var input = unsafeWindow.document.querySelector('.add input'),
+    var input = document.querySelector('.add input'),
         vidReg = /\/(\d+)\.html$/,
         vidMatch;
 
@@ -682,8 +677,8 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
+    if (document.implementation &&
+        document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
       console.log('parseXML() error: not support current web browser!');

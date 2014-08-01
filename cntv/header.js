@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         cntvHTML5
-// @version      2.3
+// @version      2.4
 // @include      http://tv.cntv.cn/video/*
 // @include      http://ent.cntv.cn/*
 // @include      http://search.cctv.com/playVideo.php*

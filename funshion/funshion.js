@@ -25,7 +25,7 @@ var monkey = {
    * router control
    */
   router: function() {
-    var url = unsafeWindow.location.href;
+    var url = location.href;
 
     if (url.search('subject/play/') > 1 ||
         url.search('/vplay/') > 1 ) {
@@ -46,7 +46,7 @@ var monkey = {
   getUGCID: function() {
     console.log('getUGCID() --');
     var urlReg = /uvideo\/play\/(\d+)$/,
-        urlMatch = urlReg.exec(unsafeWindow.location.href);
+        urlMatch = urlReg.exec(location.href);
 
     console.log('urlMatch: ', urlMatch);
     if (urlMatch.length === 2) {
@@ -118,7 +118,7 @@ var monkey = {
    */
   getVid: function() {
     console.log('getVid() --');
-    var url = unsafeWindow.location.href,
+    var url = location.href,
         urlReg = /subject\/play\/(\d+)\/(\d+)$/,
         urlMatch = urlReg.exec(url),
         urlReg2 = /\/vplay\/m-(\d+)/,
@@ -181,7 +181,7 @@ var monkey = {
    */
   getTitle: function() {
     console.log('getTitle() --');
-    var title = unsafeWindow.document.title,
+    var title = document.title,
         online = title.search(' - 在线观看');
 
     if (online > -1) {

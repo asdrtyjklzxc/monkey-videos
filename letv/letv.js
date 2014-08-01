@@ -24,7 +24,7 @@ var monkey = {
 
   run: function() {
     console.log('run() -- ');
-    var url = unsafeWindow.location.href;
+    var url = location.href;
 
     if (url.search('yuanxian.letv') !== -1) {
       // movie info page.
@@ -42,9 +42,9 @@ var monkey = {
    */
   addLinkToYuanxian: function() {
     console.log('addLinkToYuanxian() --');
-    var pid = unsafeWindow.__INFO__.video.pid,
+    var pid = __INFO__.video.pid,
         url = 'http://www.letv.com/ptv/pplay/' + pid + '.html',
-        titleLink = unsafeWindow.document.querySelector('dl.w424 dt a');
+        titleLink = document.querySelector('dl.w424 dt a');
 
     titleLink.href = url;
   },
@@ -54,7 +54,7 @@ var monkey = {
    */
   getVid: function() {
     console.log('getVid() --')
-    var input = unsafeWindow.document.querySelector('.add input'),
+    var input = document.querySelector('.add input'),
         vidReg = /\/(\d+)\.html$/,
         vidMatch;
 
@@ -209,8 +209,8 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
+    if (document.implementation &&
+        document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
       console.log('parseXML() error: not support current web browser!');

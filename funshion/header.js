@@ -3,7 +3,7 @@
 // @description Play Videos with html5 on funshion.com
 // @include     http://www.funshion.com/vplay/*
 // @include     http://funshion.com/vplay/*
-// @version     2.3
+// @version     2.4
 // @license     GPLv3
 // @author      LiuLang
 // @email       gsushzhsosgsu@gmail.com

@@ -4,7 +4,7 @@
 // @include      http://www.tudou.com/albumplay/*
 // @include      http://www.tudou.com/listplay/*
 // @include      http://www.tudou.com/programs/view/*
-// @version      2.2
+// @version      2.3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @license      GPLv3

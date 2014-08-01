@@ -35,7 +35,7 @@ var monkey = {
    */
   getVideoId: function() {
     console.log('getVideoId() --');
-    var url = unsafeWindow.location.href,
+    var url = location.href,
         idReg = /(?:id_)(.*)(?:.html)/, 
         idMatch = idReg.exec(url),
         idReg2 = /(?:v_playlist\/f)(.*)(?:o1p\d.html)/,

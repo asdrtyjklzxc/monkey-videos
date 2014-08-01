@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on sohu.com
 // @include      http://my.tv.sohu.com/*
 // @include      http://tv.sohu.com/*
-// @version      2.2
+// @version      2.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com

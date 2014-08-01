@@ -30,7 +30,7 @@ var monkey = {
    */
   router: function() {
     console.log('router() --');
-    var scripts = unsafeWindow.document.querySelectorAll('script'),
+    var scripts = document.querySelectorAll('script'),
         script,
         titleReg = /kw:\s*['"]([^'"]+)['"]/,
         titleMatch,
@@ -189,9 +189,8 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (unsafeWindow.document.implementation &&
-        unsafeWindow.document.implementation.createDocument) {
-      xmlDoc = (new unsafeWindow.DOMParser()).parseFromString(str, 'text/xml');
+    if (document.implementation && document.implementation.createDocument) {
+      xmlDoc = (new DOMParser()).parseFromString(str, 'text/xml');
     } else {
       console.error('parseXML() error: not support current web browser!');
       return null;
@@ -203,7 +202,7 @@ var monkey = {
    * Redirect window location.
    */
   redirect: function(url) {
-    unsafeWindow.location = url;
+    location = url;
   },
 };
 

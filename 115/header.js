@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         115HTML5
-// @version      1.1
+// @version      1.2
 // @description  Play Videos with html5 on 115.com
 // @include      http://115.com/?ct=play&pickcode=*
 // @author       LiuLang

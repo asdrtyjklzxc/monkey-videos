@@ -17,7 +17,7 @@ var monkey = {
   getVid: function() {
     console.log('getVid() --');
     var reg = /vimeo\.com\/(\d+)/,
-        url = unsafeWindow.document.location.href;
+        url = document.location.href;
     this.vid = reg.exec(url)[1];
     this.getVideoById();
   },
@@ -48,7 +48,7 @@ var monkey = {
         if (titleMatch && titleMatch.length === 2) {
           that.title = titleMatch[1];
         } else {
-          that.title = unsafeWindow.document.title;
+          that.title = document.title;
         }
 
         if (mobileMatch && mobileMatch.length === 2) {

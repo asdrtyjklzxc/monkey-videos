@@ -16,7 +16,7 @@ var monkey = {
    */
   getVid: function() {
     console.log('getVid() --');
-    var url = unsafeWindow.location.href,
+    var url = location.href,
         vid_reg = /\/([^\/]+)\.html/,
         vid_match = vid_reg.exec(url);
 
