@@ -5,26 +5,23 @@ var monkey = {
   title: '',
   stime: 0, // server timestamp
   tkey: 0,  // time key
+  jobs: 0,
 
   videoUrl: {
-    '350': null,
-    '1000': null,
-    '1300': null,
-    '720p': null,
-    '1080p': null,
+    '9': '',
+    '21': '',
+    '13': '',
   },
   videoFormats: {
-    '350': '流畅',
-    '1000': '高清',
-    '1300': '超清',
-    '720p': '720P',
-    '1080p': '1080P',
-    '4k': '4K', // does not support yet.
+    '9': '流畅',
+    '13': '超清',
+    '21': '高清',
   },
 
   run: function() {
     console.log('run() -- ');
     var url = location.href;
+    this.title = document.title.substr(0, document.title.length-12);
 
     if (url.search('yuanxian.letv') !== -1) {
       // movie info page.
@@ -120,9 +117,10 @@ var monkey = {
   getVideoXML: function() {
     console.log('getVideoXML() --');
     var url = [
-          'http://api.letv.com/mms/out/video/play?',
-          'id=', this.vid,
-          '&platid=1&splatid=101&format=1',
+          'http://api.letv.com/mms/out/common/geturl?',
+          'platid=3&splatid=301&playid=0&vtype=9,13,21,28&version=2.0',
+          '&tss=no',
+          '&vid=', this.vid,
           '&tkey=', this.tkey,
           '&domain=http%3A%2F%2Fwww.letv.com'
           ].join(''),
@@ -134,23 +132,8 @@ var monkey = {
       url: url,
       onload: function(response) {
         console.log('response: ', response);
-        var txt = response.responseText,
-            //xml = that.parseXML(txt);
-            jsonReg = /<playurl><!\[CDATA\[([\s\S]+)\]\]><\/playurl/,
-            match = jsonReg.exec(txt),
-            jsonTxt = '',
-            json = '';
-
-        console.log('match: ', match);
-        if (match && match.length == 2) {
-          jsonTxt = match[1];
-          json = JSON.parse(jsonTxt);
-          console.log('json: ', json);
-          that.title = json.title;
-          that.getVideoUrl(json);
-        } else {
-          console.error('Failed to get video json');
-        }
+        var json = JSON.parse(response.responseText);
+        that.getVideoUrl(json.data[0].infos);
       },
     });
   },
@@ -158,18 +141,46 @@ var monkey = {
   /**
    * Parse video url
    */
-  getVideoUrl: function(json) {
+  getVideoUrl: function(videos) {
     console.log('getVideoUrl() --');
-    var key,
+    var video,
+        i,
         url;
 
-    for (key in this.videoUrl) {
-      if (key in json.dispatch) {
-        url = json.dispatch[key][0] + '&termid=1&format=0&hwtype=un&ostype=Windows7&tag=letv&sign=letv&expect=1&pay=0&rateid=' + key;
-        this.videoUrl[key] = url;
-      }
+
+    for (i = 0; video = videos[i]; i = i + 1) {
+      url = [
+        video.mainUrl,
+        '&ctv=pc&m3v=1&termid=1&format=1&hwtype=un&ostype=Linux&tag=letv',
+        '&sign=letv&expect=3&pay=0&iscpn=f9051&rateid=1300',
+        '&tn=', Math.random()
+        ].join('');
+      this.getFinalUrl(url, video.vtype);
+      this.jobs += 1;
     }
-    this.createUI();
+  },
+
+  /**
+   * Get final video links
+   * @param url, video link,
+   * @param type, video type
+   */
+  getFinalUrl: function(url, type) {
+    console.log('getFinalUrl() --', type);
+    var that = this;
+
+    GM_xmlhttpRequest({
+      url: url,
+      method: 'GET',
+      onload: function(response) {
+        var json = JSON.parse(response.responseText);
+        that.videoUrl[type] = json.location;
+        that.jobs -= 1;
+        if (that.jobs === 0) {
+          that.createUI();
+        }
+      },
+    });
   },
 
   /**
@@ -185,7 +196,7 @@ var monkey = {
           ok: true,
           msg: '',
         },
-        types = ['350', '1000', '1300', '720p', '1080p'],
+        types = ['9', '21', '13'],
         type,
         url,
         i;
