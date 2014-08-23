@@ -1,3 +1,6 @@
+v1.3 2014.8.23
+* Fixed: failed to get download_url
+
 v1.2 2014.8.2
 * Fixed: Permission denied to access object, in Greasemonkey 2.0+
 

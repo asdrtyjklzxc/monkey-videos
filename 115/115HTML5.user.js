@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         115HTML5
-// @version      1.2
+// @version      1.3
 // @description  Play Videos with html5 on 115.com
 // @include      http://115.com/?ct=play&pickcode=*
 // @author       LiuLang
@@ -470,50 +470,30 @@ var monkey = {
 
   title: '',
   download_url: null,
+  intervalId: 0,
   formats: {
     800000: '标清',
     1200000: '高清',
   },
 
   run: function() {
+    var that = this;
     console.log('run() --');
-    this.getTitle();
-  },
+    this.intervalId = window.setInterval( function() {
+      console.log('getDownloadUrl() --');
 
-  getTitle: function() {
-    console.log('getTitle() --');
-    var scripts = document.querySelectorAll('script'),
-        script,
-        content,
-        i,
-        url_reg = /var download_url = eval([^;]+);/m,
-        url_match,
-        download_url;
-
-    this.title = document.title;
-    for (i = 0; script = scripts[i]; i += 1) {
-      content = script.innerHTML;
-      if (content.search('var download_url')) {
-        url_match = url_reg.exec(content);
-        console.log(url_match);
-        if (url_match && url_match.length === 2) {
-          download_url = url_match[0];
-          eval(download_url); // will override download_url
-          this.download_url = download_url;
-          break;
-        } else {
-          console.error('Failed to match download url!');
-        }
+      console.log(unsafeWindow.download_url);
+      console.log(that);
+      if (unsafeWindow.download_url && unsafeWindow.download_url['800000']) {
+        window.clearInterval(that.intervalId);
+        that.download_url = unsafeWindow.download_url;
+        that.title = document.title;
+        that.createUI();
+      } else {
+        console.error('Failed to get `download_url`!');
       }
-    }
-
-    if (this.download_url != null) {
-      this.createUI();
-    } else {
-      console.error('Will not create UI!');
-    }
+    }, 1000);
   },
-
   createUI: function() {
     console.log('createUI() --');
     console.log(this);
