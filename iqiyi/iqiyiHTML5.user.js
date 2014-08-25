@@ -12,7 +12,7 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-var uw = unsafeWindow,
+var uw = window,
     log = uw.console.log,
     error = uw.console.error;
 
@@ -223,8 +223,7 @@ var multiFiles = {
 
   removeOldPanels: function() {
     console.log('removeOldPanels() --');
-    var panels = unsafeWindow.document.querySelectorAll(
-          '.monkey-videos-panel'),
+    var panels = document.querySelectorAll('.monkey-videos-panel'),
         panel,
         i;
 
@@ -238,7 +237,7 @@ var multiFiles = {
    */
   createPanel: function() {
     console.log('createPanel() --');
-    var panel = unsafeWindow.document.createElement('div'),
+    var panel = document.createElement('div'),
         div,
         form,
         label,
@@ -294,27 +293,27 @@ var multiFiles = {
     ].join(''));
 
     panel.className = 'monkey-videos-panel';
-    unsafeWindow.document.body.appendChild(panel);
+    document.body.appendChild(panel);
 
-    playlistWrap = unsafeWindow.document.createElement('div');
+    playlistWrap = document.createElement('div');
     playlistWrap.className = 'playlist-wrap';
     panel.appendChild(playlistWrap);
 
-    div = unsafeWindow.document.createElement('div');
+    div = document.createElement('div');
     div.className = 'playlist-nav';
     playlistWrap.appendChild(div);
 
-    form = unsafeWindow.document.createElement('form');
+    form = document.createElement('form');
     form.className = 'playlist-format';
     playlistWrap.appendChild(form);
     for (i = 0; i < this.videos.formats.length; i += 1) {
-      label = unsafeWindow.document.createElement('label');
+      label = document.createElement('label');
       form.appendChild(label);
-      input = unsafeWindow.document.createElement('input');
+      input = document.createElement('input');
       label.appendChild(input);
       input.type = 'radio';
       input.name = 'monkey-videos-format';
-      span = unsafeWindow.document.createElement('span');
+      span = document.createElement('span');
       label.appendChild(span);
       span.innerHTML = this.videos.formats[i];
 
@@ -327,7 +326,7 @@ var multiFiles = {
     }
     
     // playlist m3u (with url data schema)
-    a = unsafeWindow.document.createElement('a');
+    a = document.createElement('a');
     a.className = 'playlist-m3u';
     a.innerHTML = '播放列表';
     a.title = a.innerHTML;
@@ -335,18 +334,17 @@ var multiFiles = {
     a.href = '';
     form.appendChild(a);
 
-    div = unsafeWindow.document.createElement('div');
+    div = document.createElement('div');
     div.className = 'playlist';
     playlistWrap.appendChild(div);
 
-    playlistToggle = unsafeWindow.document.createElement('div');
+    playlistToggle = document.createElement('div');
     playlistToggle.id = 'playlist-toggle';
     playlistToggle.title = '隐藏';
     playlistToggle.className = 'playlist-show';
     panel.appendChild(playlistToggle);
     playlistToggle.addEventListener('click', function(event) {
-      var wrap = unsafeWindow.document.querySelector(
-            '.monkey-videos-panel .playlist-wrap');
+      var wrap = document.querySelector('.monkey-videos-panel .playlist-wrap');
       if (wrap.style.display === 'none') {
         wrap.style.display = 'block';
         event.target.className = 'playlist-show';
@@ -380,7 +378,7 @@ var multiFiles = {
     }
     console.log('currPos: ', currPos);
 
-    currPlaylist = unsafeWindow.document.querySelectorAll(
+    currPlaylist = document.querySelectorAll(
         '.monkey-videos-panel .playlist-format input')[currPos];
 
     if (currPlaylist) {
@@ -396,8 +394,7 @@ var multiFiles = {
    */
   modifyList: function(pos) {
     console.log('modifyList(), pos = ', pos);
-    var playlist = unsafeWindow.document.querySelector(
-          '.monkey-videos-panel .playlist'),
+    var playlist = document.querySelector('.monkey-videos-panel .playlist'),
         url,
         a,
         i;
@@ -406,7 +403,7 @@ var multiFiles = {
     playlist.innerHTML = '';
 
     for (i = 0; url = this.videos.links[pos][i]; i += 1) {
-      a = unsafeWindow.document.createElement('a');
+      a = document.createElement('a');
       playlist.appendChild(a);
       a.className = 'playlist-item',
       a.href = url;
@@ -422,8 +419,7 @@ var multiFiles = {
     }
 
     // Refresh m3u playlist file.
-    unsafeWindow.document.querySelector(
-      '.playlist-m3u').href = this.plsDataScheme();
+    document.querySelector('.playlist-m3u').href = this.plsDataScheme();
   },
 
   /**
@@ -447,8 +443,7 @@ var multiFiles = {
   generatePls: function() {
     console.log('generatePls() --');
     var output = [],
-        links = unsafeWindow.document.querySelectorAll(
-            '.monkey-videos-panel .playlist-item'),
+        links = document.querySelectorAll('.monkey-videos-panel .playlist-item'),
         a,
         i;
 
@@ -466,9 +461,9 @@ var multiFiles = {
    *   - The <style> tag content.
    */
   addStyle: function(styleText) {
-    var style = unsafeWindow.document.createElement('style');
-    if (unsafeWindow.document.head) {
-      unsafeWindow.document.head.appendChild(style);
+    var style = document.createElement('style');
+    if (document.head) {
+      document.head.appendChild(style);
       style.innerHTML = styleText;
     }
   },
@@ -553,15 +548,9 @@ var monkey = {
 
   getVideoUrls: function() {
     log('getVideoUrls() --');
-    var url = 'http://cache.video.qiyi.com/vd/',
+    var url = ['http://cache.video.qiyi.com/vj', this.tvid, this.vid].join('/'),
         that = this;
 
-    if (this.tvid) {
-      url = url + this.tvid + '/' + this.vid + '/';
-    } else {
-      error('Failed to construct video url!');
-      return;
-    }
 
     log('url: ', url);
     GM_xmlhttpRequest({

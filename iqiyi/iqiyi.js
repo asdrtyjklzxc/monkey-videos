@@ -77,15 +77,9 @@ var monkey = {
 
   getVideoUrls: function() {
     log('getVideoUrls() --');
-    var url = 'http://cache.video.qiyi.com/vd/',
+    var url = ['http://cache.video.qiyi.com/vj', this.tvid, this.vid].join('/'),
         that = this;
 
-    if (this.tvid) {
-      url = url + this.tvid + '/' + this.vid + '/';
-    } else {
-      error('Failed to construct video url!');
-      return;
-    }
 
     log('url: ', url);
     GM_xmlhttpRequest({
