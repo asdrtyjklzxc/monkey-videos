@@ -9,32 +9,12 @@ var monkey = {
   brs: null,
 
   // store video formats and its urls
-  formats: {
-    'flv': [],
-    'flvhd': [],
-    'mp4': [],
-    'hd2': [],
-    'hd3': [],
-  },
-
-  stream_types: [
-      {id: 'hd3', container: 'flv', name: '1080P', size: 0},
-      {id: 'hd2', container: 'flv', name: '超清', size: 0},
-      {id: 'mp4', container: 'mp4', name: '高清', size: 0},
-      {id: 'flvhd', container: 'flv', name: '高清', size: 0},
-      {id: 'flv', container: 'flv', name: '标清', size: 0},
-      {id: '3gphd', container: '3gp', name: '高清(3GP)', size: 0}
-  ],
-
-  // video title
+  data: null,
   title: '',
-  // store video id
   videoId: '',
 
-  ep: '',
-  ip: '',
-
   run: function() {
+    console.log('run() --');
     this.getVideoId();
   },
 
@@ -80,9 +60,7 @@ var monkey = {
       method: 'GET',
       url: url2,
       onload: function(response) {
-        console.log('response:', response);
         var json = JSON.parse(response.responseText);
-        console.log('json:', json);
         if (json.data.length === 0) {
           console.error('Error: video not found!');
           return;
@@ -90,184 +68,99 @@ var monkey = {
         that.rs = json.data[0];
         that.title = that.rs.title;
         that.parseVideo();
+      }
     });
 
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        console.log('response:', response);
         var json = JSON.parse(response.responseText);
-        console.log('json:', json);
         if (json.data.length === 0) {
           console.error('Error: video not found!');
           return;
         }
         that.brs = json.data[0];
         that.parseVideo();
+      }
     });
   },
 
   parseVideo: function() {
     console.log('parseVideo() --');
-    if (! this.brs || ! this.rs) {
+    if (! this.rs || ! this.brs) {
       return;
     }
-    var streamtypes = this.rs.streamtypes,  // 清晰度
+
+    var streamtypes = this.rs.streamtypes,
         streamfileids = this.rs.streamfileids,
+        data = {},
         seed = this.rs.seed,
         segs = this.rs.segs,
+        key,
+        value,
+        k,
+        v,
         ip = this.rs.ip,
         bsegs = this.brs.segs,
-        [sid, token] = this.yk_e('becaf9be', this.yk_na(this.rs.ep)),
-        seg,
-        ep,
-        val,
-        key,
+        sid,
+        token,
+        i,
         k,
-        k2,
-        num,
+        number,
+        fileId0,
         fileId,
-        filetypes = {
-          'flv': 'normal',
-          '
+        ep,
+        pass1 = 'becaf9be',
+        pass2 = 'bf7e5f01',
+        typeArray = {
+          'flv': 'flv', 'mp4': 'mp4', 'hd2': 'flv', '3gphd': 'mp4',
+          '3gp': 'flv', 'hd3': 'flv'
+          },
+        sharpness = {
+          'flv': 'normal', 'flvhd': 'normal', 'mp4': 'high',
+          'hd2': 'super', '3gphd': 'high', '3g': 'normal',
+          'hd3': 'original'
         },
         filetype;
 
-        for (key in meta.segs) {
-          if (key in meta.streamtypes) {
-            val = meta.segs[key];
-            for (k in val) {
-              // 转为16进制, num 为每段视频的序号
-              num = parseInt(val[k].no).toString(16);
-              if (num.length === 1) {
-                num = '0' + num;
-              }
-
-              // 构建视频地址的K值
-              k2 = val.k;
-              if (!k2 || k2 === '' || k2 === '-1') {
-                k2 = bsegs[key][k].k;
-              }
-
-              fileId = this.getFileId(streamfileids[key], seed);
-              // 修正了编码问题, 应该用十六进制的序号;
-              fileId = fileId.slice(0, 8) + num + fileId.slice(10);
-//              if (j < 16) {
-//                fileId = fileId.slice(0, 9) + j.toString(16).toUpperCase() + 
-//                         fileId.slice(10);
-//              } else {
-//                fileId = fileId.slice(0, 8) + j.toString(16).toUpperCase() + 
-//                         fileId.slice(10);
-//              }
-                ep = encodeURI(
-                    this.yk_d(
-                      this.yk_e('bf7e5f01', sid + '_' + fileId + '_'),
-                      token));
-                // 根据后缀, 确定清析度
-                filetype = filetypes[key];
-            }
-          }
-        }
-      }
-  },
-
-  generate_ep: function(vid, ep) {
-    console.log('generate_ep() --');
-    var f_code_1 = 'becaf9be',
-        f_code_2 = 'bf7e5f01';
-
-    function trans_e(a, c) {
-      var f = 0,
-          h = 0,
-          b = new Array(256),
-          i,
-          q = 0,
-          tmp,
-          result = '';
-
-      for (i = 0; i < 256; i = i + 1) {
-        b[i] = i;
-      }
-
-      while (h < 256) {
-        //f = (f + b[h] + a[h % a.length].charCodeAt(0)) % 256; 
-        f = (f + b[h] + a.charCodeAt(h % a.length)) % 256; 
-        tmp = b[f];
-        b[f] = b[h];
-        b[h] = tmp;
-        h = h + 1
-      }
-
-      h = 0;
-      f = 0;
-      while (q < c.length) {
-        h = (h + 1) % 256;
-        f = (f + b[h]) % 256;
-        tmp = b[f];
-        b[f] = b[h];
-        b[h] = tmp;
-        if (typeof c[q] === 'number') {
-          result += String.fromCharCode(c[q] ^ b[(b[h] + b[f]) % 256])
-        } else {
-          result += String.fromCharCode((c[q]).charCodeAt() ^ b[(b[h] + b[f]) % 256])
-        }
-        q += 1
-      }
-      return result
-    }
-
-    var e_code = trans_e(f_code_1, base64.decode(ep));
-    var [sid, token] = e_code.split('_');
-    var new_ep = trans_e(f_code_2, [sid, vid, token].join('_'));
-    return [base64.encode(new_ep), sid, token];
-  },
-
-  /**
-   * Get video playlist.
-   */
-  getPlayList: function() {
-    console.log('getPlayList() --');
-    var url = 'http://v.youku.com/player/getPlayList/VideoIDS/' +
-          this.videoId,
-        that = this;
+    [sid, token] = this.yk_e(pass1, this.yk_na(this.rs.ep)).split('_');
     
-    console.log('url: ', url);
-    GM_xmlhttpRequest({
-      method: 'GET',
-      url: url,
-      onload: function(response) {
-        console.log('response:', response);
-        that.json = JSON.parse(response.responseText);
-        if (that.json) {
-          that.decodeURL();
-        }
-      },
-    });
-  },
+    for (key in segs) {
+      value = segs[key];
+      if (streamtypes.indexOf(key) > -1) {
+        for (k in value) {
+          v = value[k];
+          number = parseInt(v.no, 10).toString(16).toUpperCase();
+          if (number.length === 1) {
+            number = '0'.concat(number);
+          }
+          // 构建视频地址K值
+          k = v.k;
+          if (!k || k === '-1') {
+            k = bsegs[key][k]['k'];
+          }
+          fileId0 = this.getFileId(streamfileids[key], seed);
+          fileId = fileId0.substr(0, 8) + number + fileId0.substr(10);
+          ep = encodeURIComponent(this.yk_d(
+                this.yk_e(pass2, [sid, fileId, token].join('_'))));
 
-      fileId = this.getFileId(json.seed, json.streamfileids[format]);
-      for (j = 0; j < json.segs[format].length; j += 1) {
-        // 修正hd2|hd3的格式命名问题;
-        tmp = format;
-        if (tmp === 'hd2' || tmp == 'hd3') {
-          tmp = 'flv';
+          // 判断后缀类型, 获得后缀
+          filetype = typeArray[key];
+          data[key] = data[key] || [];
+          data[key].push([
+            'http://k.youku.com/player/getFlvPath/sid/', sid,
+            '_00/st/', filetype,
+            '/fileid/', fileId,
+            '?K=', k,
+            '&ctype=12&ev=1&token=', token,
+            '&oip=', ip,
+            '&ep=', ep,
+            ].join(''));
         }
-        url = [
-            urlPrefix,
-            tmp,
-            '/fileid/',
-            fileId,
-            '?K=',
-            json.segs[format][j].k,
-            ',k2:',
-            json.segs[format][j].k2
-            ].join('');
-
-        this.formats[format][j] = url;
       }
     }
-    // 调用UI函数;
+    this.data = data;
     this.createUI();
   },
 
@@ -330,6 +223,7 @@ var monkey = {
         result = [],
         e = 0,
         g = 0,
+        h,
         chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
     if (len === 0) {
@@ -349,9 +243,103 @@ var monkey = {
       i = i + 1;
       if (i === len) {
         result.push(chars.charAt(e >> 2));
+        result.push(chars.charAt((e & 3) << 4 | (g & 240) >> 4));
+        result.push(chars.charAt((g & 15) << 2));
+        result.push('=');
+        break
       }
+      h = s.charCodeAt(i);
+      i = i + 1;
+      result.push(chars.charAt(e >> 2));
+      result.push(chars.charAt((e & 3) << 4 | (g & 240) >> 4));
+      result.push(chars.charAt((g & 15) << 2 | (h & 192) >> 6));
+      result.push(chars.charAt(h & 63));
+    }
+    return result.join('');
+  },
+
+  yk_na: function(a) {
+    if (! a) {
+      return '';
     }
 
+    var h = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,62,-1,-1,-1,63,52,53,54,55,56,57,58,59,60,61,-1,-1,-1,-1,-1,-1,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,-1,-1,-1,-1,-1,-1,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,-1,-1,-1,-1,-1],
+        i = a.length,
+        e = [],
+        f = 0,
+        b,
+        c;
+
+    while (f < i) {
+      do {
+        c = h[a.charCodeAt(f++) & 255];
+      } while (f < i && c === -1);
+      if (c === -1) {
+        break;
+      }
+
+      do {
+        b = h[a.charCodeAt(f++) & 255];
+      } while (f < i && b === -1);
+      if (b === -1) {
+        break;
+      }
+      e.push(String.fromCharCode(c << 2 | (b & 48) >> 4));
+
+      do {
+        c = a.charCodeAt(f++) & 255;
+        if (c === 61) {
+          return e.join('');
+        }
+        c = h[c];
+      } while (f < i && c === -1);
+      if (c === -1) {
+        break;
+      }
+      e.push(String.fromCharCode((b & 15) << 4 | (c & 60) >> 2));
+
+      do {
+        b = a.charCodeAt(f) & 255;
+        f = f + 1;
+        if (b === 61) {
+          return e.join('');
+        }
+        b = h[b];
+      } while (f < i && b === -1);
+      if (b === -1) {
+        break;
+      }
+      e.push(String.fromCharCode((c & 3) << 6 | b));
+    }
+
+    return e.join('');
+  },
+
+  yk_e: function(a, c) {
+    var f = 0,
+        i = '',
+        e = [],
+        q = 0,
+        h = 0,
+        b = {};
+    for (h = 0; h < 256; h = h + 1) {
+      b[h] = h;
+    }
+    for (h = 0; h < 256; h = h + 1) {
+      f = ((f + b[h]) + a.charCodeAt(h % a.length)) % 256;
+      i = b[h];
+      b[h] = b[f];
+      b[f] = i;
+    }
+    for (q = 0, f = 0, h = 0; q < c.length; q = q + 1) {
+      h = (h + 1) % 256;
+      f = (f + b[h]) % 256;
+      i = b[h];
+      b[h] = b[f];
+      b[f] = i;
+      e.push(String.fromCharCode(c.charCodeAt(q) ^ b[(b[h] + b[f]) % 256]));
+    }
+    return e.join('');
   },
 
   /**
@@ -359,24 +347,27 @@ var monkey = {
    */
   createUI: function() {
     console.log('createUI() --');
+    console.log(this);
     var videos = {
           title: this.title,
           formats: [],
           links: [],
         },
         types = {
+          '3gp': '3G',
+          '3gphd': '3G高清',
           flv: '标清',
           flvhd: '高清Flv',
           mp4: '高清',
           hd2: '超清',
-          hd3: '1080P'
+          hd3: '1080P',
         },
         type;
 
-    for (type in types) {
-      if (this.formats[type].length > 0) {
+    for(type in types) {
+      if (type in this.data) {
         videos.formats.push(types[type]);
-        videos.links.push(this.formats[type]);
+        videos.links.push(this.data[type]);
       }
     }
 
@@ -385,5 +376,3 @@ var monkey = {
 };
 
 monkey.run();
-
-

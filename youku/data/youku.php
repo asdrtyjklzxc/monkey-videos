@@ -1,6 +1,7 @@
 <?php
 
 class Youku {
+
     const USER_AGENT = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36";
     const REFERER = "http://www.youku.com";
     const FORM_ENCODE = "GBK";
@@ -50,13 +51,6 @@ class Youku {
         return $sid;
     }
 
-    private static function getKey($key1,$key2){
-        $a = hexdec($key1);
-        $b = $a ^0xA55AA5A5;
-        $b = dechex($b);
-        return $key2.$b;
-    }
-
     private static function getFileid($fileId,$seed){
         $mixed = self::getMixString($seed);
         $ids = explode("*",rtrim($fileId,'*')); //去掉末尾的*号分割为数组
@@ -82,7 +76,7 @@ class Youku {
         return $mixed;
     }
 
-    private static function yk_d($a){
+    public function yk_d($a){
         if (!$a) {
             return '';
         }
@@ -113,7 +107,8 @@ class Youku {
         }
         return $c;
     }
-    private static function yk_na($a){
+
+    public function yk_na($a) {
         if (!$a) {
             return '';
         }
@@ -128,6 +123,7 @@ class Youku {
             if (-1 == $c) {
                 break;
             }
+
             do {
                 $b = $h[self::charCodeAt($a, $f++) & 255];
             } while ($f < $i && -1 == $b);
@@ -135,6 +131,7 @@ class Youku {
                 break;
             }
             $e .= self::fromCharCode($c << 2 | ($b & 48) >> 4);
+
             do {
                 $c = self::charCodeAt($a, $f++) & 255;
                 if (61 == $c) {
@@ -160,7 +157,8 @@ class Youku {
         }
         return $e;
     }
-    private static function yk_e($a, $c){
+
+    public function yk_e($a, $c) {
         for ($f = 0, $i, $e = '', $h = 0; 256 > $h; $h++) {
             $b[$h] = $h;
         }
@@ -191,7 +189,8 @@ class Youku {
         }
         return $str;
     }
-    private static function charCodeAt($str, $index){
+
+    private static function charCodeAt($str, $index) {
         static $charCode = array();
         $key = md5($str);
         $index = $index + 1;
@@ -202,7 +201,7 @@ class Youku {
         return $charCode[$key][$index];
     }
 
-    private static function charAt($str, $index = 0){
+    private static function charAt($str, $index = 0) {
         return substr($str, $index, 1);
     }
 
@@ -212,7 +211,7 @@ class Youku {
      * @param  [type] $vid [视频id]
      * @return [type]      [description]
      */
-    public static function _getYouku($vid){
+    public static function _getYouku($vid) {
         //$link = "http://v.youku.com/player/getPlayList/VideoIDS/{$vid}/Pf/4"; //获取视频信息json 有些视频获取不全(土豆网的 火影忍者)
         $blink = self::$base . $vid;
         $link = $blink."/Pf/4/ctype/12/ev/1";
@@ -232,8 +231,6 @@ class Youku {
             $ip = $rs['data'][0]['ip'];
             $bsegs =  $brs['data'][0]['segs'];
             list($sid, $token) = explode('_', self::yk_e('becaf9be', self::yk_na($rs['data'][0]['ep'])));
-			echo $rs['data'][0]['ep'];
-			echo "sid = $sid, token=$token\n";
             foreach ($segs as $key=>$val) {
                 if(in_array($key,$streamtypes)){
                     foreach($val as $k=> $v){
@@ -249,6 +246,7 @@ class Youku {
                         $fileId = self::getFileid($streamfileids[$key],$seed);
                         $fileId = substr($fileId,0,8).$no.substr($fileId,10);
                         $ep = urlencode(iconv('gbk', 'UTF-8', self::yk_d(self::yk_e('bf7e5f01', ((($sid . '_') . $fileId) . '_') . $token))));
+						echo "ep = $ep, sid=$sid, fileid=$fileId, token=$token\n";
                         //判断后缀类型 、获得后缀
                         $typeArray = array("flv"=>"flv","mp4"=>"mp4","hd2"=>"flv","3gphd"=>"mp4","3gp"=>"flv","hd3"=>"flv");
                         //判断视频清晰度  
@@ -272,5 +270,6 @@ class Youku {
 
 
 $youku = new Youku;
-$url = 'http://v.youku.com/v_show/id_XMzk2MzQ2MjU2.html';
+//$url = 'http://v.youku.com/v_show/id_XMzk2MzQ2MjU2.html';
+$url = 'http://v.youku.com/v_show/id_XNzYyNzAwNjky.html?f=22785246&ev=1';
 print_r($youku->parse($url));
