@@ -129,16 +129,17 @@ var monkey = {
     for (key in segs) {
       value = segs[key];
       if (streamtypes.indexOf(key) > -1) {
-        for (k in value) {
-          v = value[k];
+        for (i in value) {
+          v = value[i];
           number = parseInt(v.no, 10).toString(16).toUpperCase();
           if (number.length === 1) {
             number = '0'.concat(number);
           }
           // 构建视频地址K值
           k = v.k;
-          if (!k || k === '-1') {
-            k = bsegs[key][k]['k'];
+          if (!k || k === -1) {
+            console.log(bsegs, bsegs[key], bsegs[key][i]);
+            k = bsegs[key][i]['k'];
           }
           fileId0 = this.getFileId(streamfileids[key], seed);
           fileId = fileId0.substr(0, 8) + number + fileId0.substr(10);
