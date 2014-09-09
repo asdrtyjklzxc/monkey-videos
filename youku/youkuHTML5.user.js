@@ -483,7 +483,18 @@ var monkey = {
 
   run: function() {
     console.log('run() --');
+    this.hideSidebar();
     this.getVideoId();
+  },
+
+  hideSidebar: function() {
+    console.log('hideSidebar() --');
+    this.addStyle([
+        'div#sideTool, div#toolbarutil {',
+          'display: none !important;',
+          'visiblity: hidden !impotant;',
+        '}',
+        ].join(''));
   },
 
   /**
@@ -841,6 +852,19 @@ var monkey = {
     }
 
     multiFiles.run(videos);
+  },
+
+  /**
+   * Create a new <style> tag with str as its content.
+   * @param string styleText
+   *   - The <style> tag content.
+   */
+  addStyle: function(styleText) {
+    var style = document.createElement('style');
+    if (document.head) {
+      document.head.appendChild(style);
+      style.innerHTML = styleText;
+    }
   },
 };
 

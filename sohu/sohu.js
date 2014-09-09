@@ -125,7 +125,8 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        console.log('response: ', response);
+:w
+
         var json = JSON.parse(response.responseText);
 
         console.log('json: ', json);
@@ -211,13 +212,38 @@ var monkey = {
    */
   getId: function() {
     console.log('getId() --');
-    this.vid = vid;
-    this.p2.vid = vid;
-    this.plid = playlistId;
-    this.title = document.title.split('-')[0].trim();
-    this.referer = escape(location.href);
-    this.jobs += 1;
-    this.getVideoJSON('p2');
+    var scripts = document.querySelectorAll('script'),
+        script,
+        vidReg = /var vid="(\d+)";/,
+        vidMatch,
+        playlistReg = /var playlistId="(\d+)";/,
+        playlistMatch,
+        i;
+    for (i = 0; script = scripts[i]; i += 1) {
+      if (script.innerHTML.search('var vid') > -1) {
+        txt = script.innerHTML;
+        vidMatch = vidReg.exec(txt);
+        console.log('vidMatch: ', vidMatch);
+        if (vidMatch && vidMatch.length === 2) {
+          this.vid = vidMatch[1];
+        }
+        playlistMatch = playlistReg.exec(txt);
+        if (playlistMatch && playlistMatch.length === 2) {
+          this.plid = playlistMatch[1];
+          break;
+        }
+      }
+    }
+
+    if (this.vid) {
+      this.p2.vid = this.vid;
+      this.title = document.title.split('-')[0].trim();
+      this.referer = escape(location.href);
+      this.jobs += 1;
+      this.getVideoJSON('p2');
+    } else {
+      console.error('Failed to get vid!');
+    }
   },
 
   /**
@@ -326,4 +352,3 @@ var monkey = {
 };
 
 monkey.run();
-
