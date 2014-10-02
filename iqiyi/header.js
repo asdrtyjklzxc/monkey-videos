@@ -2,7 +2,7 @@
 // @name         iqiyiHTML5
 // @description  play video with html5 in iqiyi.com
 // @include      http://*.iqiyi.com/*
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -11,8 +11,4 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-
-var uw = window,
-    log = uw.console.log,
-    error = uw.console.error;
 

@@ -1,174 +1,186 @@
 
 var monkey = {
   title: '',
-  vid: '', // default vid, data-player-videoid
-  aid: '', // album id, data-player-albumid
+  vid: '',  // default vid, data-player-videoid
+  uid: '',  // generated uuid/user id
+  aid: '',  // album id, data-player-albumid
   tvid: '', // data-player-tvid
-  type: 0, // default type
-  rcOrder: [96, 1, 4, 5, 10],
+  type: 0,  // default type
+  rcOrder: [96, 1, 2, 3, 4, 5, 10],
+  vip: false, // this video is for VIP only
   rc: {
-    96: {
-      vid: '',
-      key: '',
-      name: '320P',
-      links: [],
-    },
-    1: {
-      vid: '',
-      key: '',
-      name: '480P',
-      links: [],
-    },
-    // 2, 3
-    4: {
-      vid: '',
-      key: '',
-      name: '720P',
-      links: [],
-    },
-    5: {
-      vid: '',
-      key: '',
-      name: '1080P',
-      links: [],
-    },
-    10: {
-      vid: '',
-      key: '',
-      name: '4K',
-      links: [],
-    },
+    96: {name: '240P', links: []},
+    1: {name: '320P', links: []},
+    2: {name: '480P', links: []},
+    3: {name: 'super', links: []},
+    4: {name: '720P', links: []},
+    5: {name: '1080P', links: []},
+    10: {name: '4K', links: []},
   },
   jobs: 0,
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.getVid();
   },
 
   getTitle: function() {
-    log('getTitle() --');
-    var nav = uw.document.querySelector('#navbar em'),
+    console.log('getTitle() --');
+    var nav = unsafeWindow.document.querySelector('#navbar em'),
         id,
         title;
 
     if (nav) {
       title = nav.innerHTML;
     } else {
-      title = uw.document.title.split('-')[0];
+      title = unsafeWindow.document.title.split('-')[0];
     }
     this.title = title.trim();
   },
 
   getVid: function() {
-    log('getVid() --');
-    var videoPlay = uw.document.querySelector('div#flashbox');
+    console.log('getVid() --');
+    var videoPlay = unsafeWindow.document.querySelector('div#flashbox');
     if (videoPlay && videoPlay.hasAttribute('data-player-videoid')) {
       this.vid = videoPlay.getAttribute('data-player-videoid');
       this.aid = videoPlay.getAttribute('data-player-aid');
       this.tvid = videoPlay.getAttribute('data-player-tvid');
+      this.uid = this.hex_guid();
       this.getVideoUrls();
     } else {
-      error('Error: failed to get video id');
+      console.error('Error: failed to get video id');
       return;
     }
   },
 
   getVideoUrls: function() {
-    log('getVideoUrls() --');
-    var url = ['http://cache.video.qiyi.com/vj', this.tvid, this.vid].join('/'),
+    console.log('getVideoUrls() --');
+    var tm = this.randint(1000, 2000),
+        enc = md5('ts56gh' + tm + this.tvid),
+        url = [
+          'http://cache.video.qiyi.com/vms?key=fvip&src=p',
+          '&tvId=', this.tvid,
+          '&vid=', this.vid,
+          '&vinfo=1&tm=', tm,
+          '&enc=', enc,
+          '&qyid=', this.uid,
+          '&tn=', Math.random(),
+        ].join(''),
         that = this;
 
-
-    log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
-
         var json = JSON.parse(response.responseText),
-            title,
-            vid_elemes,
-            vid_elem,
-            type,
-            container,
+            formats,
+            format,
+            vlink,
+            vlink_parts,
+            key,
+            url,
             i,
-            j,
-            files,
-            file;
+            j;
 
-        log('json: ', json);
+        that.title = json.data.vi.vn;
+        if (! json.data.vp.tkl) {
+          that.vip = true;
+          self.createUI();
+        }
 
-//        vid_elems = xml.querySelectorAll('relative data');
-//        for (i = 0; vid_elem = vid_elems[i]; i += 1) {
-//          type = vid_elem.getAttribute('version');
-//          if (! that.rc[type]) {
-//            error('Current video type not supported: ', type);
-//            continue;
-//          }
-//          container = that.rc[type];
-//          if (container.vid.length === 0) {
-//            container.vid = vid_elem.innerHTML;
-//            if (container.vid != vid && that.vid === vid) {
-//              that.getVideoUrls(container.vid);
-//            }
-//            if (vid === that.vid) {
-//              that.type = type;
-//            }
-//          }
-//          if (container.vid === vid) {
-//            files = xml.querySelectorAll('fileUrl file');
-//            for (j = 0; file = files[j]; j += 1) {
-//              container.links.push(file.innerHTML);
-//            }
-//            that.jobs += 1;
-//            that.getKey(container);
-//          }
-//        }
+        formats = json.data.vp.tkl[0].vs;
+        for (i = 0; format = formats[i]; i += 1) {
+          if (! that.rc[format.bid]) {
+            console.error('Current video type not supported: ', format.bid);
+            continue;
+          }
+          for (j = 0; j < format.fs.length; j += 1) {
+            vlink = format.fs[j].l;
+            if (! vlink.startsWith('/')) {
+              vlink = that.getVrsEncodeCode(vlink);
+            }
+            vlink_parts = vlink.split('/');
+            that.getDispathKey(
+                vlink_parts[vlink_parts.length - 1].split('.')[0],
+                format.bid, vlink, j);
+          }
+        }
       },
     });
   },
 
-  /**
-   * Get video authority key
-   */
-  getKey: function(container) {
-    log('getKey()', container);
-    var hash = container.links[0].split('/'),
-        url = [
-          'http://data.video.qiyi.com/',
-          hash[hash.length - 1].substr(0, 32),
-          '.ts',
-        ].join(''),
+  getVrsEncodeCode: function(vlink) {
+    var loc6 = 0,
+        loc2 = [],
+        loc3 = vlink.split('-'),
+        loc4 = loc3.length,
+        i;
+
+    for (i = loc4 - 1; i >= 0; i -= 1) {
+      loc6 = this.getVRSXORCode(parseInt(loc3[loc4 - i - 1], 16), i);
+      loc2.push(String.fromCharCode(loc6));
+    }
+    return loc2.reverse().join('');
+  },
+
+  getVRSXORCode: function(arg1, arg2) {
+    var loc3 = arg2 % 3;
+    if (loc3 === 1) {
+      return arg1 ^ 121;
+    } else if (loc3 === 2) {
+      return arg1 ^ 72
+    } else {
+      return arg1 ^ 103;
+    }
+  },
+
+  getDispathKey: function(rid, bid, vlink, i) {
+    var tp =  ")(*&^flash@#$%a",
         that = this;
 
-    log('getKey: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: 'http://data.video.qiyi.com/t?tn=' + Math.random(),
+      onload: function(response) {
+        var json = JSON.parse(response.responseText),
+            time = json.t,
+            t = Math.floor(parseInt(time) / 600.0).toString(),
+            key = md5(t + tp + rid),
+            url = [
+              'http://data.video.qiyi.com/', key, '/videos', vlink,
+              '?su=', that.uid,
+              '&client=&z=&bt=&ct=&tn=', that.randint(10000, 20000),
+              ].join('');
+
+          that.rc[bid].links.push('');
+          that.jobs += 1;
+          that.getFinalURL(bid, i, url);
+      },
+    });
+  },
+
+  getFinalURL: function(bid, i, url) {
+    var that = this;
+    
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
-        var finalUrl = response.finalUrl;
+        var json = JSON.parse(response.responseText);
 
-        log('finalUrl:', finalUrl);
-        container.key = finalUrl.substr(finalUrl.search('key='));
+        that.rc[bid].links[i] = json.l;
         that.jobs -= 1;
-        log('jobs: ', that.jobs, that);
         if (that.jobs === 0) {
           that.createUI();
         }
-      },
-      onerror: function(response) {
-        log('onerror:', response);
       },
     });
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var i,
         video,
         videos = {
@@ -205,14 +217,30 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;
+  },
+
+  /**
+   * Generate a UUID string
+   */
+  hex_guid: function() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+                 .toString(16)
+                 .substring(1);
+    }
+    return [s4(), s4(), s4(), s4(), s4(), s4(), s4(), s4()].join('');
+  },
+
+  randint: function(start, stop) {
+    return parseInt(Math.random() * (stop - start)) + start;
   },
 };
 

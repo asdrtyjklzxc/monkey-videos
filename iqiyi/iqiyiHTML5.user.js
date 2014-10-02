@@ -2,7 +2,7 @@
 // @name         iqiyiHTML5
 // @description  play video with html5 in iqiyi.com
 // @include      http://*.iqiyi.com/*
-// @version      2.3
+// @version      2.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -12,10 +12,280 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-var uw = window,
-    log = uw.console.log,
-    error = uw.console.error;
+/*
+ * JavaScript MD5 1.0.1
+ * https://github.com/blueimp/JavaScript-MD5
+ *
+ * Copyright 2011, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ * 
+ * Based on
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
 
+/*jslint bitwise: true */
+/*global unescape, define */
+
+(function ($) {
+    'use strict';
+
+    /*
+    * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+    * to work around bugs in some JS interpreters.
+    */
+    function safe_add(x, y) {
+        var lsw = (x & 0xFFFF) + (y & 0xFFFF),
+            msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+        return (msw << 16) | (lsw & 0xFFFF);
+    }
+
+    /*
+    * Bitwise rotate a 32-bit number to the left.
+    */
+    function bit_rol(num, cnt) {
+        return (num << cnt) | (num >>> (32 - cnt));
+    }
+
+    /*
+    * These functions implement the four basic operations the algorithm uses.
+    */
+    function md5_cmn(q, a, b, x, s, t) {
+        return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
+    }
+    function md5_ff(a, b, c, d, x, s, t) {
+        return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+    }
+    function md5_gg(a, b, c, d, x, s, t) {
+        return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+    }
+    function md5_hh(a, b, c, d, x, s, t) {
+        return md5_cmn(b ^ c ^ d, a, b, x, s, t);
+    }
+    function md5_ii(a, b, c, d, x, s, t) {
+        return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+    }
+
+    /*
+    * Calculate the MD5 of an array of little-endian words, and a bit length.
+    */
+    function binl_md5(x, len) {
+        /* append padding */
+        x[len >> 5] |= 0x80 << (len % 32);
+        x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+        var i, olda, oldb, oldc, oldd,
+            a =  1732584193,
+            b = -271733879,
+            c = -1732584194,
+            d =  271733878;
+
+        for (i = 0; i < x.length; i += 16) {
+            olda = a;
+            oldb = b;
+            oldc = c;
+            oldd = d;
+
+            a = md5_ff(a, b, c, d, x[i],       7, -680876936);
+            d = md5_ff(d, a, b, c, x[i +  1], 12, -389564586);
+            c = md5_ff(c, d, a, b, x[i +  2], 17,  606105819);
+            b = md5_ff(b, c, d, a, x[i +  3], 22, -1044525330);
+            a = md5_ff(a, b, c, d, x[i +  4],  7, -176418897);
+            d = md5_ff(d, a, b, c, x[i +  5], 12,  1200080426);
+            c = md5_ff(c, d, a, b, x[i +  6], 17, -1473231341);
+            b = md5_ff(b, c, d, a, x[i +  7], 22, -45705983);
+            a = md5_ff(a, b, c, d, x[i +  8],  7,  1770035416);
+            d = md5_ff(d, a, b, c, x[i +  9], 12, -1958414417);
+            c = md5_ff(c, d, a, b, x[i + 10], 17, -42063);
+            b = md5_ff(b, c, d, a, x[i + 11], 22, -1990404162);
+            a = md5_ff(a, b, c, d, x[i + 12],  7,  1804603682);
+            d = md5_ff(d, a, b, c, x[i + 13], 12, -40341101);
+            c = md5_ff(c, d, a, b, x[i + 14], 17, -1502002290);
+            b = md5_ff(b, c, d, a, x[i + 15], 22,  1236535329);
+
+            a = md5_gg(a, b, c, d, x[i +  1],  5, -165796510);
+            d = md5_gg(d, a, b, c, x[i +  6],  9, -1069501632);
+            c = md5_gg(c, d, a, b, x[i + 11], 14,  643717713);
+            b = md5_gg(b, c, d, a, x[i],      20, -373897302);
+            a = md5_gg(a, b, c, d, x[i +  5],  5, -701558691);
+            d = md5_gg(d, a, b, c, x[i + 10],  9,  38016083);
+            c = md5_gg(c, d, a, b, x[i + 15], 14, -660478335);
+            b = md5_gg(b, c, d, a, x[i +  4], 20, -405537848);
+            a = md5_gg(a, b, c, d, x[i +  9],  5,  568446438);
+            d = md5_gg(d, a, b, c, x[i + 14],  9, -1019803690);
+            c = md5_gg(c, d, a, b, x[i +  3], 14, -187363961);
+            b = md5_gg(b, c, d, a, x[i +  8], 20,  1163531501);
+            a = md5_gg(a, b, c, d, x[i + 13],  5, -1444681467);
+            d = md5_gg(d, a, b, c, x[i +  2],  9, -51403784);
+            c = md5_gg(c, d, a, b, x[i +  7], 14,  1735328473);
+            b = md5_gg(b, c, d, a, x[i + 12], 20, -1926607734);
+
+            a = md5_hh(a, b, c, d, x[i +  5],  4, -378558);
+            d = md5_hh(d, a, b, c, x[i +  8], 11, -2022574463);
+            c = md5_hh(c, d, a, b, x[i + 11], 16,  1839030562);
+            b = md5_hh(b, c, d, a, x[i + 14], 23, -35309556);
+            a = md5_hh(a, b, c, d, x[i +  1],  4, -1530992060);
+            d = md5_hh(d, a, b, c, x[i +  4], 11,  1272893353);
+            c = md5_hh(c, d, a, b, x[i +  7], 16, -155497632);
+            b = md5_hh(b, c, d, a, x[i + 10], 23, -1094730640);
+            a = md5_hh(a, b, c, d, x[i + 13],  4,  681279174);
+            d = md5_hh(d, a, b, c, x[i],      11, -358537222);
+            c = md5_hh(c, d, a, b, x[i +  3], 16, -722521979);
+            b = md5_hh(b, c, d, a, x[i +  6], 23,  76029189);
+            a = md5_hh(a, b, c, d, x[i +  9],  4, -640364487);
+            d = md5_hh(d, a, b, c, x[i + 12], 11, -421815835);
+            c = md5_hh(c, d, a, b, x[i + 15], 16,  530742520);
+            b = md5_hh(b, c, d, a, x[i +  2], 23, -995338651);
+
+            a = md5_ii(a, b, c, d, x[i],       6, -198630844);
+            d = md5_ii(d, a, b, c, x[i +  7], 10,  1126891415);
+            c = md5_ii(c, d, a, b, x[i + 14], 15, -1416354905);
+            b = md5_ii(b, c, d, a, x[i +  5], 21, -57434055);
+            a = md5_ii(a, b, c, d, x[i + 12],  6,  1700485571);
+            d = md5_ii(d, a, b, c, x[i +  3], 10, -1894986606);
+            c = md5_ii(c, d, a, b, x[i + 10], 15, -1051523);
+            b = md5_ii(b, c, d, a, x[i +  1], 21, -2054922799);
+            a = md5_ii(a, b, c, d, x[i +  8],  6,  1873313359);
+            d = md5_ii(d, a, b, c, x[i + 15], 10, -30611744);
+            c = md5_ii(c, d, a, b, x[i +  6], 15, -1560198380);
+            b = md5_ii(b, c, d, a, x[i + 13], 21,  1309151649);
+            a = md5_ii(a, b, c, d, x[i +  4],  6, -145523070);
+            d = md5_ii(d, a, b, c, x[i + 11], 10, -1120210379);
+            c = md5_ii(c, d, a, b, x[i +  2], 15,  718787259);
+            b = md5_ii(b, c, d, a, x[i +  9], 21, -343485551);
+
+            a = safe_add(a, olda);
+            b = safe_add(b, oldb);
+            c = safe_add(c, oldc);
+            d = safe_add(d, oldd);
+        }
+        return [a, b, c, d];
+    }
+
+    /*
+    * Convert an array of little-endian words to a string
+    */
+    function binl2rstr(input) {
+        var i,
+            output = '';
+        for (i = 0; i < input.length * 32; i += 8) {
+            output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
+        }
+        return output;
+    }
+
+    /*
+    * Convert a raw string to an array of little-endian words
+    * Characters >255 have their high-byte silently ignored.
+    */
+    function rstr2binl(input) {
+        var i,
+            output = [];
+        output[(input.length >> 2) - 1] = undefined;
+        for (i = 0; i < output.length; i += 1) {
+            output[i] = 0;
+        }
+        for (i = 0; i < input.length * 8; i += 8) {
+            output[i >> 5] |= (input.charCodeAt(i / 8) & 0xFF) << (i % 32);
+        }
+        return output;
+    }
+
+    /*
+    * Calculate the MD5 of a raw string
+    */
+    function rstr_md5(s) {
+        return binl2rstr(binl_md5(rstr2binl(s), s.length * 8));
+    }
+
+    /*
+    * Calculate the HMAC-MD5, of a key and some data (raw strings)
+    */
+    function rstr_hmac_md5(key, data) {
+        var i,
+            bkey = rstr2binl(key),
+            ipad = [],
+            opad = [],
+            hash;
+        ipad[15] = opad[15] = undefined;
+        if (bkey.length > 16) {
+            bkey = binl_md5(bkey, key.length * 8);
+        }
+        for (i = 0; i < 16; i += 1) {
+            ipad[i] = bkey[i] ^ 0x36363636;
+            opad[i] = bkey[i] ^ 0x5C5C5C5C;
+        }
+        hash = binl_md5(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
+        return binl2rstr(binl_md5(opad.concat(hash), 512 + 128));
+    }
+
+    /*
+    * Convert a raw string to a hex string
+    */
+    function rstr2hex(input) {
+        var hex_tab = '0123456789abcdef',
+            output = '',
+            x,
+            i;
+        for (i = 0; i < input.length; i += 1) {
+            x = input.charCodeAt(i);
+            output += hex_tab.charAt((x >>> 4) & 0x0F) +
+                hex_tab.charAt(x & 0x0F);
+        }
+        return output;
+    }
+
+    /*
+    * Encode a string as utf-8
+    */
+    function str2rstr_utf8(input) {
+        return unescape(encodeURIComponent(input));
+    }
+
+    /*
+    * Take string arguments and return either raw or hex encoded strings
+    */
+    function raw_md5(s) {
+        return rstr_md5(str2rstr_utf8(s));
+    }
+    function hex_md5(s) {
+        return rstr2hex(raw_md5(s));
+    }
+    function raw_hmac_md5(k, d) {
+        return rstr_hmac_md5(str2rstr_utf8(k), str2rstr_utf8(d));
+    }
+    function hex_hmac_md5(k, d) {
+        return rstr2hex(raw_hmac_md5(k, d));
+    }
+
+    function md5(string, key, raw) {
+        if (!key) {
+            if (!raw) {
+                return hex_md5(string);
+            }
+            return raw_md5(string);
+        }
+        if (!raw) {
+            return hex_hmac_md5(key, string);
+        }
+        return raw_hmac_md5(key, string);
+    }
+
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return md5;
+        });
+    } else {
+        $.md5 = md5;
+    }
+}(this));
 
 /**
  * base64 function wrap
@@ -472,174 +742,186 @@ var multiFiles = {
 
 var monkey = {
   title: '',
-  vid: '', // default vid, data-player-videoid
-  aid: '', // album id, data-player-albumid
+  vid: '',  // default vid, data-player-videoid
+  uid: '',  // generated uuid/user id
+  aid: '',  // album id, data-player-albumid
   tvid: '', // data-player-tvid
-  type: 0, // default type
-  rcOrder: [96, 1, 4, 5, 10],
+  type: 0,  // default type
+  rcOrder: [96, 1, 2, 3, 4, 5, 10],
+  vip: false, // this video is for VIP only
   rc: {
-    96: {
-      vid: '',
-      key: '',
-      name: '320P',
-      links: [],
-    },
-    1: {
-      vid: '',
-      key: '',
-      name: '480P',
-      links: [],
-    },
-    // 2, 3
-    4: {
-      vid: '',
-      key: '',
-      name: '720P',
-      links: [],
-    },
-    5: {
-      vid: '',
-      key: '',
-      name: '1080P',
-      links: [],
-    },
-    10: {
-      vid: '',
-      key: '',
-      name: '4K',
-      links: [],
-    },
+    96: {name: '240P', links: []},
+    1: {name: '320P', links: []},
+    2: {name: '480P', links: []},
+    3: {name: 'super', links: []},
+    4: {name: '720P', links: []},
+    5: {name: '1080P', links: []},
+    10: {name: '4K', links: []},
   },
   jobs: 0,
 
   run: function() {
-    log('run() --');
+    console.log('run() --');
     this.getTitle();
     this.getVid();
   },
 
   getTitle: function() {
-    log('getTitle() --');
-    var nav = uw.document.querySelector('#navbar em'),
+    console.log('getTitle() --');
+    var nav = unsafeWindow.document.querySelector('#navbar em'),
         id,
         title;
 
     if (nav) {
       title = nav.innerHTML;
     } else {
-      title = uw.document.title.split('-')[0];
+      title = unsafeWindow.document.title.split('-')[0];
     }
     this.title = title.trim();
   },
 
   getVid: function() {
-    log('getVid() --');
-    var videoPlay = uw.document.querySelector('div#flashbox');
+    console.log('getVid() --');
+    var videoPlay = unsafeWindow.document.querySelector('div#flashbox');
     if (videoPlay && videoPlay.hasAttribute('data-player-videoid')) {
       this.vid = videoPlay.getAttribute('data-player-videoid');
       this.aid = videoPlay.getAttribute('data-player-aid');
       this.tvid = videoPlay.getAttribute('data-player-tvid');
+      this.uid = this.hex_guid();
       this.getVideoUrls();
     } else {
-      error('Error: failed to get video id');
+      console.error('Error: failed to get video id');
       return;
     }
   },
 
   getVideoUrls: function() {
-    log('getVideoUrls() --');
-    var url = ['http://cache.video.qiyi.com/vj', this.tvid, this.vid].join('/'),
+    console.log('getVideoUrls() --');
+    var tm = this.randint(1000, 2000),
+        enc = md5('ts56gh' + tm + this.tvid),
+        url = [
+          'http://cache.video.qiyi.com/vms?key=fvip&src=p',
+          '&tvId=', this.tvid,
+          '&vid=', this.vid,
+          '&vinfo=1&tm=', tm,
+          '&enc=', enc,
+          '&qyid=', this.uid,
+          '&tn=', Math.random(),
+        ].join(''),
         that = this;
 
-
-    log('url: ', url);
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
-
         var json = JSON.parse(response.responseText),
-            title,
-            vid_elemes,
-            vid_elem,
-            type,
-            container,
+            formats,
+            format,
+            vlink,
+            vlink_parts,
+            key,
+            url,
             i,
-            j,
-            files,
-            file;
+            j;
 
-        log('json: ', json);
+        that.title = json.data.vi.vn;
+        if (! json.data.vp.tkl) {
+          that.vip = true;
+          self.createUI();
+        }
 
-//        vid_elems = xml.querySelectorAll('relative data');
-//        for (i = 0; vid_elem = vid_elems[i]; i += 1) {
-//          type = vid_elem.getAttribute('version');
-//          if (! that.rc[type]) {
-//            error('Current video type not supported: ', type);
-//            continue;
-//          }
-//          container = that.rc[type];
-//          if (container.vid.length === 0) {
-//            container.vid = vid_elem.innerHTML;
-//            if (container.vid != vid && that.vid === vid) {
-//              that.getVideoUrls(container.vid);
-//            }
-//            if (vid === that.vid) {
-//              that.type = type;
-//            }
-//          }
-//          if (container.vid === vid) {
-//            files = xml.querySelectorAll('fileUrl file');
-//            for (j = 0; file = files[j]; j += 1) {
-//              container.links.push(file.innerHTML);
-//            }
-//            that.jobs += 1;
-//            that.getKey(container);
-//          }
-//        }
+        formats = json.data.vp.tkl[0].vs;
+        for (i = 0; format = formats[i]; i += 1) {
+          if (! that.rc[format.bid]) {
+            console.error('Current video type not supported: ', format.bid);
+            continue;
+          }
+          for (j = 0; j < format.fs.length; j += 1) {
+            vlink = format.fs[j].l;
+            if (! vlink.startsWith('/')) {
+              vlink = that.getVrsEncodeCode(vlink);
+            }
+            vlink_parts = vlink.split('/');
+            that.getDispathKey(
+                vlink_parts[vlink_parts.length - 1].split('.')[0],
+                format.bid, vlink, j);
+          }
+        }
       },
     });
   },
 
-  /**
-   * Get video authority key
-   */
-  getKey: function(container) {
-    log('getKey()', container);
-    var hash = container.links[0].split('/'),
-        url = [
-          'http://data.video.qiyi.com/',
-          hash[hash.length - 1].substr(0, 32),
-          '.ts',
-        ].join(''),
+  getVrsEncodeCode: function(vlink) {
+    var loc6 = 0,
+        loc2 = [],
+        loc3 = vlink.split('-'),
+        loc4 = loc3.length,
+        i;
+
+    for (i = loc4 - 1; i >= 0; i -= 1) {
+      loc6 = this.getVRSXORCode(parseInt(loc3[loc4 - i - 1], 16), i);
+      loc2.push(String.fromCharCode(loc6));
+    }
+    return loc2.reverse().join('');
+  },
+
+  getVRSXORCode: function(arg1, arg2) {
+    var loc3 = arg2 % 3;
+    if (loc3 === 1) {
+      return arg1 ^ 121;
+    } else if (loc3 === 2) {
+      return arg1 ^ 72
+    } else {
+      return arg1 ^ 103;
+    }
+  },
+
+  getDispathKey: function(rid, bid, vlink, i) {
+    var tp =  ")(*&^flash@#$%a",
         that = this;
 
-    log('getKey: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: 'http://data.video.qiyi.com/t?tn=' + Math.random(),
+      onload: function(response) {
+        var json = JSON.parse(response.responseText),
+            time = json.t,
+            t = Math.floor(parseInt(time) / 600.0).toString(),
+            key = md5(t + tp + rid),
+            url = [
+              'http://data.video.qiyi.com/', key, '/videos', vlink,
+              '?su=', that.uid,
+              '&client=&z=&bt=&ct=&tn=', that.randint(10000, 20000),
+              ].join('');
+
+          that.rc[bid].links.push('');
+          that.jobs += 1;
+          that.getFinalURL(bid, i, url);
+      },
+    });
+  },
+
+  getFinalURL: function(bid, i, url) {
+    var that = this;
+    
     GM_xmlhttpRequest({
       method: 'GET',
       url: url,
       onload: function(response) {
-        log('response: ', response);
-        var finalUrl = response.finalUrl;
+        var json = JSON.parse(response.responseText);
 
-        log('finalUrl:', finalUrl);
-        container.key = finalUrl.substr(finalUrl.search('key='));
+        that.rc[bid].links[i] = json.l;
         that.jobs -= 1;
-        log('jobs: ', that.jobs, that);
         if (that.jobs === 0) {
           that.createUI();
         }
-      },
-      onerror: function(response) {
-        log('onerror:', response);
       },
     });
   },
 
   createUI: function() {
-    log('createUI() --');
-    log(this);
+    console.log('createUI() --');
+    console.log(this);
     var i,
         video,
         videos = {
@@ -676,14 +958,30 @@ var monkey = {
    *  - the converted xml object.
    */
   parseXML: function(str) {
-    if (uw.document.implementation &&
-        uw.document.implementation.createDocument) {
+    if (unsafeWindow.document.implementation &&
+        unsafeWindow.document.implementation.createDocument) {
       xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
     } else {
-      log('parseXML() error: not support current web browser!');
+      console.log('parseXML() error: not support current web browser!');
       return null;
     }
     return xmlDoc;
+  },
+
+  /**
+   * Generate a UUID string
+   */
+  hex_guid: function() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+                 .toString(16)
+                 .substring(1);
+    }
+    return [s4(), s4(), s4(), s4(), s4(), s4(), s4(), s4()].join('');
+  },
+
+  randint: function(start, stop) {
+    return parseInt(Math.random() * (stop - start)) + start;
   },
 };
 
