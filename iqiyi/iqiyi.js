@@ -86,7 +86,7 @@ var monkey = {
         that.title = json.data.vi.vn;
         if (! json.data.vp.tkl) {
           that.vip = true;
-          self.createUI();
+          that.createUI();
         }
 
         formats = json.data.vp.tkl[0].vs;
@@ -192,6 +192,10 @@ var monkey = {
         link,
         j;
 
+    if (this.vip) {
+      unsafeWindow.alert('VIP only!');
+      return;
+    }
     for (i = 0; i < this.rcOrder.length; i += 1) {
       video = this.rc[this.rcOrder[i]];
       if (video.links.length > 0) {
