@@ -2,7 +2,7 @@
 // @name         pptvHTML5
 // @description  Play videos with html5 on pptv.com
 // @include      http://v.pptv.com/*
-// @version      2.1
+// @version      2.2
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -11,9 +11,4 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-
-var uw = window,
-    log = uw.console.log,
-    error = uw.console.error;
-
 
