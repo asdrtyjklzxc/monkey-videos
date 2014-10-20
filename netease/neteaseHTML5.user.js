@@ -640,7 +640,7 @@ var monkey = {
         i;
 
     if (this.pl_title.length > 0) {
-      videos.title = this.pl_title + '-' + this.title;
+      videos.title = this.title;
     }
 
     for (i = 0; format = formats[i]; i += 1) {
