@@ -1,4 +1,7 @@
-v2.7 20148.9.3
+v2.8 2014.10.20
+* Add updateURL
+
+v2.7 2014.9.3
 * Fixed: failed to get `k` value
 
 v2.6 2014.8.28

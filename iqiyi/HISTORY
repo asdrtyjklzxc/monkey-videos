@@ -1,29 +1,32 @@
-* v2.4 - 2014.10.3
+v2.5 - 2014.10.20
+* Add updateURL
+
+v2.4 - 2014.10.3
 * Algorithm updated.
 
-* v2.3 - 2014.4.19
+v2.3 - 2014.4.19
 * Fixed: Failed to get videoId; reported by @hbhghong
 
-* v2.2 - 2014.2.9
-Support 4K, reported by @spurding
+v2.2 - 2014.2.9
+* Support 4K, reported by @spurding
 
-* v2.1 - 2014.1.16
-Reconstructed
-Failed to get video key.
+v2.1 - 2014.1.16
+* Reconstructed
+* Failed to get video key.
 
-* v1.4 - 2013.11.12
-Fixed: add type == 4
+v1.4 - 2013.11.12
+* Fixed: add type == 4
 
-* v1.3 - 2013.11.5
-algorithm updated.
+v1.3 - 2013.11.5
+* algorithm updated.
 
-* v1.2 - 2013.8.3
-Create UI
+v1.2 - 2013.8.3
+* Create UI
 
-* v1.1 - 2013.7.31
-Start from scratch.
-Need to enable js on iqiyi.com, because setInterval() does not work
-without window js context.
+v1.1 - 2013.7.31
+* Start from scratch.
+* Need to enable js on iqiyi.com, because setInterval() does not work
+* without window js context.
 
-* v1.0 - 2012.3.28
-project inited
+v1.0 - 2012.3.28
+* project inited
