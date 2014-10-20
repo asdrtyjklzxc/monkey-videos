@@ -3,7 +3,7 @@
 // @description  Play Videos with html5 on letv.com
 // @include      http://letv.com/*
 // @include      http://*.letv.com/*
-// @version      2.7
+// @version      2.8
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -12,6 +12,7 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
+// @updateURL    https://raw.githubusercontent.com/LiuLang/monkey-videos/master/letv/letvHTML5.user.js
 // ==/UserScript==
 
 /**
