@@ -506,13 +506,19 @@ var monkey = {
   getOpenCourseSource: function() {
     console.log('getOpenCourseSource() --');
     var url = document.location.href.split('/'),
+        urlMatch = /([A-Z0-9]{9})_([A-Z0-9]{9})/,
+        match = urlMatch.exec(url),
         length = url.length,
         xmlUrl,
         that = this;
 
-    this.raw_vid = url[length - 1].replace('.html', '');
-    this.plid = this.raw_vid.split('_')[0];
-    this.mid = this.raw_vid.split('_')[1];
+    if (! match || match.length !== 3) {
+      console.error('Failed to get mid!', match);
+      return;
+    }
+    this.raw_vid = match[0];
+    this.plid = match[1];
+    this.mid = match[2];
     xmlUrl = [
       'http://live.ws.126.net/movie',
       url[length - 3],
@@ -525,7 +531,6 @@ var monkey = {
       method: 'GET',
       url: xmlUrl,
       onload: function(response) {
-        console.log('response: ', response);
         var xml = that.parseXML(response.responseText),
             type,
             video,
@@ -570,30 +575,21 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-        console.log('response: ', response);
         var json = JSON.parse(response.responseText),
             video,
             i;
 
-        console.log('json: ', json);
         for (i = 0; i < json.videoList.length; i += 1) {
-          if (json.videoList[i].mid === that.mid) {
-            video = json.videoList[i].repovideourl;
-            that.title = json.videoList[i].title;
+          video = json.videoList[i];
+          console.log('video:', video);
+          if (video.mid === that.mid) {
+            that.videos.sd = video.repovideourlmp4Origin;
+            that.videos.hd = video.repovideourl;
+            that.title = video.title;
             that.pl_title = json.title;
             break;
           }
         }
-
-        if (that.videos.sd.length > 0) {
-          that.videos.sd = video.replace('mobilev', 'movieMP4');
-        }
-        if (that.videos.hd.length > 0) {
-          that.videos.hd = video.replace('mobilev', 'movieMP4');
-        }
-        //if (that.videos.shd.length > 0) {
-          //that.videos.shd = video.replace('_sd.', '_shd.');
-        //}
         that.createUI();
       },
     });
