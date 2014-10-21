@@ -48,6 +48,7 @@ flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果
 * tucao.cc, 吐槽
 * tudou.com, 土豆网
 * wasu.cn, 华数TV
+* weiqitv.com, 围棋TV
 * youku.com, 优酷
 * youtube.com, YouTube
 

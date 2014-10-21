@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         monkey-videos
 // @description  播放网页里的视频, 不再需要Adobe Flash Player
-// @version      1.0.0
+// @version      1.0.1
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
 // @include      http://www.56.com/u*
 // @include      http://www.56.com/w*
-// @include      http://www.acfun.tv/v/*
-// @include      http://www.bilibili.com/video/*
+// @include      http://www.acfun.tv/v/ac*
+// @include      http://www.bilibili.com/video/av*
 // @include      http://tv.cntv.cn/video/*
 // @include      http://search.cctv.com/playVideo.php*
 // @include      http://www.fun.tv/vplay/*
@@ -33,6 +33,7 @@
 // @include      http://www.tudou.com/programs/view/*
 // @include      http://www.wasu.cn/Play/show/id/*
 // @include      http://www.wasu.cn/wap/Play/show/id/*
+// @include      http://www.weiqitv.com/index/live_back?videoId=*
 // @include      http://v.youku.com/v_show/id_*
 // @include      http://v.youku.com/v_playlist/*
 // @include      http://www.youtube.com/watch?v=*
@@ -555,6 +556,22 @@
       document.head.appendChild(style);
       style.innerHTML = styleText;
     }
+  };
+
+  /**
+   * Split query parameters in url and convert to object
+   */
+  var getQueryVariable = function(query) {
+    var vars = query.split('&'),
+        params = {},
+        param,
+        i;
+
+    for (i = 0; i < vars.length; i += 1) {
+      param = vars[i].split('=');
+      params[param[0]] = param[1];
+    }
+    return params;
   };
 
   /**
@@ -1125,7 +1142,7 @@ var monkey_acfun = {
         console.log('response:', response);
         var json = JSON.parse(response.responseText);
 
-        if (json.success) {
+        if (json.success && json.sourceUrl.startsWith('http')) {
           that.origUrl = json.sourceUrl;
         }
         that.createUI();
@@ -1146,7 +1163,7 @@ var monkey_acfun = {
 
     if (this.origUrl.length === 0) {
       videos.ok = false;
-      videos.msg = '视频已被删除';
+      videos.msg = '暂不支持';
       singleFile.run(videos);
     } else {
       videos.formats.push(' ');
@@ -1157,7 +1174,7 @@ var monkey_acfun = {
 }
 
 monkey.extend('www.acfun.tv', [
-  'http://www.acfun.tv/v/',
+  'http://www.acfun.tv/v/ac',
 ], monkey_acfun);
 
 /**
@@ -1263,8 +1280,9 @@ var monkey_bili = {
 }
 
 monkey.extend('www.bilibili.com', [
-  'http://www.bilibili.com/video/',
+  'http://www.bilibili.com/video/av',
 ], monkey_bili);
+
 
 /**
  * cntv.cn
@@ -3399,7 +3417,7 @@ var monkey_tucao = {
       this.pos = parseInt(location.hash.replace('#', '')) - 1;
       this.url = location.href.replace(location.hash, '');
     }
-    params = this.getQueryVariable(this.vids[this.pos].split('|')[0]);
+    params = getQueryVariable(this.vids[this.pos].split('|')[0]);
     this.vid = params.vid;
     this.type = params.type;
     if (this.vids.length === 1) {
@@ -3441,7 +3459,7 @@ var monkey_tucao = {
       url: url,
       onload: function(response) {
         console.log(response);
-        var xml = that.parseXML(response.responseText),
+        var xml = parseXML(response.responseText),
             durls = xml.querySelectorAll('durl'),
             durl,
             url,
@@ -3480,6 +3498,7 @@ var monkey_tucao = {
    */
   redirectTo: function() {
     console.log('redirectTo() --');
+    console.log(this);
     var urls = {
           tudou: function(vid) {
             return 'http://www.tudou.com/programs/view/' + vid + '/';
@@ -3516,38 +3535,6 @@ var monkey_tucao = {
     multiFiles.run(videos);
   },
 
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
-  },
-
-  /**
-   * Split query parameters in url and convert to object
-   */
-  getQueryVariable: function(query) {
-    var vars = query.split('&'),
-        params = {},
-        param,
-        i;
-
-    for (i = 0; i < vars.length; i += 1) {
-      param = vars[i].split('=');
-      params[param[0]] = param[1];
-    }
-    return params;
-  },
 }
 
 
@@ -3879,6 +3866,119 @@ monkey.extend('www.wasu.cn', [
   'http://www.wasu.cn/Play/show/id/',
   'http://www.wasu.cn/wap/Play/show/id/',
 ], monkey_wasu);
+
+
+/**
+ * weiqitv.com
+ */
+var monkey_weiqitv = {
+  sid: '',
+  vid: '',
+  title: '',
+  videos: {},
+  formats: {
+    '2': '高清',
+    '3': '超清',
+    '5': '高清2',
+    '4': '标清',
+    'default': 'flv',
+  },
+
+  run: function() {
+    console.log('run() -- ');
+    this.getVid();
+  },
+
+  getVid: function() {
+    console.log('getVid() --');
+    var vidReg = /vid:(\d+),/,
+        vidMatch,
+        sidReg = /sid:(\d+)\s*/,
+        sidMatch,
+        scripts = document.querySelectorAll('script'),
+        script,
+        i;
+
+    for (i = 0; i < scripts.length; i += 1) {
+      script = scripts[i];
+      vidMatch = vidReg.exec(script.innerHTML);
+      if (vidMatch && vidMatch.length === 2) {
+        this.vid = vidMatch[1];
+        sidMatch = sidReg.exec(script.innerHTML);
+        this.sid = sidMatch[1];
+        break;
+      }
+    }
+    this.title = document.title;
+    if (this.vid.length === 0) {
+      console.error('Failed to get vid!');
+    } else {
+      this.getVideoInfo();
+    }
+  },
+
+  getVideoInfo: function() {
+    var that = this,
+        url = [
+          'http://www.yunsp.com.cn:8080/dispatch/videoPlay/getInfo?',
+          'vid=', this.vid,
+          '&sid=', this.sid,
+          '&isList=0&ecode=notexist',
+        ].join('');
+
+    console.log('url: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        var json = JSON.parse(response.responseText),
+            videoInfo = json[0].videoInfo,
+            format;
+
+        that.title = videoInfo.name;
+        for (format in that.formats) {
+          if (format in videoInfo) {
+            that.videos[format] = videoInfo[format].url;
+          }
+        }
+        that.createUI();
+      },
+    });
+  },
+
+  /**
+   * construct ui widgets.
+   */
+  createUI: function() {
+    console.log('createUI() --');
+    console.log(this);
+    var videos = {
+          title: this.title,
+          formats: [],
+          links: [],
+          ok: true,
+          msg: '',
+        },
+        types = ['default', '4', '5', '2', '3'],
+        type,
+        url,
+        i;
+  
+    for (i = 0; type = types[i]; i += 1) {
+      url = this.videos[type];
+      if (url && url.length > 0) {
+        videos.links.push(url);
+        videos.formats.push(this.formats[type]);
+      }
+    }
+
+    singleFile.run(videos);
+  },
+};
+
+monkey.extend('www.weiqitv.com', [
+  'http://www.weiqitv.com/index/live_back?videoId=',
+], monkey_weiqitv);
 
 /**
  * youku.com

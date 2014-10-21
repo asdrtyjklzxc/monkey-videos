@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         monkey-videos
 // @description  播放网页里的视频, 不再需要Adobe Flash Player
-// @version      1.0.0
+// @version      1.0.1
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -524,6 +524,22 @@ IMPORT_INCLUDES
       document.head.appendChild(style);
       style.innerHTML = styleText;
     }
+  };
+
+  /**
+   * Split query parameters in url and convert to object
+   */
+  var getQueryVariable = function(query) {
+    var vars = query.split('&'),
+        params = {},
+        param,
+        i;
+
+    for (i = 0; i < vars.length; i += 1) {
+      param = vars[i].split('=');
+      params[param[0]] = param[1];
+    }
+    return params;
   };
 
   /**

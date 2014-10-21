@@ -102,5 +102,6 @@ var monkey_bili = {
 }
 
 monkey.extend('www.bilibili.com', [
-  'http://www.bilibili.com/video/',
+  'http://www.bilibili.com/video/av',
 ], monkey_bili);
+

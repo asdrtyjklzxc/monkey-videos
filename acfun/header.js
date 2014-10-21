@@ -1,1 +1,1 @@
-// @include      http://www.acfun.tv/v/*
+// @include      http://www.acfun.tv/v/ac*

@@ -1,1 +1,1 @@
-// @include      http://www.bilibili.com/video/*
+// @include      http://www.bilibili.com/video/av*

@@ -21,6 +21,7 @@ handlers = [
     'tucao.js',
     'tudou.js',
     'wasu.js',
+    'weiqitv.js',
     'youku.js',
     'youtube.js',
 ]

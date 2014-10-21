@@ -50,7 +50,7 @@ var monkey_acfun = {
         console.log('response:', response);
         var json = JSON.parse(response.responseText);
 
-        if (json.success) {
+        if (json.success && json.sourceUrl.startsWith('http')) {
           that.origUrl = json.sourceUrl;
         }
         that.createUI();
@@ -71,7 +71,7 @@ var monkey_acfun = {
 
     if (this.origUrl.length === 0) {
       videos.ok = false;
-      videos.msg = '视频已被删除';
+      videos.msg = '暂不支持';
       singleFile.run(videos);
     } else {
       videos.formats.push(' ');
@@ -82,5 +82,5 @@ var monkey_acfun = {
 }
 
 monkey.extend('www.acfun.tv', [
-  'http://www.acfun.tv/v/',
+  'http://www.acfun.tv/v/ac',
 ], monkey_acfun);

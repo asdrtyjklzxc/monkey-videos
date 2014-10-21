@@ -61,7 +61,7 @@ var monkey_tucao = {
       this.pos = parseInt(location.hash.replace('#', '')) - 1;
       this.url = location.href.replace(location.hash, '');
     }
-    params = this.getQueryVariable(this.vids[this.pos].split('|')[0]);
+    params = getQueryVariable(this.vids[this.pos].split('|')[0]);
     this.vid = params.vid;
     this.type = params.type;
     if (this.vids.length === 1) {
@@ -103,7 +103,7 @@ var monkey_tucao = {
       url: url,
       onload: function(response) {
         console.log(response);
-        var xml = that.parseXML(response.responseText),
+        var xml = parseXML(response.responseText),
             durls = xml.querySelectorAll('durl'),
             durl,
             url,
@@ -142,6 +142,7 @@ var monkey_tucao = {
    */
   redirectTo: function() {
     console.log('redirectTo() --');
+    console.log(this);
     var urls = {
           tudou: function(vid) {
             return 'http://www.tudou.com/programs/view/' + vid + '/';
@@ -178,38 +179,6 @@ var monkey_tucao = {
     multiFiles.run(videos);
   },
 
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
-  },
-
-  /**
-   * Split query parameters in url and convert to object
-   */
-  getQueryVariable: function(query) {
-    var vars = query.split('&'),
-        params = {},
-        param,
-        i;
-
-    for (i = 0; i < vars.length; i += 1) {
-      param = vars[i].split('=');
-      params[param[0]] = param[1];
-    }
-    return params;
-  },
 }
 
 
