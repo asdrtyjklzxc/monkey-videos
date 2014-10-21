@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * iqiyi.com
+ */
+var monkey_iqiyi = {
   title: '',
   vid: '',  // default vid, data-player-videoid
   uid: '',  // generated uuid/user id
@@ -248,5 +251,7 @@ var monkey = {
   },
 };
 
-monkey.run();
-
+monkey.extend('www.iqiyi.com', [
+  'http://www.iqiyi.com/v_',
+  'http://www.iqiyi.com/jilupian/',
+], monkey_iqiyi);

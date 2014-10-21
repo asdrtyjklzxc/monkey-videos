@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * letv.com
+ */
+var monkey_letv = {
   pid: '',
   vid: '',   // video id
   title: '',
@@ -211,25 +214,9 @@ var monkey = {
 
     multiFiles.run(videos);
   },
+};
 
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation &&
-        document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
-  },
-}
-
-monkey.run();
+monkey.extend('www.letv.com', [
+  'http://www.letv.com/ptv/vplay/',
+], monkey_letv);
 

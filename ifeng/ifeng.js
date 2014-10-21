@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * ifeng.com
+ */
+var monkey_ifeng = {
   id: '',
   title: '',
   links: [],
@@ -14,6 +17,7 @@ var monkey = {
     var reg = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/,
         match = reg.exec(location.href);
 
+    console.log('match: ', match);
     if (match && match.length === 2) {
       this.id = match[1];
       this.downloadById();
@@ -68,4 +72,10 @@ var monkey = {
   },
 };
 
-monkey.run();
+monkey.extend('v.ifeng.com', [
+  'http://v.ifeng.com/',
+], monkey_ifeng);
+
+monkey.extend('phtv.ifeng.com', [
+  'http://phtv.ifeng.com/program/',
+], monkey_ifeng);

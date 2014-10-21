@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * tudou.com
+ */
+var monkey_tudou = {
 
   url:'',   // document.location.href
   title: '',
@@ -155,7 +158,8 @@ var monkey = {
    */
   redirectToYouku: function() {
     var url = 'http://v.youku.com/v_show/id_' + this.vcode + '.html';
-    this.redirect(url);
+    console.log('redirectToYouku:', url);
+    this.createUI();
   },
 
   /**
@@ -168,43 +172,31 @@ var monkey = {
           title: this.title,
           formats: [],
           links: [],
+          ok: true,
+          msg: '',
         },
         type,
         i;
 
-    for (type in this.links) {
-      videos.links.push(this.links[type]);
-      videos.formats.push(this.formats[type]);
-    }
-
-    console.log('videos: ', videos);
-    multiFiles.run(videos);
-  },
-
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = (new DOMParser()).parseFromString(str, 'text/xml');
+    if (this.vcode.length > 0) {
+      videos.title = '原始地址';
+      videos.links.push('http://v.youku.com/v_show/id_' + this.vcode + '.html');
+      videos.formats.push('');
+      singleFile.run(videos);
     } else {
-      console.error('parseXML() error: not support current web browser!');
-      return null;
+      for (type in this.links) {
+        videos.links.push(this.links[type]);
+        videos.formats.push(this.formats[type]);
+      }
+      console.log('videos: ', videos);
+      multiFiles.run(videos);
     }
-    return xmlDoc;
   },
 
-  /**
-   * Redirect window location.
-   */
-  redirect: function(url) {
-    location = url;
-  },
 };
 
-monkey.run();
-
+monkey.extend('www.tudou.com', [
+  'http://www.tudou.com/albumplay/',
+  'http://www.tudou.com/listplay/',
+  'http://www.tudou.com/programs/view/',
+], monkey_tudou);

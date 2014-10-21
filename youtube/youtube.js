@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * youtube.com
+ */
+var monkey_youtube = {
   videoId: '',
   videoInfoUrl: null,
   videoTitle: '',
@@ -302,5 +305,8 @@ var monkey = {
   },
 };
 
-monkey.run();
 
+monkey.extend('www.youtube.com', [
+  'http://www.youtube.com/watch?v=',
+  'https://www.youtube.com/watch?v=',
+], monkey_youtube);

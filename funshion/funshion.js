@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * funshion.com
+ */
+var monkey_funshion = {
   title: '',
   mediaid: '',       // 专辑ID;
   number: '',        // 第几集, 从1计数;
@@ -254,5 +257,10 @@ var monkey = {
   },
 }
 
-monkey.run();
+monkey.extend('fun.tv', [
+  'http://fun.tv/vplay/',
+], monkey_funshion);
 
+monkey.extend('www.fun.tv', [
+  'http://www.fun.tv/vplay/',
+], monkey_funshion);

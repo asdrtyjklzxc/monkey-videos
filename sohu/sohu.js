@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * sohu.com
+ */
+var monkey_sohu = {
   title: '',
   vid: '',
   plid: '',
@@ -125,8 +128,6 @@ var monkey = {
       method: 'GET',
       url: url,
       onload: function(response) {
-:w
-
         var json = JSON.parse(response.responseText);
 
         console.log('json: ', json);
@@ -351,4 +352,7 @@ var monkey = {
   },
 };
 
-monkey.run();
+monkey.extend('tv.sohu.com', [
+  'http://tv.sohu.com/',
+], monkey_sohu);
+

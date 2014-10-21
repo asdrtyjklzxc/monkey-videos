@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * 56.com
+ */
+var monkey_56 = {
   title: '',
   id: '',
   json: null,
@@ -101,5 +104,8 @@ var monkey = {
   },
 }
 
-monkey.run();
 
+monkey.extend('www.56.com', [
+  'http://www.56.com/u',
+  'http://www.56.com/w',
+], monkey_56);

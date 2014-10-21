@@ -1,9 +1,7 @@
 /**
- * monkey object.
- *
- * get video links for youku.com
+ * youku.com
  */
-var monkey = {
+var monkey_youku = {
   // store xhr result, with json format
   rs: null,
   brs: null,
@@ -15,18 +13,7 @@ var monkey = {
 
   run: function() {
     console.log('run() --');
-    this.hideSidebar();
     this.getVideoId();
-  },
-
-  hideSidebar: function() {
-    console.log('hideSidebar() --');
-    this.addStyle([
-        'div#sideTool, div#toolbarutil {',
-          'display: none !important;',
-          'visiblity: hidden !impotant;',
-        '}',
-        ].join(''));
   },
 
   /**
@@ -385,19 +372,10 @@ var monkey = {
 
     multiFiles.run(videos);
   },
-
-  /**
-   * Create a new <style> tag with str as its content.
-   * @param string styleText
-   *   - The <style> tag content.
-   */
-  addStyle: function(styleText) {
-    var style = document.createElement('style');
-    if (document.head) {
-      document.head.appendChild(style);
-      style.innerHTML = styleText;
-    }
-  },
 };
 
-monkey.run();
+monkey.extend('v.youku.com', [
+  'http://v.youku.com/v_show/id_',
+  'http://v.youku.com/v_playlist/',
+], monkey_youku);
+

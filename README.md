@@ -6,6 +6,8 @@
 直接播放的, 比如我常用vlc来播放youku的视频, 效果还可以, 至少不会像adobe
 flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果很好.
 
+目前只支持firefox平台.
+
 
 类似项目
 ========
@@ -20,106 +22,34 @@ flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果
 安装
 ====
 1. 安装firefox.
-2. 安装greasemonkey扩展.
-3. 选择你需要的脚本, 比如youtube/, 找到里面的.user.js文件, 下载, 双击,
-应该就可以在firefox中打开, 它还会弹出一个提示框, 问你是否允许安装这个脚本,
-点允许就可以安装到greasemonkey脚本库了.
-4. 访问视频网站, 就可以在页面的右/左下角看到解析好的链接了. 如果需要批量下载
+2. 安装[greasemonkey扩展](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/).
+3. 点击[这里](https://raw.githubusercontent.com/LiuLang/monkey-videos/master/monkey-videos.user.js) 安装monke-videos.
+4. 访问视频网站, 就可以在页面的右下角看到解析好的链接了. 如果需要批量下载
 这些视频的话, 我推荐使用DownThemAll这个firefox的扩展, 很方便.
 
 
-youku
-=====
-解析youku.com的, 这个常用, 我看dota视频时就用它.
+支持的网站
+=========
 
-它会同时生成一个m3u格式的播放列表, 用vlc打开这个播放列表就可以看啦, 很方便.
-
-之前有朋友要求把它移植到opera, chromium里, 我改了一下, 另存为了
-youku-needjs.user.js, 但我没测试过.
-
-
-youtube
-=======
-这个也常用, 只能说, youtube太强了, 一般的视频提供了flv, mp4, 3gp, webm等多
-种格式, 还有从320p, 480p, 720p, 1080p等不同的分辨率, 相当牛X. 并且不管视频
-大小, 都只有一个文件, 不像国内的youku, iqiyi, pptv, cntv之流, 还要把视频切
-成n个小片段.
-
-
-LeTV
-====
-乐视的, 还行, 暑假用了好多次.
-
-
-PPS
-===
-pps的话, 好像还可以播放一些收费的视频, 因为它不像youku那样在服务端进行验证.
-这个一段时间没用了.
-
-
-iqiyi
-=====
-iqiyi的算法已经更新了, 现在可以解析各种清晰度.
-
-cntv
-====
-它也是分段的视频, 方式和优酷一样, 也可以得到一个播放列表,点开就能看了, 主要
-用它看一些纪录片, 还有[原来如此]这个节目, 暑假给看了一遍.
-
-funshion
-========
-风行网的还可以吧, 但是视频下到一半有时候就没了速度, 暑假用它下了全套的[星球
-大战].
-
-sohu
-====
-更新了, 为了看<生活大爆炸>. 支持三种清晰度.
-
-netease
-=======
-这个能工作, 也可以用来下载公开课等.
-
-tucao
-=====
-tucao.cc, 主要收录了一些二次元动画, 还有弹幕功能. 它主要使用了新浪的视频.
-
-tudou
-=====
-也可以用了, 有些视频会直接重定向到youku.com, 使用youku的视频解析算法.
-
-acfun
-=====
-acfun.tv, 由@只是说 推荐的网站.
-
-bilibili
-========
-bilibili.tv, 这个网站不存储视频, 只使用其它视频网站的资源.
-
-sina
-====
-sina视频存在一些问题, 它的接口太混乱了.
-
-justing
-=======
-justing.com.cn, 直接得到mp3的地址.
-justing.py 是python3版本的批量下载工具, 需要安装这些模块:
-
-* python3-gi
-* mutagenx  https://pypi.python.org/pypi/mutagenx
-* lxml http://lxml.de
-
-wasu
-====
-wasu.cn, 华数TV.
-
-ku6
-===
-ku6.com, 酷6视频
-
-
-ifeng
-=====
-已支持凤凰视频.
+* v.163.com, 网易视频
+* open.163.com, 网易公开课
+* acfun.tv, AcFun弹幕视频网
+* bilibili.tv, 哔哩哔哩弹幕视频网
+* cntv.cn, 中国网络电视台
+* funshion.com, 风行网
+* v.ifeng.com, 凤凰视频
+* iqiyi.com, 爱奇艺
+* justing.com.cn, 静雅思听
+* ku6.com, 酷6视频
+* letv.com, 乐视
+* pps.com, PPS影音
+* tv.sina.com.cn, 新浪视频
+* tv.sohu.com, 搜狐视频
+* tucao.cc, 吐槽
+* tudou.com, 土豆网
+* wasu.cn, 华数TV
+* youku.com, 优酷
+* youtube.com, YouTube
 
 
 COPYRIGHT

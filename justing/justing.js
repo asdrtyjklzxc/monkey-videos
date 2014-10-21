@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * justing.com.cn
+ */
+var monkey_justing = {
   title: '',
   link: '',
 
@@ -43,5 +46,6 @@ var monkey = {
 
 };
 
-monkey.run();
-
+monkey.extend('www.justing.com.cn', [
+  'http://www.justing.com.cn/page/',
+], monkey_justing);

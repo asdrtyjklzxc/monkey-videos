@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * cntv.cn
+ */
+var monkey_cntv = {
   pid: '',
   title: '',
   json: [],
@@ -188,5 +191,10 @@ var monkey = {
   },
 }
 
-monkey.run();
+monkey.extend('tv.cntv.cn', [
+  'http://tv.cntv.cn/video/',
+], monkey_cntv);
 
+monkey.extend('search.cctv.com', [
+  'http://search.cctv.com/playVideo.php',
+], monkey_cntv);

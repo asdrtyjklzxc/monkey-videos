@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * bilibili.tv
+ */
+var monkey_bili = {
   cid: '',
   title: '',
   oriurl: '',
@@ -98,5 +101,6 @@ var monkey = {
   },
 }
 
-monkey.run();
-
+monkey.extend('www.bilibili.com', [
+  'http://www.bilibili.com/video/',
+], monkey_bili);

@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * pps.tv
+ */
+var monkey_pps = {
   vid: '',
   title: '',
   types: {
@@ -95,4 +98,11 @@ var monkey = {
   },
 }
 
-monkey.run();
+monkey.extend('v.pps.tv', [
+  'http://v.pps.tv/play_',
+], monkey_pps);
+
+monkey.extend('ipd.pps.tv', [
+    'http://ipd.pps.tv/play_',
+], monkey_pps);
+

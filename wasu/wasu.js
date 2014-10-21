@@ -1,14 +1,31 @@
 
-var monkey = {
+/**
+ * wasu.cn
+ */
+var monkey_wasu = {
 
   id: '',
+  key: '',
+  url: '',
   title: '',
-  rawLink: '',
   link: '',
   format: '高清',
 
   run: function() {
     console.log('run() --');
+    this.getTitle();
+  },
+
+  getTitle: function() {
+    console.log('getTitle() --');
+    var h3 = document.querySelector('div.play_movie div.play_site div.l h3');
+    if (h3) {
+      this.title = h3.innerHTML;
+    } else {
+      this.title = document.title.replace(
+          '高清电影全集在线观看-正版高清电影-华数TV', '').replace(
+          ' 正版高清电影', '');
+    }
     this.getVid();
   },
 
@@ -16,50 +33,65 @@ var monkey = {
    * Get video id
    */
   getVid: function() {
-    console.log('getVid() --');
-    var idReg = /show\/id\/(\d+)/,
-        idMatch = idReg.exec(document.location.href);
-
-    if (idMatch && idMatch.length === 2) {
-      this.id = idMatch[1];
-      this.getVideoInfo();
-    } else {
-      this.createUI();
-    }
-  },
-
-  /**
-   * Get video information from an xml file.
-   */
-  getVideoInfo: function() {
-    console.log('getVideoInfo() --');
-    var url = 'http://www.wasu.cn/Api/getPlayInfoById/id/' + this.id + '/datatype/xml',
+    console.log('getVid()--');
+    var reg = /show\/id\/(\d+)/,
+        match = reg.exec(location.href),
+        url,
         that = this;
 
+    if (!match || match.length !== 2) {
+      console.error('Failed to get vid!');
+      return
+    }
+    this.vid = match[1];
+    url = 'http://www.wasu.cn/wap/play/show/id/' + this.vid,
+
+    console.log('url: ', url);
     GM_xmlhttpRequest({
-      url: url,
       method: 'GET',
+      url: url,
       onload: function(response) {
-        console.log('response: ', response);
-        var xmlObj = that.parseXML(response.responseText);
-        if (! xmlObj) {
-          that.createUI();
+        var txt = response.responseText,
+            keyReg = /'key'\s*:\s*'([^']+)'/,
+            urlReg = /'url'\s*:\s*'([^']+)'/,
+            keyMatch,
+            urlMatch;
+
+        keyMatch = keyReg.exec(txt);
+        if (! keyMatch || keyMatch.length !== 2) {
+          console.error('Failed to get key: ', keyMatch);
           return;
         }
-        that.title = xmlObj.querySelector('title').textContent;
-        that.rawLink = xmlObj.querySelector('video').innerHTML;
-        that.modifyLink();
-        that.createUI();
+        that.key = keyMatch[1];
+        urlMatch = urlReg.exec(txt);
+        that.url = urlMatch[1];
+        that.getVideoInfo();
       },
     });
   },
 
-  modifyLink: function() {
-    console.log('modifyLink() --');
-    if (this.rawLink.length === 0) {
-      return;
-    }
-    this.link = this.rawLink.replace('vodipad', 'p2pvod');
+  /**
+   * Get video information
+   */
+  getVideoInfo: function() {
+    console.log('getVideoInfo() --');
+    var url = [
+          'http://www.wasu.cn/wap/Api/getVideoUrl/id/', this.vid,
+          '/key/', this.key,
+          '/url/', this.url,
+          '/type/txt',
+        ].join(''),
+        that = this;
+
+    console.log('video info link: ', url);
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        that.link = response.responseText;
+        that.createUI();
+      },
+    });
   },
 
   createUI: function() {
@@ -78,29 +110,15 @@ var monkey = {
       videos.msg = 'Failed to get video link';
     } else {
       videos.formats.push(this.format);
-      videos.links.push([this.link]);
+      videos.links.push(this.link);
     }
-    multiFiles.run(videos);
-  },
-
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
+    singleFile.run(videos);
   },
 
 };
 
-monkey.run();
+monkey.extend('www.wasu.cn', [
+  'http://www.wasu.cn/Play/show/id/',
+  'http://www.wasu.cn/wap/Play/show/id/',
+], monkey_wasu);
 

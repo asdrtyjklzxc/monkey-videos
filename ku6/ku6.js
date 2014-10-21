@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * ku6.com
+ */
+var monkey_ku6 = {
 
   vid: '',
   title: '',
@@ -66,5 +69,6 @@ var monkey = {
   },
 };
 
-monkey.run();
-
+monkey.extend('v.ku6.com', [
+  'http://v.ku6.com/',
+], monkey_ku6);

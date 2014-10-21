@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * acfun.tv
+ */
+var monkey_acfun = {
   vid: '',
   origUrl: '',
 
@@ -78,5 +81,6 @@ var monkey = {
   },
 }
 
-monkey.run();
-
+monkey.extend('www.acfun.tv', [
+  'http://www.acfun.tv/v/',
+], monkey_acfun);

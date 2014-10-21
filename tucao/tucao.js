@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * tucao.cc
+ */
+var monkey_tucao = {
 
   url: '',
   title: '',
@@ -124,9 +127,9 @@ var monkey = {
    */
   calcKey: function() {
     console.log('calcKey () --');
-    var time = new Date().getTime(),
-        this.timestamp = Math.round(time / 1000);
+    var time = new Date().getTime();
 
+    this.timestamp = Math.round(time / 1000);
     var local3 = this.timestamp ^ 2774181285;
     var local4 = parseInt(this.vid, 10);
     var local5 = local3 + local4;
@@ -209,5 +212,7 @@ var monkey = {
   },
 }
 
-monkey.run();
 
+monkey.extend('www.tucao.cc', [
+  'http://www.tucao.cc/play/',
+], monkey_tucao);

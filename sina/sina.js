@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * sina.com.cn
+ */
+var monkey_sina = {
   title: '',
   jobs: 0,
   video: {
@@ -218,5 +221,11 @@ var monkey = {
   },
 }
 
-monkey.run();
 
+monkey.extend('video.sina.com.cn', [
+  'http://video.sina.com.cn/',
+], monkey_sina);
+
+monkey.extend('open.sina.com.cn', [
+  'http://open.sina.com.cn/course/',
+], monkey_sina);

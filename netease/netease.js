@@ -1,5 +1,8 @@
 
-var monkey = {
+/**
+ * 163.com
+ */
+var monkey_netease = {
 
   plid: '',  // playlist id
   mid: '',   // video id
@@ -209,4 +212,12 @@ var monkey = {
 
 };
 
-monkey.run();
+
+monkey.extend('v.163.com', [
+  'http://v.163.com/',
+], monkey_netease);
+
+monkey.extend('open.163.com', [
+  'http://open.163.com/',
+], monkey_netease);
+
