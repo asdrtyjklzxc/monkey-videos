@@ -90,7 +90,7 @@ var monkey_weiqitv = {
           ok: true,
           msg: '',
         },
-        types = ['default', '4', '5', '2', '3'],
+        types = ['3', '5', '2', '4', 'default'],
         type,
         url,
         i;

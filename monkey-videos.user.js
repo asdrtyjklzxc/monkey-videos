@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         monkey-videos
 // @description  播放网页里的视频, 不再需要Adobe Flash Player
-// @version      1.0.1
+// @version      1.0.3
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -3163,14 +3163,10 @@ var monkey_sohu = {
 
     for (i = 0; i < json.data.clipsURL.length; i += 1) {
       url = [
-        'http://',
-        json.allot,
-        '?prot=',
-        json.prot, 
-        '&file=',
-        json.data.clipsURL[i],
-        '&new=',
-        json.data.su[i],
+        'http://', json.allot, '/' ,
+        '?prot=', json.prot, 
+        '&file=', json.data.clipsURL[i],
+        '&new=', json.data.su[i],
       ].join('');
       console.log('url: ', url);
       this[fmt].videos.push('');
@@ -3293,8 +3289,9 @@ var monkey_sohu = {
         that[fmt].reserveIp = that[fmt].json.reserveIp.split(';');
         for (i in that[fmt].clipsURL) {
           url = [
-            'http://', that[fmt].ip,
-            '/?prot=', that[fmt].clipsURL[i],
+            'http://', that[fmt].ip, '/',
+            '?prot=', that[fmt].prot,
+            '&file=', that[fmt].clipsURL[i],
             '&new=', that[fmt].su[i],
             ].join('');
           that[fmt].videos.push(url);
@@ -3959,7 +3956,7 @@ var monkey_weiqitv = {
           ok: true,
           msg: '',
         },
-        types = ['default', '4', '5', '2', '3'],
+        types = ['3', '5', '2', '4', 'default'],
         type,
         url,
         i;
