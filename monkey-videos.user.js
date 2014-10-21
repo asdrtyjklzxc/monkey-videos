@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         monkey-videos
 // @description  播放网页里的视频, 不再需要Adobe Flash Player
-// @version      1.0.3
+// @version      1.0.4
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -3290,11 +3290,13 @@ var monkey_sohu = {
         for (i in that[fmt].clipsURL) {
           url = [
             'http://', that[fmt].ip, '/',
-            '?prot=', that[fmt].prot,
+            '?prot=', that[fmt].json.prot,
             '&file=', that[fmt].clipsURL[i],
             '&new=', that[fmt].su[i],
             ].join('');
-          that[fmt].videos.push(url);
+          that.jobs += 1;
+          that[fmt].videos.push('');
+          that.getRealUrl(fmt, url, that[fmt].su[i], i);
         }
 
         if (fmt === 'p2') {
@@ -3311,6 +3313,34 @@ var monkey_sohu = {
             that.getVideoJSON('p4');
           }
         }
+
+      },
+    });
+  },
+
+  /**
+   * Get final url from content like this:
+   *   http://61.54.26.168/sohu/s26h23eab6/6/|145|182.112.229.55|G69w1ucoqFNj8ww74DxHN-6ZQTkgJZ90FlnqBA..|1|0|2|1518|1
+   */
+  getRealUrl: function(fmt, url, new_, i) {
+    console.log('getRealUrl() --', fmt, url, new_, i);
+    var that = this;
+
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: url,
+      onload: function(response) {
+        var txt = response.responseText,
+            params = txt.split('|'),
+            start = params[0],
+            key = params[3],
+            url = [
+              start.substr(0, start.length-1), new_,
+              '?key=', key,
+            ].join('');
+
+        that[fmt].videos[i] = url;
+        that.jobs -= 1;
 
         // Display UI when all processes ended
         if (that.jobs === 0) {
