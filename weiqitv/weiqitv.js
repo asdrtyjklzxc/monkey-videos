@@ -8,11 +8,11 @@ var monkey_weiqitv = {
   title: '',
   videos: {},
   formats: {
-    '2': '高清',
-    '3': '超清',
-    '5': '高清2',
-    '4': '标清',
-    'default': 'flv',
+    '2': '(960x540)-flv',
+    '3': '(1280x720)-flv',
+    '5': '(1280x720)-mp4',
+    '4': '(850x478)-mp4',
+    'default': '(640x360)-flv',
   },
 
   run: function() {
