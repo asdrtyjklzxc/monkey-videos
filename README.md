@@ -1,12 +1,8 @@
 关于
 ====
-一些常用的油㺅脚本, 主要用于下载音乐, 视频等.
+一些常用的油㺅脚本, 主要用于下载视频, 也可以直接点击播放, 无需安装Flash插件.
 
-这些脚本只解析出下载链接, 最终还是需要DownThemAll等下载工具. 视频的话也可以
-直接播放的, 比如我常用vlc来播放youku的视频, 效果还可以, 至少不会像adobe
-flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果很好.
-
-目前只支持firefox平台.
+目前只支持firefox平台, chrome/chromium用户或许可以通过tampermonkey插件来使用, 但未经测试.
 
 
 类似项目
@@ -26,6 +22,14 @@ flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果
 3. 点击[这里](https://raw.githubusercontent.com/LiuLang/monkey-videos/master/monkey-videos.user.js) 安装monke-videos.
 4. 访问视频网站, 就可以在页面的右下角看到解析好的链接了. 如果需要批量下载
 这些视频的话, 我推荐使用DownThemAll这个firefox的扩展, 很方便.
+
+
+特点
+===
+* 直接解析出视频的最终下载地址, 而不是调用第三方的视频解析接口
+* 即使禁用了页面上的javascript, monkey-videos仍然能工作; 不受 NoScript/YesScript的影响
+* 可以直接生成一个m3u格式的播放列表, 点击"播放列表"后, 可以直接用本地的视频播放器打开, 性能就有了很好的保证, 笔记本安静了很多
+* 远离Adobe Flash Player
 
 
 支持的网站
@@ -53,8 +57,8 @@ flash player那样把cpu拖到100%, 然后风扇使劲地转. vlc的播放效果
 * youtube.com, YouTube
 
 
-COPYRIGHT
-=========
+版权
+===
 `Copyright (C) 2013-2014 LiuLang <gsushzhsosgsu@gmail.com>`
 
 依照GNU General Public License v3协议发布, 协议内容请参看LICENSE文件.
