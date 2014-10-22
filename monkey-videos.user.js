@@ -1818,8 +1818,8 @@ var monkey_ifeng = {
           msg: '',
         };
     videos.formats.push('标清');
-    videos.links = this.links;
-    singleFile.run(videos);
+    videos.links.push([this.links]);
+    multiFiles.run(videos);
   },
 };
 
@@ -2348,10 +2348,10 @@ var monkey_justing = {
       videos.ok = false;
       videos.msg = 'Failed to get mp3 link';
     } else {
-      videos.links.push(this.link);
+      videos.links.push([this.link]);
       videos.formats.push('mp3');
     }
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 
 
@@ -2502,7 +2502,7 @@ var monkey_netease = {
       method: 'GET',
       url: xmlUrl,
       onload: function(response) {
-        var xml = that.parseXML(response.responseText),
+        var xml = parseXML(response.responseText),
             type,
             video,
             subs,
@@ -2625,27 +2625,8 @@ var monkey_netease = {
       videos.links.push([this.subs[subName]]);
       videos.formats.push(subName);
     }
-    
     multiFiles.run(videos);
   },
-
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
-  },
-
 };
 
 
@@ -2752,7 +2733,6 @@ var monkey_pps = {
         videos.formats.push(this.types[type]);
       }
     }
-
     multiFiles.run(videos);
   },
 }
@@ -3882,9 +3862,9 @@ var monkey_wasu = {
       videos.msg = 'Failed to get video link';
     } else {
       videos.formats.push(this.format);
-      videos.links.push(this.link);
+      videos.links.push([this.link]);
     }
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 
 };
@@ -3994,12 +3974,12 @@ var monkey_weiqitv = {
     for (i = 0; type = types[i]; i += 1) {
       url = this.videos[type];
       if (url && url.length > 0) {
-        videos.links.push(url);
+        videos.links.push([url]);
         videos.formats.push(this.formats[type]);
       }
     }
 
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 };
 

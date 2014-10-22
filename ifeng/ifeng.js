@@ -67,8 +67,8 @@ var monkey_ifeng = {
           msg: '',
         };
     videos.formats.push('标清');
-    videos.links = this.links;
-    singleFile.run(videos);
+    videos.links.push([this.links]);
+    multiFiles.run(videos);
   },
 };
 

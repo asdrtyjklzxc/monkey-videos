@@ -93,7 +93,6 @@ var monkey_pps = {
         videos.formats.push(this.types[type]);
       }
     }
-
     multiFiles.run(videos);
   },
 }

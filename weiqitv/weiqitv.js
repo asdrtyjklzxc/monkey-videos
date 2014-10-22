@@ -98,12 +98,12 @@ var monkey_weiqitv = {
     for (i = 0; type = types[i]; i += 1) {
       url = this.videos[type];
       if (url && url.length > 0) {
-        videos.links.push(url);
+        videos.links.push([url]);
         videos.formats.push(this.formats[type]);
       }
     }
 
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 };
 

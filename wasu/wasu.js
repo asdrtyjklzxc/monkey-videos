@@ -110,9 +110,9 @@ var monkey_wasu = {
       videos.msg = 'Failed to get video link';
     } else {
       videos.formats.push(this.format);
-      videos.links.push(this.link);
+      videos.links.push([this.link]);
     }
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 
 };

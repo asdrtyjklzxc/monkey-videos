@@ -66,7 +66,7 @@ var monkey_netease = {
       method: 'GET',
       url: xmlUrl,
       onload: function(response) {
-        var xml = that.parseXML(response.responseText),
+        var xml = parseXML(response.responseText),
             type,
             video,
             subs,
@@ -189,27 +189,8 @@ var monkey_netease = {
       videos.links.push([this.subs[subName]]);
       videos.formats.push(subName);
     }
-    
     multiFiles.run(videos);
   },
-
-  /**
-   * Convert string to xml
-   * @param string str
-   *  - the string to be converted.
-   * @return object xml
-   *  - the converted xml object.
-   */
-  parseXML: function(str) {
-    if (document.implementation && document.implementation.createDocument) {
-      xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
-    } else {
-      console.log('parseXML() error: not support current web browser!');
-      return null;
-    }
-    return xmlDoc;
-  },
-
 };
 
 

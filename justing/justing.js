@@ -37,10 +37,10 @@ var monkey_justing = {
       videos.ok = false;
       videos.msg = 'Failed to get mp3 link';
     } else {
-      videos.links.push(this.link);
+      videos.links.push([this.link]);
       videos.formats.push('mp3');
     }
-    singleFile.run(videos);
+    multiFiles.run(videos);
   },
 
 
