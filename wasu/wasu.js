@@ -119,6 +119,8 @@ var monkey_wasu = {
 
 monkey.extend('www.wasu.cn', [
   'http://www.wasu.cn/Play/show/id/',
+  'http://www.wasu.cn/play/show/id/',
   'http://www.wasu.cn/wap/Play/show/id/',
+  'http://www.wasu.cn/wap/play/show/id/',
 ], monkey_wasu);
 

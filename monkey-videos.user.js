@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         monkey-videos
 // @description  播放网页里的视频, 不再需要Adobe Flash Player
-// @version      1.0.5
+// @version      1.0.6
 // @license      GPLv3
 // @author       LiuLang
 // @email        gsushzhsosgsu@gmail.com
@@ -32,7 +32,9 @@
 // @include      http://www.tudou.com/listplay/*
 // @include      http://www.tudou.com/programs/view/*
 // @include      http://www.wasu.cn/Play/show/id/*
+// @include      http://www.wasu.cn/play/show/id/*
 // @include      http://www.wasu.cn/wap/Play/show/id/*
+// @include      http://www.wasu.cn/wap/play/show/id/*
 // @include      http://www.weiqitv.com/index/live_back?videoId=*
 // @include      http://v.youku.com/v_show/id_*
 // @include      http://v.youku.com/v_playlist/*
@@ -3871,7 +3873,9 @@ var monkey_wasu = {
 
 monkey.extend('www.wasu.cn', [
   'http://www.wasu.cn/Play/show/id/',
+  'http://www.wasu.cn/play/show/id/',
   'http://www.wasu.cn/wap/Play/show/id/',
+  'http://www.wasu.cn/wap/play/show/id/',
 ], monkey_wasu);
 
 
@@ -3884,15 +3888,16 @@ var monkey_weiqitv = {
   title: '',
   videos: {},
   formats: {
-    '2': '(960x540)-flv',
-    '3': '(1280x720)-flv',
-    '5': '(1280x720)-mp4',
-    '4': '(850x478)-mp4',
-    'default': '(640x360)-flv',
+    'default': '标清flv',  // 640x360
+          '2': '高清flv',  // 960x540
+          '3': '超清flv',  // 1280x720
+          '4': '高清mp4',  // 850x480
+          '5': '超清mp4',  // 1280x720
   },
 
   run: function() {
     console.log('run() -- ');
+    this.title = document.title.replace('围棋TV - ', '');
     this.getVid();
   },
 
@@ -3916,7 +3921,6 @@ var monkey_weiqitv = {
         break;
       }
     }
-    this.title = document.title;
     if (this.vid.length === 0) {
       console.error('Failed to get vid!');
     } else {
@@ -3942,7 +3946,6 @@ var monkey_weiqitv = {
             videoInfo = json[0].videoInfo,
             format;
 
-        that.title = videoInfo.name;
         for (format in that.formats) {
           if (format in videoInfo) {
             that.videos[format] = videoInfo[format].url;
@@ -3966,7 +3969,7 @@ var monkey_weiqitv = {
           ok: true,
           msg: '',
         },
-        types = ['3', '5', '2', '4', 'default'],
+        types = ['default', '4', '2', '5', '3'],
         type,
         url,
         i;
