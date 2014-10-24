@@ -1,6 +1,10 @@
 关于
 ====
-一些常用的油㺅脚本, 主要用于下载视频, 也可以直接点击播放, 无需安装Flash插件.
+这个油㺅脚本主要用于解析常用视频网站里的视频地址, 得到地址后就可以直接使用本地
+视频播放器播放(推荐用[VLC](http://www.videolan.org/vlc/index.html)),
+不需要启用Flash插件; 也可以直接下载这些视频, 推荐用
+[DownThemAll](https://addons.mozilla.org/en-US/firefox/addon/downthemall/)
+这个非常棒的下载工具.
 
 目前只支持firefox平台, chrome/chromium用户或许可以通过tampermonkey插件来使用, 但未经测试.
 
@@ -27,7 +31,9 @@
 特点
 ===
 * 直接解析出视频的最终下载地址, 而不是调用第三方的视频解析接口
-* 即使禁用了页面上的javascript, monkey-videos仍然能工作; 不受 NoScript/YesScript的影响
+* 即使禁用了页面上的javascript, monkey-videos仍然能工作; 不受
+[NoScript](https://addons.mozilla.org/en-US/firefox/addon/noscript/) 或
+[YesScript](https://addons.mozilla.org/en-US/firefox/addon/yesscript/) 的影响
 * 可以直接生成一个m3u格式的播放列表, 点击"播放列表"后, 可以直接用本地的视频播放器打开, 性能就有了很好的保证, 笔记本安静了很多
 * 远离Adobe Flash Player
 
@@ -55,6 +61,25 @@
 * weiqitv.com, 围棋TV
 * youku.com, 优酷
 * youtube.com, YouTube
+
+
+截图
+====
+![youku](screenshots/youku.png)
+![youtube](screenshots/youtube.png)
+
+
+Q&A
+===
+1.为什么会有这个项目?
+Flash插件很不安全, 经常被曝出新的漏洞; 而且它对linux桌面的支持越来越无力, 很久
+没有更新.
+用浏览器中的flash来播放视频时, 会加重笔记本的负担. 尤其是iqiyi.com, 在爱奇艺
+看视频时, CPU的负载能保持在70%左右.
+Flash插件可以用于跟踪用户行为, 被称为超级cookie.
+几年前, 优酷的flash播放器引入了黑屏特效, 当它检测到它的广告被过滤后, 就会让
+flash播放器黑屏, 而且长达数十秒.
+从2011年前后, 写了youkuHTML5插件, 也就是从那时起, 我就没再安装过flash插件了.
 
 
 版权
