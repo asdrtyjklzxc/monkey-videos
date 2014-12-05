@@ -108,5 +108,6 @@ var monkey_weiqitv = {
 
 monkey.extend('www.weiqitv.com', [
   'http://www.weiqitv.com/index/live_back?videoId=',
+  'http://www.weiqitv.com/index/video_play?videoId=',
 ], monkey_weiqitv);
 
