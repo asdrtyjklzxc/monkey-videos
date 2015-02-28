@@ -136,7 +136,7 @@ var monkey_netease = {
         script,
         reg = /<source[\s\S]+src="([^"]+)"/,
         match,
-        m3u8Reg = /appsrc\:\s*'([\s\S]+)\.m3u8'/,
+        m3u8Reg = /appsrc\s*\:\s*'([\s\S]+)\.m3u8'/,
         m3u8Match,
         i;
 
